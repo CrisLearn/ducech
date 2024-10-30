@@ -1,133 +1,90 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
-function LoginPage() {
-    const [email, setEmail] = useState('');
+const LoginPage = () => {
+    const [correo, setCorreo] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const navigate = useNavigate();
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const navigate = useNavigate(); // Hook para redirección
 
-    const handleLogin = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage(''); // Reinicia el mensaje de error al intentar iniciar sesión
-        try {
-            // Intentar iniciar sesión como admin
-            const adminResponse = await axios.post('http://localhost:5000/api/admin/login', {
-                correo: email,
-                password: password,
-            });
-            localStorage.setItem('token', adminResponse.data.token);
-            
-            navigate('/admin'); // Redirige al panel de admin
-            return; // Salir de la función si la autenticación es exitosa
-        } catch (error) {
-            console.error("Error en login admin:", error); // Para depuración
-        }
-        
-        try {
-            const mecanicoResponse = await axios.post('http://localhost:5000/api/mecanico/login', {
-                correo: email,
-                password: password,
-            });
-            localStorage.setItem('token', mecanicoResponse.data.token);
-            
-            navigate('/mecanico'); // Redirige al panel del mecánico
-            return; // Salir de la función si la autenticación es exitosa
-        } catch (error) {
-            console.error("Error en login mecanico:", error); // Para depuración
-        }
-        
-        try {
-            const clienteResponse = await axios.post('http://localhost:5000/api/cliente/login', {
-                correo: email,
-                password: password,
-            });
-            localStorage.setItem('token', clienteResponse.data.token);
-            
-            navigate('/cliente'); // Redirige al panel del cliente
-        } catch (error) {
-            console.error("Error en login cliente:", error); // Para depuración
-            setErrorMessage(error.response?.data?.message || 'Error al iniciar sesión');
-        }
-    };
 
-    const handleRegister = () => {
-        setShowModal(true);
-    };
+        try {
+            const response = await axios.post('http://localhost:5000/api/admin/login', { correo, password });
+            setSuccess(response.data.message);
+            setError('');
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+            // Guardar el token en localStorage
+            localStorage.setItem('token', response.data.token);
 
-    const handleSelectRole = (role) => {
-        setShowModal(false);
-        if (role === 'cliente') {
-            navigate('/registro-cliente'); // Redirige a RegistroCliente.js
-        } else if (role === 'mecanico') {
-            navigate('/registro-mecanico'); // Redirige a RegistroMecanico.js
+            // Redirigir a la página de administración
+            navigate('/admin');
+        } catch (err) {
+            try {
+                const response = await axios.post('http://localhost:5000/api/mecanico/login', { correo, password });
+                setSuccess(response.data.message);
+                setError('');
+
+                // Guardar el token en localStorage
+                localStorage.setItem('token', response.data.token);
+
+                // Redirigir a la página de administración
+                navigate('/mecanico');
+            } catch (error) {
+                setError(err.response?.data?.message || 'Error en el inicio de sesión');
+                setSuccess('');
+            }
         }
     };
 
     return (
-        <div className="container d-flex align-items-center justify-content-center vh-100">
-            <div className="card p-4 shadow-lg" style={{ width: '100%', maxWidth: '400px' }}>
-                <h2 className="text-center mb-4">Iniciar Sesión</h2>
-                {errorMessage && <div className="alert alert-danger text-center">{errorMessage}</div>}
-                <form onSubmit={handleLogin}>
-                    <div className="mb-3">
-                        <label className="form-label">Correo Electrónico:</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Contraseña:</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn btn-primary w-100 mb-2">Iniciar Sesión</button>
-                </form>
-                <button onClick={handleRegister} className="btn btn-secondary w-100">Registrarse</button>
-            </div>
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-header text-center">
+                            <h3>Iniciar Sesión</h3>
+                        </div>
+                        <div className="card-body">
+                            {error && <div className="alert alert-danger">{error}</div>}
+                            {success && <div className="alert alert-success">{success}</div>}
 
-            {/* Modal de selección de rol */}
-            {showModal && (
-                <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">¿Cómo te gustaría registrarte?</h5>
-                                <button type="button" className="btn-close" onClick={handleCloseModal}></button>
-                            </div>
-                            <div className="modal-body text-center">
-                                <button onClick={() => handleSelectRole('cliente')} className="btn btn-outline-primary w-100 mb-2">
-                                    Cliente
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group mb-3">
+                                    <label htmlFor="correo">Correo electrónico</label>
+                                    <input
+                                        type="email"
+                                        id="correo"
+                                        className="form-control"
+                                        value={correo}
+                                        onChange={(e) => setCorreo(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group mb-3">
+                                    <label htmlFor="password">Contraseña</label>
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        className="form-control"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary w-100">
+                                    Iniciar Sesión
                                 </button>
-                                <button onClick={() => handleSelectRole('mecanico')} className="btn btn-outline-primary w-100">
-                                    Mecánico
-                                </button>
-                            </div>
-                            <div className="modal-footer">
-                                <button onClick={handleCloseModal} className="btn btn-secondary w-100">Cancelar</button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
-}
+};
 
 export default LoginPage;

@@ -1,12 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function MecanicoPage() {
-    return (
-        <div>
-            <h1>Bienvenido a la Página de Mecanico</h1>
-            <p>Has iniciado sesión correctamente y has sido redirigido aquí.</p>
-        </div>
-    );
+const MecanicoPage = () => {
+    const[perfil,setPerfil] = useState(null);
+    
 }
-
-export default MecanicoPage;

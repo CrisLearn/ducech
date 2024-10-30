@@ -1,108 +1,123 @@
 import Admin from '../models/Admin.js';
-import bcrypt from 'bcryptjs'; // Para encriptar contraseñas
-import jwt from 'jsonwebtoken'; // Para generar tokens JWT
+import Mecanico from '../models/Mecanico.js'; // Asegúrate de que el modelo esté importado
+import Cliente from '../models/Cliente.js'; // Asegúrate de que el modelo esté importado
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-// Registrar un nuevo administrador
+// Register a new admin
 export const registerAdmin = async (req, res) => {
     const { usuario, correo, password } = req.body;
 
     try {
-        // Verificar si el usuario ya existe
-        const existingAdmin = await Admin.findOne({ correo });
+        // Check if the email or username already exists
+        const existingAdmin = await Admin.findOne({ $or: [{ correo }, { usuario }] });
         if (existingAdmin) {
-            return res.status(400).json({ message: 'El correo ya está registrado.' });
+            return res.status(400).json({ message: 'Usuario o correo ya existe' });
         }
 
-        // Encriptar la contraseña
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Crear un nuevo administrador
+        // Create a new admin
         const newAdmin = new Admin({
             usuario,
             correo,
             password: hashedPassword,
         });
+        
+        // Save the admin to the database
+        await newAdmin.save();
 
-        const savedAdmin = await newAdmin.save();
-        res.status(201).json({ message: 'Administrador registrado', admin: savedAdmin });
+        // Respond with a success message
+        res.status(201).json({ message: 'Registro exitoso' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error en el registro', error });
     }
 };
 
-// Iniciar sesión (login) de un administrador
+// Login admin
 export const loginAdmin = async (req, res) => {
     const { correo, password } = req.body;
 
     try {
-        // Buscar al administrador por correo
+        // Check if admin exists
         const admin = await Admin.findOne({ correo });
         if (!admin) {
-            return res.status(404).json({ message: 'Administrador no encontrado.' });
+            return res.status(400).json({ message: 'Correo o contraseña incorrectos' });
         }
 
-        // Comparar contraseñas
-        const isMatch = await bcrypt.compare(password, admin.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Contraseña incorrecta.' });
+        // Compare password
+        const isPasswordValid = await bcrypt.compare(password, admin.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: 'Correo o contraseña incorrectos' });
         }
 
-        // Generar token JWT
+        // Generate JWT token
         const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+        // Respond with the token
         res.status(200).json({ message: 'Inicio de sesión exitoso', token });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error en el inicio de sesión', error });
     }
 };
 
-// Visualizar perfil del administrador
+// Get admin profile
 export const obtenerPerfil = async (req, res) => {
     try {
-        const adminId = req.adminId; // Asumiendo que tienes middleware que añade adminId al req después de la verificación del token
-        const admin = await Admin.findById(adminId).select('-password'); // No incluir la contraseña
-
+        // Retrieve admin data using the ID from the token payload
+        const admin = await Admin.findById(req.admin.id).select('-password'); // Exclude password field
         if (!admin) {
-            return res.status(404).json({ message: 'Administrador no encontrado.' });
+            return res.status(404).json({ message: 'Perfil no encontrado' });
         }
 
         res.status(200).json(admin);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error al obtener el perfil', error });
     }
 };
 
-// Actualizar perfil del administrador
+// Update admin profile
 export const actualizarPerfil = async (req, res) => {
     const { usuario, correo, password } = req.body;
-    
+
     try {
-        const adminId = req.adminId; // Asumiendo que tienes middleware que añade adminId al req después de la verificación del token
-
-        // Buscar al administrador por ID
-        const admin = await Admin.findById(adminId);
+        // Find admin by ID
+        const admin = await Admin.findById(req.admin.id);
         if (!admin) {
-            return res.status(404).json({ message: 'Administrador no encontrado.' });
+            return res.status(404).json({ message: 'Perfil no encontrado' });
         }
 
-        // Actualizar campos
+        // Update fields if they exist in the request body
         if (usuario) admin.usuario = usuario;
-        if (correo) {
-            // Verificar si el nuevo correo ya está registrado
-            const existingAdmin = await Admin.findOne({ correo });
-            if (existingAdmin && existingAdmin._id.toString() !== adminId) {
-                return res.status(400).json({ message: 'El correo ya está registrado por otro administrador.' });
-            }
-            admin.correo = correo;
-        }
-        if (password) {
-            // Encriptar nueva contraseña
-            admin.password = await bcrypt.hash(password, 10);
-        }
+        if (correo) admin.correo = correo;
+        if (password) admin.password = await bcrypt.hash(password, 10);
 
-        const updatedAdmin = await admin.save();
-        res.status(200).json({ message: 'Perfil actualizado', admin: updatedAdmin });
+        // Save updates
+        await admin.save();
+
+        res.status(200).json({ message: 'Perfil actualizado exitosamente' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error al actualizar el perfil', error });
+    }
+};
+
+// Get all mechanics
+export const obtenerMecanicos = async (req, res) => {
+    try {
+        const mecanicos = await Mecanico.find(); // Retrieves all mechanics
+        res.status(200).json(mecanicos);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener mecánicos', error });
+    }
+};
+
+// Get all clients
+export const obtenerClientes = async (req, res) => {
+    try {
+        const clientes = await Cliente.find(); // Retrieves all clients
+        res.status(200).json(clientes);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener clientes', error });
     }
 };
