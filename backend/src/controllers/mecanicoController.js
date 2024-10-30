@@ -1,5 +1,6 @@
 import Mecanico from '../models/Mecanico.js';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export const registrarMecanico = async (req, res) => {
     try {
@@ -33,5 +34,30 @@ export const registrarMecanico = async (req, res) => {
         res.status(201).json({ message: 'Mecánico registrado exitosamente', mecanico: nuevoMecanico });
     } catch (error) {
         res.status(500).json({ message: 'Error al registrar el mecánico', error: error.message });
+    }
+};
+
+export const loginMecanico = async (req, res) => {
+    const { correo, password } = req.body;
+
+    try {
+        // Buscar al mecanico por correo
+        const mecanico = await Mecanico.findOne({ correo });
+        if (!mecanico) {
+            return res.status(404).json({ message: 'Mecanico no encontrado.' });
+        }
+
+        // Comparar contraseñas
+        const isMatch = await bcrypt.compare(password, mecanico.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Contraseña incorrecta.' });
+        }
+
+        // Generar token JWT
+        const token = jwt.sign({ id: mecanico._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(200).json({ message: 'Inicio de sesión exitoso', token });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

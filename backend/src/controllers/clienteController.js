@@ -1,5 +1,6 @@
 import Cliente from '../models/Cliente.js';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export const registrarCliente = async (req, res) => {
     try {
@@ -32,5 +33,30 @@ export const registrarCliente = async (req, res) => {
         res.status(201).json({ message: 'Cliente registrado exitosamente', cliente: nuevoCliente });
     } catch (error) {
         res.status(500).json({ message: 'Error al registrar el cliente', error: error.message });
+    }
+};
+
+export const loginCliente = async (req, res) => {
+    const { correo, password } = req.body;
+
+    try {
+        // Buscar al cliente por correo
+        const cliente = await Cliente.findOne({ correo });
+        if (!cliente) {
+            return res.status(404).json({ message: 'Cliente no encontrado.' });
+        }
+
+        // Comparar contraseñas
+        const isMatch = await bcrypt.compare(password, cliente.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Contraseña incorrecta.' });
+        }
+
+        // Generar token JWT
+        const token = jwt.sign({ id: cliente._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(200).json({ message: 'Inicio de sesión exitoso', token });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
