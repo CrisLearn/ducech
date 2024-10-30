@@ -55,3 +55,54 @@ export const loginAdmin = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Visualizar perfil del administrador
+export const obtenerPerfil = async (req, res) => {
+    try {
+        const adminId = req.adminId; // Asumiendo que tienes middleware que añade adminId al req después de la verificación del token
+        const admin = await Admin.findById(adminId).select('-password'); // No incluir la contraseña
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Administrador no encontrado.' });
+        }
+
+        res.status(200).json(admin);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Actualizar perfil del administrador
+export const actualizarPerfil = async (req, res) => {
+    const { usuario, correo, password } = req.body;
+    
+    try {
+        const adminId = req.adminId; // Asumiendo que tienes middleware que añade adminId al req después de la verificación del token
+
+        // Buscar al administrador por ID
+        const admin = await Admin.findById(adminId);
+        if (!admin) {
+            return res.status(404).json({ message: 'Administrador no encontrado.' });
+        }
+
+        // Actualizar campos
+        if (usuario) admin.usuario = usuario;
+        if (correo) {
+            // Verificar si el nuevo correo ya está registrado
+            const existingAdmin = await Admin.findOne({ correo });
+            if (existingAdmin && existingAdmin._id.toString() !== adminId) {
+                return res.status(400).json({ message: 'El correo ya está registrado por otro administrador.' });
+            }
+            admin.correo = correo;
+        }
+        if (password) {
+            // Encriptar nueva contraseña
+            admin.password = await bcrypt.hash(password, 10);
+        }
+
+        const updatedAdmin = await admin.save();
+        res.status(200).json({ message: 'Perfil actualizado', admin: updatedAdmin });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

@@ -12,6 +12,7 @@ function LoginPage() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setErrorMessage(''); // Reinicia el mensaje de error al intentar iniciar sesión
         try {
             // Intentar iniciar sesión como admin
             const adminResponse = await axios.post('http://localhost:5000/api/admin/login', {
@@ -19,28 +20,37 @@ function LoginPage() {
                 password: password,
             });
             localStorage.setItem('token', adminResponse.data.token);
+            
             navigate('/admin'); // Redirige al panel de admin
+            return; // Salir de la función si la autenticación es exitosa
         } catch (error) {
-            // Si falla, intenta iniciar sesión como mecánico
-            try {
-                const mecanicoResponse = await axios.post('http://localhost:5000/api/mecanico/login', {
-                    correo: email,
-                    password: password,
-                });
-                localStorage.setItem('token', mecanicoResponse.data.token);
-                navigate('/mecanico'); // Redirige al panel del mecánico
-            } catch (error) {
-                try {
-                    const mecanicoResponse = await axios.post('http://localhost:5000/api/cliente/login', {
-                        correo: email,
-                        password: password,
-                    });
-                    localStorage.setItem('token', mecanicoResponse.data.token);
-                    navigate('/cliente');
-                } catch (error) {
-                    setErrorMessage(error.response?.data?.message || 'Error al iniciar sesión');
-                }
-            }
+            console.error("Error en login admin:", error); // Para depuración
+        }
+        
+        try {
+            const mecanicoResponse = await axios.post('http://localhost:5000/api/mecanico/login', {
+                correo: email,
+                password: password,
+            });
+            localStorage.setItem('token', mecanicoResponse.data.token);
+            
+            navigate('/mecanico'); // Redirige al panel del mecánico
+            return; // Salir de la función si la autenticación es exitosa
+        } catch (error) {
+            console.error("Error en login mecanico:", error); // Para depuración
+        }
+        
+        try {
+            const clienteResponse = await axios.post('http://localhost:5000/api/cliente/login', {
+                correo: email,
+                password: password,
+            });
+            localStorage.setItem('token', clienteResponse.data.token);
+            
+            navigate('/cliente'); // Redirige al panel del cliente
+        } catch (error) {
+            console.error("Error en login cliente:", error); // Para depuración
+            setErrorMessage(error.response?.data?.message || 'Error al iniciar sesión');
         }
     };
 
@@ -121,4 +131,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
