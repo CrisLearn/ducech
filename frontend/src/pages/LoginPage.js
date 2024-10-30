@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar'; // Asegúrate de tener el Navbar importado
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import axios from 'axios';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate(); // Hook para navegar a otra página
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -18,10 +20,8 @@ function LoginPage() {
 
             // Guarda el token JWT en el almacenamiento local si el inicio de sesión es exitoso
             localStorage.setItem('token', response.data.token);
-            alert('Inicio de sesión exitoso');
-            // Redireccionar o realizar otra acción después del inicio de sesión
+            navigate('/admin'); // Redirige a AdminPage directamente
         } catch (error) {
-            // Captura y muestra el mensaje de error
             setErrorMessage(error.response?.data?.message || 'Error al iniciar sesión');
         }
     };
