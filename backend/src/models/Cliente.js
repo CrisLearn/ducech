@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const mecanicoSchema = new mongoose.Schema({
+const clienteSchema = new mongoose.Schema({
     usuario: {
         type: String,
         required: true
@@ -18,22 +18,18 @@ const mecanicoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    taller: {
+    direccion: {
         type: String,
         required: true
     },
-    clienteId: [{
+    vehiculoId: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cliente'
+        ref: 'Vehiculo'
     }],
     fechaCreacion: {
         type: Date,
         default: Date.now
-    },
-    estado: {
-        type: Boolean,
-        default: true // Por defecto, el estado es verdadero (activo)
     }
 });
 
-export default mongoose.model('Mecanico', mecanicoSchema);
+export default mongoose.model('Cliente', clienteSchema);
