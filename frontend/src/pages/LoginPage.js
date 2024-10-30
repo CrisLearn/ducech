@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import axios from 'axios';
+import './LoginPage.css'; // Asegúrate de que este archivo CSS esté correctamente enlazado
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -26,32 +26,40 @@ function LoginPage() {
         }
     };
 
+    const handleRegister = () => {
+        navigate('/register'); // Redirige a la página de registro
+    };
+
     return (
-        <div>
-            <Navbar />
-            <h2>Iniciar Sesión</h2>
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label>Correo Electrónico:</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Contraseña:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Iniciar Sesión</button>
-            </form>
+        <div className="login-container">
+            <div className="login-form">
+                <h2>Iniciar Sesión</h2>
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
+                <form onSubmit={handleLogin}>
+                    <div className="form-group">
+                        <label>Correo Electrónico:</label>
+                        <input
+                            type="email"
+                            className="form-control"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Contraseña:</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
+                </form>
+                <button onClick={handleRegister} className="btn btn-secondary">Registrarse</button>
+            </div>
         </div>
     );
 }
