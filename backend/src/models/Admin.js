@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
 
 const adminSchema = new mongoose.Schema({
-    usuario: {
+    nombre: {
         type: String,
         required: true,
-        unique: true, // Asegura que el nombre de usuario sea único
+        unique: true, 
     },
-    correo: {
+    email: {
         type: String,
         required: true,
-        unique: true, // Asegura que el correo electrónico sea único
-        match: /.+\@.+\..+/, // Valida el formato del correo electrónico
+        unique: true, 
+        match: /.+\@.+\..+/, 
     },
     password: {
         type: String,
@@ -18,7 +18,7 @@ const adminSchema = new mongoose.Schema({
     },
     fechacreacion: {
         type: Date,
-        default: Date.now, // Establece la fecha de creación por defecto
+        default: Date.now, 
     },
 });
 

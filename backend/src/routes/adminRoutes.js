@@ -1,30 +1,14 @@
-import { Router } from 'express';
-import {
-    registerAdmin,
-    loginAdmin,
-    obtenerPerfil,
-    actualizarPerfil,
-    obtenerMecanicos,
-    obtenerClientes
-} from '../controllers/adminController.js';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import express from 'express';
+import { createAdmin, loginAdmin, updateAdmin, deleteAdmin } from '../controllers/adminController.js';
 
-const router = Router();
+const router = express.Router();
 
-// Ruta para registrar un nuevo administrador
-router.post('/register', registerAdmin);
+router.post('/register', createAdmin);
 
-// Ruta para iniciar sesión
 router.post('/login', loginAdmin);
 
-// Ruta para obtener el perfil del administrador
-router.get('/obtener-perfil', authMiddleware, obtenerPerfil); 
+router.put('/:id', updateAdmin);
 
-// Ruta para actualizar el perfil del administrador
-router.put('/actualizar-perfil', authMiddleware, actualizarPerfil); 
-
-// Rutas para obtener mecánicos y clientes
-router.get('/mecanicos', authMiddleware, obtenerMecanicos); // Cambiado a GET
-router.get('/clientes', authMiddleware, obtenerClientes);   // Cambiado a GET
+router.delete('/:id', deleteAdmin);
 
 export default router;
