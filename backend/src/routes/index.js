@@ -14,6 +14,6 @@ router.use('/cliente', clienteRoutes); // Todas las rutas de administrador estar
 router.use('/vehiculo', vehiculoRoutes); // Todas las rutas de administrador estarán bajo /api/admins
 router.use('/mantenimiento', mantenimientoRoutes); // Todas las rutas de administrador estarán bajo /api/admins
 
-// Puedes definir más rutas o middlewares aquí
+
 
 export default router;
