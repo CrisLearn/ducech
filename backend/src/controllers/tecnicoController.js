@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import Tecnico from '../models/Tecnico.js';
+import Cliente from '../models/Cliente.js';
 
 // Create a new Tecnico
 export const createTecnico = async (req, res) => {
@@ -136,5 +137,62 @@ export const deleteTecnico = async (req, res) => {
       return res.status(401).json({ message: 'Token inválido' });
     }
     res.status(500).json({ message: 'Error al eliminar el tecnico', error });
+  }
+};
+
+export const createCliente = async (req, res) => {
+  try {
+    // Obtener y verificar el token de autenticación
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Token no proporcionado' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+    const { id: tecnicoId } = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Buscar el técnico autenticado en la base de datos
+    const tecnico = await Tecnico.findById(tecnicoId);
+    if (!tecnico) {
+      return res.status(404).json({ message: 'Técnico no encontrado' });
+    }
+
+    // Crear un nuevo cliente con los datos proporcionados
+    const { nombre, email, password, telefono, direccion, vehiculoId } = req.body;
+
+    // Hashear la contraseña del cliente
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear el cliente con el ID del técnico asignado automáticamente
+    const cliente = new Cliente({
+      nombre,
+      email,
+      password: hashedPassword,
+      telefono,
+      direccion,
+      vehiculoId,
+      tecnico: tecnicoId // Asignación automática del ID del técnico
+    });
+
+    // Guardar el cliente en la base de datos
+    await cliente.save();
+
+    // Añadir el cliente recién creado a la lista de clientes del técnico
+    tecnico.clientes.push(cliente._id);
+    await tecnico.save();
+
+    res.status(201).json({
+      message: 'Cliente creado y asignado al técnico exitosamente',
+      cliente
+    });
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+    res.status(500).json({ message: 'Error al crear cliente para técnico', error });
   }
 };

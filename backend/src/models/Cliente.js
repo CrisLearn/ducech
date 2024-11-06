@@ -26,6 +26,10 @@ const clienteSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Vehiculo'
     }],
+    TecnicoId: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tecnico'
+    }],
     fechaCreacion: {
         type: Date,
         default: Date.now
