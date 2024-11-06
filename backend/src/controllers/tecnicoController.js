@@ -58,72 +58,83 @@ export const loginTecnico = async (req, res) => {
 
 // Update a tecnico
 export const updateTecnico = async (req, res) => {
-    try {
+  try {
       // Verificar que el encabezado de autorización esté presente
       const authHeader = req.headers.authorization;
       if (!authHeader) {
-        return res.status(401).json({ message: 'Token no proporcionado' });
+          return res.status(401).json({ message: 'Token no proporcionado' });
       }
-  
+
       // Extraer el token del encabezado (formato: "Bearer <token>")
       const token = authHeader.split(' ')[1];
       if (!token) {
-        return res.status(401).json({ message: 'Token inválido' });
+          return res.status(401).json({ message: 'Token inválido' });
       }
-  
+
       // Verificar el token JWT
       const { id: tecnicoId } = jwt.verify(token, process.env.JWT_SECRET);
-  
+
       // Buscar el técnico por su ID
       const tecnico = await Tecnico.findById(tecnicoId);
       if (!tecnico) {
-        return res.status(404).json({ message: 'Técnico no encontrado' });
+          return res.status(404).json({ message: 'Técnico no encontrado' });
       }
-  
-      // Actualizar la información del técnico
+
+      // Actualizar solo los campos que se proporcionen
       const { nombre, email, password, telefono, taller } = req.body;
-      tecnico.nombre = nombre;
-      tecnico.email = email;
-  
+      if (nombre !== undefined) tecnico.nombre = nombre;
+      if (email !== undefined) tecnico.email = email;
+      if (telefono !== undefined) tecnico.telefono = telefono;
+      if (taller !== undefined) tecnico.taller = taller;
+
       // Hashear la nueva contraseña si es proporcionada
       if (password) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        tecnico.password = hashedPassword;
+          const hashedPassword = await bcrypt.hash(password, 10);
+          tecnico.password = hashedPassword;
       }
-  
-      tecnico.telefono = telefono;
-      tecnico.taller = taller;
-  
+
       await tecnico.save();
-  
+
       res.status(200).json({ message: 'Técnico actualizado exitosamente', tecnico });
-    } catch (error) {
+  } catch (error) {
       if (error.name === 'JsonWebTokenError') {
-        return res.status(401).json({ message: 'Token inválido' });
+          return res.status(401).json({ message: 'Token inválido' });
       }
       res.status(500).json({ message: 'Error al actualizar el técnico', error });
-    }
-  };
-  
+  }
+};
+
 
 // Delete a tecnico
 export const deleteTecnico = async (req, res) => {
   try {
-    // Verify the JWT token
-    const { id: tecnicoId } = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
+    // Verificar el token JWT
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Token no proporcionado' });
+    }
 
-    // Find the tecnico by ID and delete
+    // Extraer el token
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+    // Verificar el token JWT
+    const { id: tecnicoId } = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Buscar el tecnico por su ID y eliminar
     const tecnico = await Tecnico.findByIdAndDelete(tecnicoId);
 
     if (!tecnico) {
-      return res.status(404).json({ message: 'tecnico not found' });
+      return res.status(404).json({ message: 'Tecnico no encontrado' });
     }
 
-    res.status(200).json({ message: 'tecnico deleted successfully' });
+    res.status(200).json({ message: 'Tecnico eliminado exitosamente' });
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: 'Invalid token' });
+      return res.status(401).json({ message: 'Token inválido' });
     }
-    res.status(500).json({ message: 'Error deleting tecnico', error });
+    res.status(500).json({ message: 'Error al eliminar el tecnico', error });
   }
 };

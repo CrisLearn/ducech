@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const clienteSchema = new mongoose.Schema({
-    usuario: {
+    nombre: {
         type: String,
         required: true
     },
-    correo: {
+    email: {
         type: String,
         required: true,
         unique: true
