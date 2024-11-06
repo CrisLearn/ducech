@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
-const mecanicoSchema = new mongoose.Schema({
-    usuario: {
+const tecnicoSchema = new mongoose.Schema({
+    nombre: {
         type: String,
         required: true
     },
-    correo: {
+    email: {
         type: String,
         required: true,
         unique: true
@@ -32,8 +32,8 @@ const mecanicoSchema = new mongoose.Schema({
     },
     estado: {
         type: Boolean,
-        default: true // Por defecto, el estado es verdadero (activo)
+        default: true 
     }
 });
 
-export default mongoose.model('Mecanico', mecanicoSchema);
+export default mongoose.model('Tecnico', tecnicoSchema);
