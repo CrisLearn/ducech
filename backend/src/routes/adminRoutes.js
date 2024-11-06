@@ -7,8 +7,8 @@ router.post('/register', createAdmin);
 
 router.post('/login', loginAdmin);
 
-router.put('/:id', updateAdmin);
+router.put('/update/:id', updateAdmin);
 
-router.delete('/:id', deleteAdmin);
+router.delete('/delete/:id', deleteAdmin);
 
 export default router;

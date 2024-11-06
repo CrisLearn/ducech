@@ -23,7 +23,7 @@ export const createAdmin = async (req, res) => {
 export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const admin = await Admin.findOne({ where: { email } });
+    const admin = await Admin.findOne({ email });
 
     if (!admin) {
       return res.status(404).json({ message: 'Administrador no encontrado' });
@@ -43,39 +43,55 @@ export const loginAdmin = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { nombre, email, password } = req.body;
-    const admin = await Admin.findByPk(id);
+    // Verify the JWT token
+    const { id: adminId } = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
+
+    // Find the admin by ID
+    const admin = await Admin.findById(adminId);
 
     if (!admin) {
-      return res.status(404).json({ message: 'Administrador no encontrado' });
+      return res.status(404).json({ message: 'Admin not found' });
     }
 
-    admin.nombre = nombre || admin.nombre;
-    admin.email = email || admin.email;
+    // Update the admin's information
+    const { nombre, email, password } = req.body;
+    admin.nombre = nombre;
+    admin.email = email;
+
+    // Hash the new password if provided
     if (password) {
-      admin.password = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      admin.password = hashedPassword;
     }
 
     await admin.save();
-    res.status(200).json({ message: 'Administrador actualizado con éxito', admin });
+
+    res.status(200).json({ message: 'Admin updated successfully', admin });
   } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar el administrador', error });
+    if (error.nombre === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    res.status(500).json({ message: 'Error updating admin', error });
   }
 };
 
 export const deleteAdmin = async (req, res) => {
   try {
-    const { id } = req.params;
-    const admin = await Admin.findByPk(id);
+    // Verify the JWT token
+    const { id: adminId } = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
+
+    // Find the admin by ID and delete
+    const admin = await Admin.findByIdAndDelete(adminId);
 
     if (!admin) {
-      return res.status(404).json({ message: 'Administrador no encontrado' });
+      return res.status(404).json({ message: 'Admin not found' });
     }
 
-    await admin.destroy();
-    res.status(200).json({ message: 'Administrador eliminado con éxito' });
+    res.status(200).json({ message: 'Admin deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error al eliminar el administrador', error });
+    if (error.nombre === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    res.status(500).json({ message: 'Error deleting admin', error });
   }
 };
