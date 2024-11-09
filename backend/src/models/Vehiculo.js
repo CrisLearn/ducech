@@ -27,6 +27,10 @@ const vehiculoSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    mantenimientos:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Mantrenimiento',
+    }],
     fechaRegistro: {
         type: Date,
         default: Date.now

@@ -13,7 +13,8 @@ const mantenimientoSchema = new mongoose.Schema({
     },
     fechaMantenimiento: {
         type: Date,
-        required: true
+        required: true,
+        default: Date.now
     },
     kilometrajeMantenimiento: {
         type: Number,

@@ -1,139 +1,134 @@
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import Cliente from '../models/Cliente.js'; // Asegúrate de que la ruta sea correcta
+import jwt from 'jsonwebtoken';
+import Cliente from '../models/Cliente.js';
+import Vehiculo from "../models/Vehiculo.js";
+import Mantenimiento from "../models/Mantenimiento.js";
 
-// Crear un nuevo Cliente
-export const createCliente = async (req, res) => {
+// Método para crear un nuevo cliente
+export const crearCliente = async (req, res) => {
   try {
     const { nombre, email, password, telefono, direccion } = req.body;
 
-    // Hash de la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    const cliente = new Cliente({
+    const nuevoCliente = new Cliente({
       nombre,
       email,
       password: hashedPassword,
       telefono,
-      direccion,
+      direccion
     });
 
-    await cliente.save();
+    await nuevoCliente.save();
 
-    res.status(201).json({ message: 'Cliente creado exitosamente', cliente });
+    res.status(201).json({ mensaje: 'Cliente creado con éxito', cliente: nuevoCliente });
   } catch (error) {
-    res.status(500).json({ message: 'Error al crear el cliente', error });
+    console.error('Error al crear el cliente:', error);
+    res.status(500).json({ mensaje: 'Error del servidor' });
   }
 };
 
-// Iniciar sesión de un Cliente
+// Método para iniciar sesión
 export const loginCliente = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Buscar el Cliente por correo
+    // Buscar el cliente por email
     const cliente = await Cliente.findOne({ email });
 
     if (!cliente) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
+      return res.status(404).json({ mensaje: 'Cliente no encontrado' });
     }
 
-    // Comparar la contraseña proporcionada con la almacenada
-    const isPasswordValid = await bcrypt.compare(password, cliente.password);
+    // Verificar la contraseña
+    const esValida = await bcrypt.compare(password, cliente.password);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Credenciales inválidas' });
+    if (!esValida) {
+      return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
     }
 
     // Generar un token JWT
-    const token = jwt.sign({ id: cliente.id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+    const token = jwt.sign({ id: cliente._id, email: cliente.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+
+    res.status(200).json({ mensaje: 'Inicio de sesión exitoso', token });
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    res.status(500).json({ mensaje: 'Error del servidor' });
+  }
+};
+
+export const crearVehiculo = async (req, res) => {
+  try {
+    const { marca, modelo, year, placa, cilindraje } = req.body;
+    const clienteId = req.user._id; // Obtener el clienteId del usuario logueado
+
+    // Validar los datos recibidos
+    if (!marca || !modelo || !year || !placa || !cilindraje) {
+      return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
+    }
+
+    // Crear un nuevo vehículo
+    const nuevoVehiculo = new Vehiculo({
+      clienteId,
+      marca,
+      modelo,
+      year,
+      placa,
+      cilindraje
     });
 
-    res.status(200).json({ message: 'Inicio de sesión exitoso', token });
+    // Guardar el vehículo en la base de datos
+    await nuevoVehiculo.save();
+
+    // Actualizar el documento del cliente con el ID del nuevo vehículo
+    await Cliente.findByIdAndUpdate(clienteId, { $push: { vehiculos: nuevoVehiculo._id } });
+
+    // Responder con éxito
+    res.status(201).json({ mensaje: 'Vehículo creado con éxito', vehiculo: nuevoVehiculo });
   } catch (error) {
-    res.status(500).json({ message: 'Error al iniciar sesión', error });
+    console.error('Error al crear el vehículo:', error);
+    res.status(500).json({ mensaje: 'Error del servidor' });
   }
 };
 
-// Actualizar un Cliente
-export const updateCliente = async (req, res) => {
-    try {
-        // Verificar que el encabezado de autorización esté presente
-        const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            return res.status(401).json({ message: 'Token no proporcionado' });
-        }
-  
-        // Extraer el token del encabezado (formato: "Bearer <token>")
-        const token = authHeader.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ message: 'Token inválido' });
-        }
-  
-        // Verificar el token JWT
-        const { id: clienteId } = jwt.verify(token, process.env.JWT_SECRET);
-  
-        // Buscar el técnico por su ID
-        const cliente = await Cliente.findById(clienteId);
-        if (!cliente) {
-            return res.status(404).json({ message: 'Técnico no encontrado' });
-        }
-  
-        // Actualizar solo los campos que se proporcionen
-        const { nombre, email, password, telefono, taller } = req.body;
-        if (nombre !== undefined) cliente.nombre = nombre;
-        if (email !== undefined) cliente.email = email;
-        if (telefono !== undefined) cliente.telefono = telefono;
-        if (taller !== undefined) cliente.taller = taller;
-  
-        // Hashear la nueva contraseña si es proporcionada
-        if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            cliente.password = hashedPassword;
-        }
-  
-        await cliente.save();
-  
-        res.status(200).json({ message: 'Cliente actualizado exitosamente', cliente });
-    } catch (error) {
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({ message: 'Token inválido' });
-        }
-        res.status(500).json({ message: 'Error al actualizar el cliente', error });
-    }
-  };
-
-// Eliminar un Cliente
-export const deleteCliente = async (req, res) => {
+export const crearMantenimiento = async (req, res) => {
   try {
-    // Verificar el token JWT
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ message: 'Token no proporcionado' });
+    const { vehiculoId, mecanicoId, fechaMantenimiento, kilometrajeMantenimiento, tipoMantenimiento, marcaRepuesto, proximoMantenimiento, detalleMantenimiento } = req.body;
+    const clienteId = req.user._id; // Obtener el clienteId del usuario logueado
+
+    // Validar los datos recibidos
+    if (!vehiculoId || !mecanicoId || !fechaMantenimiento || !kilometrajeMantenimiento || !tipoMantenimiento || !marcaRepuesto || !proximoMantenimiento || !detalleMantenimiento) {
+      return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
     }
 
-    // Extraer el token
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ message: 'Token inválido' });
+    // Verificar que el vehículo pertenezca al cliente
+    const vehiculo = await Vehiculo.findOne({ _id: vehiculoId, clienteId });
+
+    if (!vehiculo) {
+      return res.status(404).json({ mensaje: 'Vehículo no encontrado o no pertenece al cliente' });
     }
 
-    // Verificar el token JWT
-    const { id: clienteId } = jwt.verify(token, process.env.JWT_SECRET);
+    // Crear un nuevo mantenimiento
+    const nuevoMantenimiento = new Mantenimiento({
+      vehiculoId,
+      mecanicoId,
+      fechaMantenimiento,
+      kilometrajeMantenimiento,
+      tipoMantenimiento,
+      marcaRepuesto,
+      proximoMantenimiento,
+      detalleMantenimiento
+    });
 
-    // Buscar el cliente por su ID y eliminar
-    const cliente = await Cliente.findByIdAndDelete(clienteId);
+    // Guardar el mantenimiento en la base de datos
+    await nuevoMantenimiento.save();
 
-    if (!cliente) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
-    }
-
-    res.status(200).json({ message: 'Cliente eliminado exitosamente' });
+    // Responder con éxito
+    res.status(201).json({ mensaje: 'Mantenimiento creado con éxito', mantenimiento: nuevoMantenimiento });
   } catch (error) {
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: 'Token inválido' });
-    }
-    res.status(500).json({ message: 'Error al eliminar el cliente', error });
+    console.error('Error al crear el mantenimiento:', error);
+    res.status(500).json({ mensaje: 'Error del servidor' });
   }
 };
+
