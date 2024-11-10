@@ -1,11 +1,13 @@
-// import express from 'express';
-// import { createTecnico, loginTecnico, updateTecnico, deleteTecnico, createCliente } from '../controllers/tecnicoController.js';
+import express from 'express';
+import { crearTecnico, loginTecnico,crearCliente } from '../controllers/tecnicoController.js';
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.post('/register', createTecnico);
+router.post('/registrar-tecnico', crearTecnico);
 
-// router.post('/login', loginTecnico);
+router.post('/login-tecnico', loginTecnico);
+
+router.post('/registrar-cliente', crearCliente);
 
 // router.put('/update/:id', updateTecnico);
 
@@ -13,4 +15,4 @@
 
 // router.post('/create-cliente', createCliente);
 
-// export default router;
+export default router;

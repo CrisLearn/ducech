@@ -42,9 +42,9 @@ export const loginCliente = async (req, res) => {
     }
 
     // Verificar la contraseña
-    const esValida = await bcrypt.compare(password, cliente.password);
+    const validPassword = await bcrypt.compare(password, cliente.password);
 
-    if (!esValida) {
+    if (!validPassword) {
       return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
     }
 
@@ -94,11 +94,11 @@ export const crearVehiculo = async (req, res) => {
 
 export const crearMantenimiento = async (req, res) => {
   try {
-    const { vehiculoId, mecanicoId, fechaMantenimiento, kilometrajeMantenimiento, tipoMantenimiento, marcaRepuesto, proximoMantenimiento, detalleMantenimiento } = req.body;
+    const { vehiculoId, tecnicoId, fechaMantenimiento, kilometrajeMantenimiento, tipoMantenimiento, marcaRepuesto, proximoMantenimiento, detalleMantenimiento } = req.body;
     const clienteId = req.user._id; // Obtener el clienteId del usuario logueado
 
     // Validar los datos recibidos
-    if (!vehiculoId || !mecanicoId || !fechaMantenimiento || !kilometrajeMantenimiento || !tipoMantenimiento || !marcaRepuesto || !proximoMantenimiento || !detalleMantenimiento) {
+    if (!vehiculoId || !tecnicoId || !fechaMantenimiento || !kilometrajeMantenimiento || !tipoMantenimiento || !marcaRepuesto || !proximoMantenimiento || !detalleMantenimiento) {
       return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
     }
 
@@ -112,7 +112,7 @@ export const crearMantenimiento = async (req, res) => {
     // Crear un nuevo mantenimiento
     const nuevoMantenimiento = new Mantenimiento({
       vehiculoId,
-      mecanicoId,
+      tecnicoId,
       fechaMantenimiento,
       kilometrajeMantenimiento,
       tipoMantenimiento,

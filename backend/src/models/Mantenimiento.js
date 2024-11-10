@@ -6,9 +6,9 @@ const mantenimientoSchema = new mongoose.Schema({
         ref: 'Vehiculo',
         required: true
     },
-    mecanicoId: {
+    tecnicoId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Mecanico',
+        ref: 'Tecnico',
         required: true
     },
     fechaMantenimiento: {
