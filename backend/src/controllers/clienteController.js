@@ -7,10 +7,17 @@ export const createCliente = async (req, res) => {
     try {
         const { nombre, email, password, telefono, direccion, vehiculos } = req.body;
 
+        // Verificar si el email ya existe en la base de datos
+        const existingCliente = await Cliente.findOne({ email });
+        if (existingCliente) {
+            return res.status(400).send({ message: 'El correo electrónico ya está registrado.' });
+        }
+
         // Encriptar la contraseña
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+        // Crear nuevo cliente
         const newCliente = new Cliente({
             nombre,
             email,
@@ -24,7 +31,12 @@ export const createCliente = async (req, res) => {
         await newCliente.save();
         res.status(201).send(newCliente);
     } catch (error) {
-        res.status(400).send(error);
+        // Verificar si el error es de duplicado en MongoDB
+        if (error.code === 11000) {
+            res.status(400).send({ message: 'Ya existe un cliente con ese correo electrónico.' });
+        } else {
+            res.status(500).send({ message: 'Error al crear el cliente.', error });
+        }
     }
 };
 
