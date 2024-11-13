@@ -1,25 +1,24 @@
 import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
-const adminSchema = new mongoose.Schema({
+const adminSchema = new Schema({
     nombre: {
         type: String,
-        required: true,
-        unique: false, 
+        required: true
     },
     email: {
         type: String,
         required: true,
-        unique: true, 
-        match: /.+\@.+\..+/, 
+        unique: true
     },
     password: {
         type: String,
-        required: true,
+        required: true
     },
-    fechacreacion: {
+    fechaCreacion: {
         type: Date,
-        default: Date.now, 
-    },
+        default: Date.now
+    }
 });
 
 const Admin = mongoose.model('Admin', adminSchema);
