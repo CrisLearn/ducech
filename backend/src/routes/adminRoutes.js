@@ -1,5 +1,17 @@
 import express from 'express';
-import { createAdmin, loginAdmin, updateAdmin, getAllTecnicos, getTecnicoById, generateTecnicosReport } from '../controllers/adminController.js';
+import { createAdmin, 
+    loginAdmin, 
+    updateAdmin, 
+    getAllTecnicos, 
+    getTecnicoById, 
+    generateTecnicosReport,
+    getAllClientes,
+    getClienteById,
+    generateClientesReport,
+    getAllVehiculos,
+    getVehiculoById,
+    generateVehiculosReport 
+} from '../controllers/adminController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -10,5 +22,11 @@ router.put('/update-admin', authMiddleware,updateAdmin);
 router.get('/tecnicos', authMiddleware,getAllTecnicos);
 router.get('/tecnico/:id', authMiddleware,getTecnicoById);
 router.get('/reportes-tecnicos', authMiddleware,generateTecnicosReport);
+router.get('/clientes', authMiddleware,getAllClientes);
+router.get('/cliente/:id', authMiddleware,getClienteById);
+router.get('/reportes-clientes', authMiddleware,generateClientesReport);
+router.get('/vehiculos', authMiddleware,getAllVehiculos);
+router.get('/vehiculo/:id', authMiddleware,getVehiculoById);
+router.get('/reportes-vehiculos', authMiddleware,generateVehiculosReport);
 
 export default router;

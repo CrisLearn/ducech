@@ -9,7 +9,7 @@ export const authMiddleware = (req, res, next) => {
 
         const token = authHeader.replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decoded.id; // Extraer y adjuntar el ID del usuario al objeto req
+        req.userId = decoded.id; // Asegurarse de que este campo se está estableciendo correctamente
         next();
     } catch (error) {
         res.status(401).send({ error: 'Token inválido o expirado.' });
