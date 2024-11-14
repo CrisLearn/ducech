@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const RegistroPage = () => {
   const [formType, setFormType] = useState(null);
@@ -12,6 +15,8 @@ const RegistroPage = () => {
     direccion: '',
     taller: '' // Solo para técnico
   });
+
+  const navigate = useNavigate();
 
   const handleSelectForm = (type) => {
     setFormType(type);
@@ -40,17 +45,40 @@ const RegistroPage = () => {
     
     axios.post(url, formData)
       .then(response => {
-        // Maneja la respuesta del servidor (por ejemplo, mostrar un mensaje de éxito)
-        console.log(response.data);
+        // Mostrar una alerta de éxito
+        toast.success('Registro exitoso. Redirigiendo al login...', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+        // Redirigir al login después de 3 segundos
+        setTimeout(() => {
+          navigate('/ducech/login');
+        }, 3000);
       })
       .catch(error => {
-        // Maneja los errores (por ejemplo, mostrar un mensaje de error)
+        // Mostrar una alerta de error en caso de fallo
+        toast.error('Error en el registro. Inténtalo de nuevo.', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         console.error(error);
       });
   };
 
   return (
     <Container className="mt-5">
+      <ToastContainer />
       <Row className="justify-content-md-center">
         <Col md={6}>
           <Card>
@@ -129,7 +157,6 @@ const RegistroPage = () => {
                     </Form.Group>
                   )}
 
-                  {/* Mostrar Dirección para ambos tipos de usuario */}
                   <Form.Group controlId="formDireccion" className="mt-3">
                     <Form.Label>Dirección</Form.Label>
                     <Form.Control 
