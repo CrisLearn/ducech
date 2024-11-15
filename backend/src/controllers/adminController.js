@@ -4,6 +4,7 @@ import Admin from '../models/Admin.js';
 import Tecnico from '../models/Tecnico.js';
 import Cliente from '../models/Cliente.js';
 import Vehiculo from '../models/Vehiculo.js';
+import Mantenimiento from '../models/Mantenimiento.js';
 import PDFDocument from 'pdfkit'; 
 import fs from 'fs';
 
@@ -54,6 +55,32 @@ export const loginAdmin = async (req, res) => {
         res.send({ token });
     } catch (error) {
         res.status(400).send(error);
+    }
+};
+
+import Admin from '../models/Admin.js'; // Ajusta la ruta según tu estructura de proyecto
+
+export const getAdminProfile = async (req, res) => {
+    try {
+        // Obtén el ID del admin desde la solicitud (por ejemplo, del token JWT o de los parámetros)
+        const adminId = req.params.id || req.user.id; // Asume que tienes middleware de autenticación
+
+        // Busca al administrador en la base de datos
+        const admin = await Admin.findById(adminId);
+
+        if (!admin) {
+            return res.status(404).json({ error: 'Administrador no encontrado' });
+        }
+
+        // Retorna los datos del perfil
+        return res.status(200).json({
+            id: admin._id,
+            nombre: admin.nombre,
+            email: admin.email
+        });
+    } catch (error) {
+        console.error('Error al obtener el perfil del administrador:', error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
@@ -114,7 +141,7 @@ export const getTecnicoById = async (req, res) => {
 // Método para generar el reporte en PDF de los técnicos
 export const generateTecnicosReport = async (req, res) => {
     try {
-        const tecnicos = await Tecnico.find();
+        const tecnicos = await Tecnico.find().populate('clientes');
 
         // Crear el documento PDF
         const doc = new PDFDocument();
@@ -138,6 +165,21 @@ export const generateTecnicosReport = async (req, res) => {
             doc.fontSize(14).text(`Dirección: ${tecnico.direccion}`);
             doc.fontSize(14).text(`Estado: ${tecnico.estado}`);
             doc.moveDown();
+            
+            if (tecnico.clientes.length > 0) {
+                doc.fontSize(14).text('Clientes:', { underline: true });
+                tecnico.clientes.forEach(cliente => {
+                    doc.fontSize(12).text(`Nombre: ${cliente.nombre}`);
+                    doc.fontSize(12).text(`Email: ${cliente.email}`);
+                    doc.fontSize(12).text(`Teléfono: ${cliente.telefono}`);
+                    doc.fontSize(12).text(`Dirección: ${cliente.direccion}`);
+                    doc.fontSize(12).text(`Estado: ${cliente.estado}`);
+                    doc.moveDown();
+                });
+            } else {
+                doc.fontSize(12).text('Sin clientes registrados');
+            }
+            doc.moveDown();
         });
 
         // Finalizar el PDF
@@ -147,6 +189,7 @@ export const generateTecnicosReport = async (req, res) => {
         res.status(500).send(error);
     }
 };
+
 
 export const getAllClientes = async (req, res) => { 
     try { const clientes = await Cliente.find(); 
@@ -170,7 +213,7 @@ export const getClienteById = async (req, res) => {
 
 export const generateClientesReport = async (req, res) => {
     try {
-        const clientes = await Cliente.find();
+        const clientes = await Cliente.find().populate('vehiculos');
 
         // Crear el documento PDF
         const doc = new PDFDocument();
@@ -191,7 +234,17 @@ export const generateClientesReport = async (req, res) => {
             doc.fontSize(14).text(`Email: ${cliente.email}`);
             doc.fontSize(14).text(`Teléfono: ${cliente.telefono}`);
             doc.fontSize(14).text(`Dirección: ${cliente.direccion}`);
-            doc.fontSize(14).text(`Vehiculo: ${cliente.vehiculos}`);
+            doc.moveDown();
+
+            if (cliente.vehiculos.length > 0) {
+                doc.fontSize(14).text('Vehiculos:', { underline: true });
+                cliente.vehiculos.forEach(vehiculo => {
+                    doc.fontSize(12).text(`Placa: ${vehiculo.placa}`);
+                    doc.moveDown();
+                });
+            } else {
+                doc.fontSize(12).text('Sin vehiculos registrados.');
+            }
             doc.moveDown();
         });
 
@@ -203,47 +256,33 @@ export const generateClientesReport = async (req, res) => {
     }
 };
 
+// Obtener todos los vehículos
 export const getAllVehiculos = async (req, res) => { 
     try {
-        const clienteId = req.userId; // Obtener el ID del cliente del token
-        const cliente = await Cliente.findById(clienteId).populate('vehiculos');
-        if (!cliente) {
-            return res.status(404).send({ error: 'Cliente no encontrado' });
-        }
-        res.send(cliente.vehiculos);
+        const vehiculos = await Vehiculo.find(); // Obtiene todos los vehículos sin restricciones
+        res.send(vehiculos);
     } catch (error) { 
-        res.status(500).send(error); 
+        res.status(500).send({ error: 'Error del servidor', details: error.message }); 
     } 
 };
 
-// Método para obtener un vehículo por su ID
+// Método para obtener un vehículo por su ID sin restricciones
 export const getVehiculoById = async (req, res) => { 
     try { 
         const vehiculoId = req.params.id; 
-        const vehiculo = await Vehiculo.findById(vehiculoId)/*.populate('Mantenimiento')*/; 
+        const vehiculo = await Vehiculo.findById(vehiculoId); 
         if (!vehiculo) { 
             return res.status(404).send({ error: 'Vehículo no encontrado' }); 
         } 
         res.send(vehiculo); 
     } catch (error) { 
-        res.status(500).send(error); 
+        res.status(500).send({ error: 'Error del servidor', details: error.message }); 
     } 
 };
 
-// Método para generar el reporte en PDF de los vehículos del cliente autenticado
 export const generateVehiculosReport = async (req, res) => {
     try {
-        const clienteId = req.userId; // Obtener el ID del cliente del token
-        const cliente = await Cliente.findById(clienteId).populate({
-            path: 'vehiculos',
-            populate: {
-                path: 'mantenimientos'
-            }
-        });
-
-        if (!cliente) {
-            return res.status(404).send({ error: 'Cliente no encontrado' });
-        }
+        const vehiculos = await Vehiculo.find().populate('mantenimientos');
 
         // Crear el documento PDF
         const doc = new PDFDocument();
@@ -256,10 +295,10 @@ export const generateVehiculosReport = async (req, res) => {
         doc.pipe(res);
 
         // Añadir contenido al PDF
-        doc.fontSize(20).text('Reporte de Vehículos', { align: 'center' });
+        doc.fontSize(20).text('Reporte de Vehiculos', { align: 'center' });
         doc.moveDown();
 
-        cliente.vehiculos.forEach(vehiculo => {
+        vehiculos.forEach(vehiculo => {
             doc.fontSize(14).text(`Placa: ${vehiculo.placa}`);
             doc.fontSize(14).text(`Tipo: ${vehiculo.tipo}`);
             doc.fontSize(14).text(`Marca: ${vehiculo.marca}`);

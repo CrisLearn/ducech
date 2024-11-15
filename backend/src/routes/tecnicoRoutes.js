@@ -6,6 +6,7 @@ import { createTecnico,
     getAllClientes, 
     getClienteById,
     generateClientesReport,
+    createVehiculoForTecnicio,
     getAllVehiculos,
     getVehiculoById,
     generateVehiculosReport,
@@ -22,6 +23,7 @@ router.post('/registrar-cliente', authMiddleware,createClienteForTecnico);
 router.get('/clientes', authMiddleware,getAllClientes);
 router.get('/cliente/:id', authMiddleware,getClienteById);
 router.get('/reportes-clientes', authMiddleware,generateClientesReport);
+router.post('/registrar-vehiculo', authMiddleware,createVehiculoForTecnicio);
 router.get('/vehiculos', authMiddleware,getAllVehiculos);
 router.get('/vehiculo/:id', authMiddleware,getVehiculoById);
 router.get('/reportes-vehiculos', authMiddleware,generateVehiculosReport);

@@ -163,19 +163,25 @@ export const getAllVehiculos = async (req, res) => {
 
 // Método para obtener un vehículo por su ID
 export const getVehiculoById = async (req, res) => { 
-    try { 
-        const vehiculoId = req.params.id; 
-        const vehiculo = await Vehiculo.findById(vehiculoId)/*.populate('Mantenimiento')*/; 
-        if (!vehiculo) { 
-            return res.status(404).send({ error: 'Vehículo no encontrado' }); 
-        } 
-        res.send(vehiculo); 
-    } catch (error) { 
-        res.status(500).send(error); 
-    } 
+    try {
+        const clienteId = req.userId; // Obtener el ID del técnico del token
+        const vehiculoId = req.params.id;
+        
+        const cliente = await Cliente.findById(clienteId).populate({
+            path: 'vehiculos',
+            match: { _id: vehiculoId }
+        });
+        
+        if (!cliente || cliente.vehiculos.length === 0) {
+            return res.status(404).send({ error: 'Vehiculo no encontrado o no asignado a este técnico' });
+        }
+        
+        res.send(cliente.vehiculos[0]);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 };
 
-// Método para generar el reporte en PDF de los vehículos del cliente autenticad
 // Método para generar el reporte en PDF de los vehículos y sus mantenimientos del cliente autenticado
 export const generateVehiculosReport = async (req, res) => {
     try {
@@ -244,13 +250,10 @@ export const generateVehiculosReport = async (req, res) => {
 };
 
 
-
-// Método para crear un nuevo mantenimiento para un vehículo del cliente autenticado
 export const createMantenimientoForVehiculo = async (req, res) => {
     try {
         const { descripcion, tipoMantenimiento, detalleMantenimiento, marcagaRepuesto, kilometrajeActual, kilometrajeCambio, detalleGeneral, vehiculoId } = req.body;
         const clienteId = req.userId; // Obtener el ID del cliente del token
-
 
         // Buscar el vehículo por ID y verificar que pertenezca al cliente autenticado
         const vehiculo = await Vehiculo.findById(vehiculoId).populate('mantenimientos');
@@ -259,7 +262,7 @@ export const createMantenimientoForVehiculo = async (req, res) => {
         }
 
         // Verificar que el vehículo pertenece al cliente autenticado
-        const cliente = await Cliente.findById(clienteId).populate('vehiculos');
+        const cliente = await Cliente.findById(clienteId);
         if (!cliente || !cliente.vehiculos.includes(vehiculo._id)) {
             console.log('Permisos del cliente:', cliente ? cliente.vehiculos : 'No se encontró cliente');
             return res.status(403).send({ error: 'Acceso denegado. El cliente no tiene permisos para este vehículo.' });
@@ -274,7 +277,8 @@ export const createMantenimientoForVehiculo = async (req, res) => {
             kilometrajeActual,
             kilometrajeCambio,
             detalleGeneral,
-            fechaCreacion: new Date()
+            fechaCreacion: new Date(),
+            vehiculo: vehiculo._id // Asociar el mantenimiento al vehículo
         });
 
         // Guardar el nuevo mantenimiento
@@ -290,4 +294,5 @@ export const createMantenimientoForVehiculo = async (req, res) => {
         res.status(400).send({ error: 'Error al crear el mantenimiento. Por favor, revise los datos e intente nuevamente.' });
     }
 };
+
 

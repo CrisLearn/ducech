@@ -7,9 +7,9 @@ import { AdminRoute, TecnicoRoute, ClienteRoute } from './Routes/ProtectedRoute'
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import RegistroPage from './components/RegistroPage';
-import AdminDashboard from './layouts/AdminLayout';
-import TecnicoDashboard from './layouts/TecnicoLayout';
-import ClienteDashboard from './layouts/ClienteLayout';
+import AdminDashboard from './pages/Admin/AdminPage';
+import TecnicoDashboard from './pages/Admin/TecnicoPage';
+import ClienteDashboard from './pages/Admin/ClientePage';
 
 function App() {
     return (

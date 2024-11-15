@@ -131,28 +131,48 @@ export const createClienteForTecnico = async (req, res) => {
 };
 
 export const getAllClientes = async (req, res) => { 
-    try { const clientes = await Cliente.find(); 
-        res.send(clientes); 
-    } catch (error) { 
-        res.status(500).send(error); 
-    } 
+    try {
+        const tecnicoId = req.userId; // Obtener el ID del técnico del token
+        const tecnico = await Tecnico.findById(tecnicoId).populate('clientes');
+        if (!tecnico) {
+            return res.status(404).send({ error: 'Técnico no encontrado' });
+        }
+        res.send(tecnico.clientes);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 };
 
+
 export const getClienteById = async (req, res) => { 
-    try { 
-        const clienteId = req.params.id; 
-        const cliente = await Cliente.findById(clienteId); 
-        if (!cliente) { return res.status(404).send({ error: 'Cliente no encontrado' }); 
-    } 
-        res.send(cliente); 
-    } catch (error) { 
-        res.status(500).send(error); 
-    } 
+    try {
+        const tecnicoId = req.userId; // Obtener el ID del técnico del token
+        const clienteId = req.params.id;
+        
+        const tecnico = await Tecnico.findById(tecnicoId).populate({
+            path: 'clientes',
+            match: { _id: clienteId }
+        });
+        
+        if (!tecnico || tecnico.clientes.length === 0) {
+            return res.status(404).send({ error: 'Cliente no encontrado o no asignado a este técnico' });
+        }
+        
+        res.send(tecnico.clientes[0]);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 };
+
 
 export const generateClientesReport = async (req, res) => {
     try {
-        const clientes = await Cliente.find();
+        const tecnicoId = req.userId; // Obtener el ID del técnico del token
+        const tecnico = await Tecnico.findById(tecnicoId).populate('clientes');
+        if (!tecnico) {
+            return res.status(404).send({ error: 'Técnico no encontrado' });
+        }
+        const clientes = tecnico.clientes;
 
         // Crear el documento PDF
         const doc = new PDFDocument();
@@ -173,7 +193,17 @@ export const generateClientesReport = async (req, res) => {
             doc.fontSize(14).text(`Email: ${cliente.email}`);
             doc.fontSize(14).text(`Teléfono: ${cliente.telefono}`);
             doc.fontSize(14).text(`Dirección: ${cliente.direccion}`);
-            doc.fontSize(14).text(`Vehiculo: ${cliente.vehiculos}`);
+            doc.moveDown();
+
+            if (cliente.vehiculos.length > 0) {
+                doc.fontSize(14).text('Vehiculos:', { underline: true });
+                cliente.vehiculos.forEach(vehiculo => {
+                    doc.fontSize(12).text(`Placa: ${vehiculo.placa}`);
+                    doc.moveDown();
+                });
+            } else {
+                doc.fontSize(12).text('Sin vehiculos registrados.');
+            }
             doc.moveDown();
         });
 
@@ -185,32 +215,76 @@ export const generateClientesReport = async (req, res) => {
     }
 };
 
+export const createVehiculoForTecnicio = async (req, res) => {
+    try {
+        const { placa, tipo, marca, modelo, cilindraje, color, kilometrajeActual, observacion } = req.body;
+        const tecnicoId = req.userId; // Obtener el ID del cliente del token
+
+        const newVehiculo = new Vehiculo({
+            placa,
+            tipo,
+            marca,
+            modelo,
+            cilindraje,
+            color,
+            kilometrajeActual,
+            observacion,
+            fechaCreacion: new Date()
+        });
+
+        // Guardar el nuevo vehículo
+        await newVehiculo.save();
+
+        // Buscar el cliente por ID y añadir el vehículo a su lista de vehículos
+        const tecnico = await Tecnico.findById(tecnicoId);
+        if (!tecnico) {
+            return res.status(404).send({ error: 'Tecnico no encontrado' });
+        }
+
+        tecnico.vehiculos.push(newVehiculo._id);
+        await tecnico.save();
+
+        res.status(201).send(newVehiculo);
+    } catch (error) {
+        console.error(error); // Agregar log para ver el error en la consola
+        res.status(400).send({ error: 'Error al crear el vehículo. Por favor, revise los datos e intente nuevamente.' });
+    }
+};
+
 export const getAllVehiculos = async (req, res) => { 
     try {
-        const clienteId = req.userId; // Obtener el ID del cliente del token
-        const cliente = await Cliente.findById(clienteId).populate('vehiculos');
-        if (!cliente) {
-            return res.status(404).send({ error: 'Cliente no encontrado' });
+        const tecnicoId = req.userId; // Obtener el ID del tecnico del token
+        const tecnico = await Tecnico.findById(tecnicoId).populate('vehiculos');
+        if (!tecnico) {
+            return res.status(404).send({ error: 'Tecnico no encontrado' });
         }
-        res.send(cliente.vehiculos);
+        res.send(tecnico.vehiculos);
     } catch (error) { 
         res.status(500).send(error); 
     } 
 };
 
-// Método para obtener un vehículo por su ID
 export const getVehiculoById = async (req, res) => { 
-    try { 
-        const vehiculoId = req.params.id; 
-        const vehiculo = await Vehiculo.findById(vehiculoId)/*.populate('Mantenimiento')*/; 
-        if (!vehiculo) { 
-            return res.status(404).send({ error: 'Vehículo no encontrado' }); 
-        } 
-        res.send(vehiculo); 
-    } catch (error) { 
-        res.status(500).send(error); 
-    } 
+    try {
+        const tecnicoId = req.userId; // Obtener el ID del técnico del token
+        const vehiculoId = req.params.id;
+        
+        const tecnico = await Tecnico.findById(tecnicoId).populate({
+            path: 'vehiculos',
+            match: { _id: vehiculoId }
+        });
+        
+        if (!tecnico || tecnico.vehiculos.length === 0) {
+            return res.status(404).send({ error: 'Vehiculo no encontrado o no asignado a este técnico' });
+        }
+        
+        res.send(tecnico.vehiculos[0]);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 };
+
+
 
 // Método para generar el reporte en PDF de los vehículos del cliente autenticado
 export const generateVehiculosReport = async (req, res) => {
@@ -218,8 +292,11 @@ export const generateVehiculosReport = async (req, res) => {
         const clienteId = req.userId; // Obtener el ID del cliente del token
         const cliente = await Cliente.findById(clienteId).populate({
             path: 'vehiculos',
-            /*populate: { path: 'mantenimientos' }*/
+            populate: {
+                path: 'mantenimientos'
+            }
         });
+
         if (!cliente) {
             return res.status(404).send({ error: 'Cliente no encontrado' });
         }
@@ -247,15 +324,25 @@ export const generateVehiculosReport = async (req, res) => {
             doc.fontSize(14).text(`Color: ${vehiculo.color}`);
             doc.fontSize(14).text(`Kilometraje Actual: ${vehiculo.kilometrajeActual}`);
             doc.fontSize(14).text(`Observación: ${vehiculo.observacion}`);
-            /*doc.moveDown();
-            doc.fontSize(14).text('Mantenimientos:', { underline: true });
-            vehiculo.mantenimientos.forEach(mantenimiento => {
-                doc.fontSize(12).text(`Descripción: ${mantenimiento.descripcion}`);
-                doc.fontSize(12).text(`Fecha: ${mantenimiento.fecha.toISOString().split('T')[0]}`);
-                doc.fontSize(12).text(`Costo: ${mantenimiento.costo}`);
-                doc.moveDown();
-            });
-            doc.moveDown();*/
+            doc.moveDown();
+
+            if (vehiculo.mantenimientos.length > 0) {
+                doc.fontSize(14).text('Mantenimientos:', { underline: true });
+                vehiculo.mantenimientos.forEach(mantenimiento => {
+                    doc.fontSize(12).text(`Descripción: ${mantenimiento.descripcion}`);
+                    doc.fontSize(12).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento}`);
+                    doc.fontSize(12).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}`);
+                    doc.fontSize(12).text(`Marca del Repuesto: ${mantenimiento.marcagaRepuesto}`);
+                    doc.fontSize(12).text(`Kilometraje Actual: ${mantenimiento.kilometrajeActual}`);
+                    doc.fontSize(12).text(`Kilometraje del Cambio: ${mantenimiento.kilometrajeCambio}`);
+                    doc.fontSize(12).text(`Detalle General: ${mantenimiento.detalleGeneral}`);
+                    doc.fontSize(12).text(`Fecha: ${mantenimiento.fechaCreacion.toISOString().split('T')[0]}`);
+                    doc.moveDown();
+                });
+            } else {
+                doc.fontSize(12).text('Sin mantenimientos registrados.');
+            }
+            doc.moveDown();
         });
 
         // Finalizar el PDF
