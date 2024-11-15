@@ -236,8 +236,11 @@ export const generateVehiculosReport = async (req, res) => {
         const clienteId = req.userId; // Obtener el ID del cliente del token
         const cliente = await Cliente.findById(clienteId).populate({
             path: 'vehiculos',
-            /*populate: { path: 'mantenimientos' }*/
+            populate: {
+                path: 'mantenimientos'
+            }
         });
+
         if (!cliente) {
             return res.status(404).send({ error: 'Cliente no encontrado' });
         }
@@ -265,15 +268,25 @@ export const generateVehiculosReport = async (req, res) => {
             doc.fontSize(14).text(`Color: ${vehiculo.color}`);
             doc.fontSize(14).text(`Kilometraje Actual: ${vehiculo.kilometrajeActual}`);
             doc.fontSize(14).text(`Observación: ${vehiculo.observacion}`);
-            /*doc.moveDown();
-            doc.fontSize(14).text('Mantenimientos:', { underline: true });
-            vehiculo.mantenimientos.forEach(mantenimiento => {
-                doc.fontSize(12).text(`Descripción: ${mantenimiento.descripcion}`);
-                doc.fontSize(12).text(`Fecha: ${mantenimiento.fecha.toISOString().split('T')[0]}`);
-                doc.fontSize(12).text(`Costo: ${mantenimiento.costo}`);
-                doc.moveDown();
-            });
-            doc.moveDown();*/
+            doc.moveDown();
+
+            if (vehiculo.mantenimientos.length > 0) {
+                doc.fontSize(14).text('Mantenimientos:', { underline: true });
+                vehiculo.mantenimientos.forEach(mantenimiento => {
+                    doc.fontSize(12).text(`Descripción: ${mantenimiento.descripcion}`);
+                    doc.fontSize(12).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento}`);
+                    doc.fontSize(12).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}`);
+                    doc.fontSize(12).text(`Marca del Repuesto: ${mantenimiento.marcagaRepuesto}`);
+                    doc.fontSize(12).text(`Kilometraje Actual: ${mantenimiento.kilometrajeActual}`);
+                    doc.fontSize(12).text(`Kilometraje del Cambio: ${mantenimiento.kilometrajeCambio}`);
+                    doc.fontSize(12).text(`Detalle General: ${mantenimiento.detalleGeneral}`);
+                    doc.fontSize(12).text(`Fecha: ${mantenimiento.fechaCreacion.toISOString().split('T')[0]}`);
+                    doc.moveDown();
+                });
+            } else {
+                doc.fontSize(12).text('Sin mantenimientos registrados.');
+            }
+            doc.moveDown();
         });
 
         // Finalizar el PDF
@@ -283,4 +296,3 @@ export const generateVehiculosReport = async (req, res) => {
         res.status(500).send(error);
     }
 };
-
