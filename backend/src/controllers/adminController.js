@@ -58,7 +58,7 @@ export const loginAdmin = async (req, res) => {
     }
 };
 
-import Admin from '../models/Admin.js'; // Ajusta la ruta según tu estructura de proyecto
+// Ajusta la ruta según tu estructura de proyecto
 
 export const getAdminProfile = async (req, res) => {
     try {
