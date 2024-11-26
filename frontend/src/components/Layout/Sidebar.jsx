@@ -7,7 +7,7 @@ const Sidebar = () => {
       <nav>
         <ul>
           <li><a href="/ducech">Inicio</a></li>
-          <li><a href="/login">Iniciar Sesión</a></li>
+          <li><a href="/ducech/login">Iniciar Sesión</a></li>
         </ul>
       </nav>
     </aside>

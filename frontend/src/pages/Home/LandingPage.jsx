@@ -14,7 +14,7 @@ const LandingPage = () => {
           <h1 className="text-center">Bienvenido a Mi Aplicación</h1>
           <p className="text-center">Esta es la página de inicio.</p>
           <div className="text-center">
-            <a href="/login" className="btn btn-primary">Iniciar Sesión</a>
+            <a href="/ducech/login" className="btn btn-primary">Iniciar Sesión</a>
           </div>
         </div>
       </div>
