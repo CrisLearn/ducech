@@ -1,47 +1,38 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
+import { useNavigate } from 'react-router-dom';
+import AuthService from '../../services/AuthService'; // Importa el servicio
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
-  const endpoints = [
-    'http://localhost:5000/api/admin/login-admin',
-    'http://localhost:5000/api/tecnico/login-tecnico',
-    'http://localhost:5000/api/cliente/login-cliente',
-  ];
-
-  const authenticate = async (email, password) => {
-    for (const endpoint of endpoints) {
-      try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          return { success: true, role: data.role };
-        }
-      } catch (error) {
-        console.error(`Error al intentar en ${endpoint}:`, error);
-      }
-    }
-    return { success: false }; 
-  };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); // Limpia errores previos
 
-    const result = await authenticate(email, password);
+    const result = await AuthService.login(email, password);
 
     if (result.success) {
-      alert(`Bienvenido, ${result.role}!`);
+      // Guarda el token en localStorage o como sea necesario
+      localStorage.setItem('token', result.token);
+
+      // Redirige basado en el endpoint
+      switch (result.endpoint) {
+        case 'http://localhost:5000/api/admin/login-admin':
+          navigate('/ducech/admin');
+          break;
+        case 'http://localhost:5000/api/tecnico/login-tecnico':
+          navigate('/ducech/tecnico');
+          break;
+        case 'http://localhost:5000/api/cliente/login-cliente':
+          navigate('/ducech/cliente');
+          break;
+        default:
+          setError('No se puede determinar la ruta de redirección.');
+      }
     } else {
       setError('Credenciales inválidas o usuario no encontrado.');
     }
@@ -57,7 +48,7 @@ const LoginPage = () => {
               <label htmlFor="usuario">Correo</label>
               <input
                 id="usuario"
-                type="text"
+                type="email"
                 name="usuario"
                 placeholder="Correo"
                 value={email}
@@ -87,7 +78,7 @@ const LoginPage = () => {
             <hr />
             <div className="pie-form">
               <a href="/forgot">¿Perdiste tu contraseña?</a>
-              <a href="/register">¿No tienes Cuenta? Regístrate</a>
+              <a href="/ducech/registro">¿No tienes Cuenta? Regístrate</a>
               <hr />
               <a href="ducech">« Volver</a>
             </div>

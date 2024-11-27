@@ -1,0 +1,162 @@
+/* efectos por defecto */
+body {
+    font-family: 'Overpass', sans-serif;
+    font-weight: normal;
+    font-size: 100%;
+    color: #000000; /* Negro */
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Blanco suave */
+  }
+  
+  .background-registro {
+    background-image: url('/public/assets/registro2.webp'); /* Ruta de la imagen de fondo */
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  /* efectos para el contenedor de pantalla completa */
+  #contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  #contenedorcentrado-registro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    min-width: 380px;
+    max-width: 600px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.85); /* Blanco con transparencia */
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15); /* Sombras negras */
+    padding: 30px;
+    box-sizing: border-box;
+  }
+  
+  /* estilo del contenedor de formulario */
+  #registro {
+    width: 100%;
+    max-width: 500px;
+    min-width: 400px;
+    padding: 30px;
+    background-color: rgba(255, 204, 0, 0.9); /* Amarillo Caterpillar con transparencia */
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15); /* Sombras negras */
+    border-radius: 3px;
+    box-sizing: border-box;
+  }
+  
+  /* estilo de los elementos del formulario */
+  #registro label {
+    display: block;
+    font-family: 'Overpass', sans-serif;
+    font-size: 120%;
+    color: #000000; /* Negro */
+    margin-top: 15px;
+  }
+  
+  #registro input {
+    font-family: 'Overpass', sans-serif;
+    font-size: 110%;
+    color: #000000; /* Negro */
+    display: block;
+    width: 100%;
+    height: 40px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.8); /* Blanco con transparencia */
+  }
+  
+  #registro input::placeholder {
+    font-family: 'Overpass', sans-serif;
+    color: #808080; /* Gris neutro */
+  }
+  
+  #registro button {
+    font-family: 'Overpass', sans-serif;
+    font-size: 110%;
+    color: #ffffff; /* Blanco */
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 3px;
+    background-color: #000000; /* Negro */
+    margin-top: 10px;
+  }
+  
+  #registro button:hover {
+    background-color: #ffcc00; /* Amarillo Caterpillar */
+    color: #000000; /* Negro */
+  }
+  
+  #derecho {
+    text-align: center;
+    width: 100%;
+    opacity: 0.90; /* Menos transparente */
+    padding: 20px 50px;
+    background-color: #000000; /* Negro */
+    box-sizing: border-box;
+    color: #ffcc00; /* Amarillo Caterpillar */
+  }
+  
+  .titulo {
+    font-size: 300%;
+    color: #ffcc00; /* Amarillo Caterpillar */
+  }
+  
+  hr {
+    border-top: 1px solid #000000; /* Negro */
+    border-bottom: 1px solid #ffcc00; /* Amarillo Caterpillar */
+  }
+  
+  .pie-form {
+    font-size: 90%;
+    text-align: center;
+    margin-top: 15px;
+  }
+  
+  .pie-form a {
+    display: block;
+    text-decoration: none;
+    color: #ffcc00; /* Amarillo Caterpillar */
+    margin-bottom: 3px;
+  }
+  
+  .pie-form a:hover {
+    color: #ffffff; /* Blanco */
+  }
+  
+  /* ajustar a pantallas con ancho menor o igual a 775px; */
+  @media all and (max-width: 775px) {
+    #contenedorcentrado {
+      flex-direction: column-reverse;
+      width: 90%;
+      padding: 30px;
+    }
+    
+    #registro {
+      margin: 0 auto;
+    }
+    
+    #derecho {
+      padding: 20px;
+    }
+    
+    #registro label {
+      text-align: left;
+    }
+  }
+  

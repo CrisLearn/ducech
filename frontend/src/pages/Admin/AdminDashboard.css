@@ -1,0 +1,23 @@
+.admin-dashboard {
+    padding: 20px;
+  }
+  
+  .admin-dashboard h1 {
+    text-align: center;
+  }
+  
+  .dashboard-section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .dashboard-section h2 {
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-section p {
+    margin: 0;
+  }
+  
