@@ -20,6 +20,7 @@
   position: fixed; /* Fija la barra en su posición */
   top: 0;
   left: 0;
+  transition: transform 0.3s ease; /* Agregado para la animación de la barra lateral */
 }
 
 .sidebar h2 {
@@ -97,11 +98,12 @@
   color: #dddddd;
   font-size: 16px;
 }
-.tecnicos-list {
+
+.tecnicos-list, .cliente-list, .vehiculo-list {
   margin-top: 20px;
 }
 
-.tecnico-item {
+.tecnico-item, .cliente-item, .vehiculo-item {
   background-color: #2e2e2e; /* Fondo gris oscuro */
   color: #ffffff;
   padding: 15px;
@@ -110,28 +112,27 @@
   border-radius: 5px;
 }
 
-.tecnico-item h3 {
+.tecnico-item h3, .cliente-item h3, .vehiculo-item h3 {
   margin: 0 0 5px;
 }
 
-.tecnico-item p {
+.tecnico-item p, .cliente-item p, .vehiculo-item p {
   margin: 5px 0;
 }
-.cliente-item {
-  background-color: #2e2e2e; /* Fondo gris oscuro */
-  color: #ffffff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e; /* Borde amarillo */
+
+button {
+  background-color: #f2c14e;
+  color: black;
+  border: none;
+  padding: 10px 15px;
   border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.cliente-item h3 {
-  margin: 0 0 5px;
-}
-
-.cliente-item p {
-  margin: 5px 0;
+button:hover {
+  background-color: #2e2e2e;
+  color: #f2c14e;
 }
 
 .error {
@@ -139,3 +140,74 @@
   font-weight: bold;
 }
 
+.logout-button {
+  background-color: #e74c3c;
+  color: #ffffff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: auto; /* Para alinear el botón a la derecha */
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
+}
+
+/* Media Queries para responsive */
+@media (max-width: 1024px) {
+  .admin-dashboard {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    transform: translateX(0); /* Asegura que la barra lateral se vea */
+  }
+
+  .main-content {
+    margin-left: 0; /* Ajusta la barra lateral para ocupar todo el espacio */
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none; /* Oculta la barra lateral */
+  }
+
+  .main-content {
+    margin-left: 0; /* Ajusta la barra lateral para ocupar todo el espacio */
+  }
+
+  .header {
+    font-size: 14px;
+    padding: 10px 15px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  .dashboard-content h1 {
+    font-size: 20px;
+  }
+
+  .tecnico-item, .cliente-item, .vehiculo-item {
+    padding: 10px;
+  }
+
+  button {
+    padding: 8px 12px;
+  }
+
+  .logout-button {
+    padding: 8px 12px;
+  }
+}

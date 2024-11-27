@@ -1,23 +1,263 @@
+/* General */
 .tecnico-dashboard {
-    padding: 20px;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+}
+
+/* Barra lateral */
+.sidebar {
+  width: 250px;
+  height: 100%;
+  background-color: #2e2e2e;
+  color: #f2c14e;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  border-bottom: 1px solid #f2c14e;
+  padding-bottom: 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+  width: 100%;
+}
+
+.sidebar ul li button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 10px 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sidebar ul li button:hover {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+}
+
+.sidebar ul li.active button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  font-weight: bold;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: 250px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+
+.header {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 15px 20px;
+  text-align: right;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.dashboard-content h1 {
+  color: #f2c14e;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.dashboard-content p {
+  color: #dddddd;
+  font-size: 16px;
+}
+
+/* Lista de clientes */
+.cliente-list {
+  margin-top: 20px;
+}
+
+.cliente-item {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+}
+
+.cliente-item h3 {
+  margin: 0 0 5px;
+}
+
+.cliente-item p {
+  margin: 5px 0;
+}
+
+/* Lista de vehículos */
+.vehiculo-list {
+  margin-top: 20px;
+}
+
+.vehiculo-item {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.vehiculo-item h3 {
+  margin: 0 0 5px;
+}
+
+.vehiculo-item p {
+  margin: 5px 0;
+}
+
+.vehiculo-detalles {
+  margin-top: 10px;
+  background-color: #1b1b1b;
+  padding: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+}
+
+/* Botón */
+button {
+  background-color: #f2c14e;
+  color: black;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2e2e2e;
+  color: #f2c14e;
+}
+
+/* Mensajes de error */
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .tecnico-dashboard {
+    flex-direction: column;
   }
-  
-  .tecnico-dashboard h1 {
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    box-shadow: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+    margin-top: 60px; /* Space for the header */
+  }
+
+  .header {
     text-align: center;
   }
-  
-  .dashboard-section {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+
+  .sidebar ul li button {
+    font-size: 14px;
+    padding: 8px;
   }
-  
-  .dashboard-section h2 {
-    margin-bottom: 10px;
+
+  .dashboard-content h1 {
+    font-size: 20px;
   }
-  
-  .dashboard-section p {
-    margin: 0;
+
+  .dashboard-content p {
+    font-size: 14px;
   }
-  
+
+  .cliente-item,
+  .vehiculo-item,
+  .vehiculo-detalles {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+
+  button {
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    padding: 10px;
+  }
+
+  .sidebar ul li button {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .dashboard-content {
+    padding: 10px;
+  }
+
+  .header {
+    font-size: 14px;
+  }
+
+  .dashboard-content h1 {
+    font-size: 18px;
+  }
+
+  .dashboard-content p {
+    font-size: 12px;
+  }
+
+  .cliente-item,
+  .vehiculo-item,
+  .vehiculo-detalles {
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  button {
+    padding: 6px 8px;
+  }
+}
