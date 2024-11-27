@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import Admin from "../models/Admin.js";
+import Tecnico from "../models/Tecnico.js";
 import Cliente from '../models/Cliente.js';
 import Vehiculo from '../models/Vehiculo.js';
 import Mantenimiento from '../models/Mantenimiento.js';
@@ -10,10 +12,23 @@ export const createCliente = async (req, res) => {
     try {
         const { nombre, email, password, telefono, direccion, vehiculos } = req.body;
 
-        // Verificar si el email ya existe en la base de datos
-        const existingCliente = await Cliente.findOne({ email });
+        // Verificar si el correo ya está registrado en cualquiera de los modelos
+        const [existingTecnico, existingCliente, existingAdmin] = await Promise.all([
+            Tecnico.findOne({ email }),
+            Cliente.findOne({ email }),
+            Admin.findOne({ email })
+        ]);
+
+        if (existingTecnico) {
+            return res.status(400).send({ message: 'El correo ya está registrado' });
+        }
+
         if (existingCliente) {
-            return res.status(400).send({ message: 'El correo electrónico ya está registrado.' });
+            return res.status(400).send({ message: 'El correo ya está registrado' });
+        }
+
+        if (existingAdmin) {
+            return res.status(400).send({ message: 'El correo ya está registrado' });
         }
 
         // Encriptar la contraseña
@@ -32,16 +47,26 @@ export const createCliente = async (req, res) => {
         });
 
         await newCliente.save();
-        res.status(201).send(newCliente);
+
+        res.status(201).send({
+            message: 'Cliente registrado exitosamente.',
+            cliente: newCliente
+        });
     } catch (error) {
+        console.error('Error al crear el cliente:', error);
+
         // Verificar si el error es de duplicado en MongoDB
         if (error.code === 11000) {
             res.status(400).send({ message: 'Ya existe un cliente con ese correo electrónico.' });
         } else {
-            res.status(500).send({ message: 'Error al crear el cliente.', error });
+            res.status(500).send({
+                message: 'Error al crear el cliente.',
+                error: error.message
+            });
         }
     }
 };
+
 
 // Método para autenticar un cliente (login)
 export const loginCliente = async (req, res) => {

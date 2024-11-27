@@ -9,32 +9,58 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Validación del formulario
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar correos electrónicos
+
+    if (!emailRegex.test(email)) {
+      return 'Por favor, ingresa un correo electrónico válido.';
+    }
+    if (password.trim() === '') {
+      return 'La contraseña no puede estar vacía.';
+    }
+    return null; // Sin errores
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); // Limpia errores previos
 
-    const result = await AuthService.login(email, password);
+    // Validar formulario
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
-    if (result.success) {
-      // Guarda el token en localStorage o como sea necesario
-      localStorage.setItem('token', result.token);
+    try {
+      // Llamar al servicio de autenticación
+      const result = await AuthService.login(email, password);
 
-      // Redirige basado en el endpoint
-      switch (result.endpoint) {
-        case 'http://localhost:5000/api/admin/login-admin':
-          navigate('/ducech/admin');
-          break;
-        case 'http://localhost:5000/api/tecnico/login-tecnico':
-          navigate('/ducech/tecnico');
-          break;
-        case 'http://localhost:5000/api/cliente/login-cliente':
-          navigate('/ducech/cliente');
-          break;
-        default:
+      if (result.success) {
+        // Guarda el token
+        localStorage.setItem('token', result.token);
+
+        // Mapeo de endpoints a rutas
+        const endpointToRoute = {
+          'http://localhost:5000/api/admin/login-admin': '/ducech/admin',
+          'http://localhost:5000/api/tecnico/login-tecnico': '/ducech/tecnico',
+          'http://localhost:5000/api/cliente/login-cliente': '/ducech/cliente',
+        };
+
+        // Redirige basado en el endpoint
+        const route = endpointToRoute[result.endpoint];
+        if (route) {
+          navigate(route);
+        } else {
           setError('No se puede determinar la ruta de redirección.');
+        }
+      } else {
+        setError('Credenciales inválidas o usuario no encontrado.');
       }
-    } else {
-      setError('Credenciales inválidas o usuario no encontrado.');
+    } catch (err) {
+      console.error('Error en la solicitud:', err);
+      setError('Ocurrió un error al intentar iniciar sesión. Por favor, intenta nuevamente.');
     }
   };
 
@@ -80,7 +106,7 @@ const LoginPage = () => {
               <a href="/forgot">¿Perdiste tu contraseña?</a>
               <a href="/ducech/registro">¿No tienes Cuenta? Regístrate</a>
               <hr />
-              <a href="ducech">« Volver</a>
+              <a href="/ducech">« Volver</a>
             </div>
           </div>
         </div>

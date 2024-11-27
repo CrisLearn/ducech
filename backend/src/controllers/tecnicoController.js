@@ -5,16 +5,32 @@ import Cliente from '../models/Cliente.js';
 import Vehiculo from '../models/Vehiculo.js'; // Asegúrate de importar el modelo Cliente
 import Mantenimiento from '../models/Mantenimiento.js'; // Asegúrate de importar el modelo Cliente
 import PDFDocument from 'pdfkit'; 
+import Admin from '../models/Admin.js';
 
 // Método para crear un nuevo técnico
 export const createTecnico = async (req, res) => {
     try {
         const { nombre, email, password, telefono, taller, direccion } = req.body;
 
+        // Verificar si el correo ya está registrado en cualquiera de los modelos
+        const [existingTecnico, existingAdmin] = await Promise.all([
+            Tecnico.findOne({ email }),
+            Admin.findOne({ email })
+        ]);
+
+        if (existingTecnico) {
+            return res.status(400).send({ message: 'El correo ya está registrado' });
+        }
+
+        if (existingAdmin) {
+            return res.status(400).send({ message: 'El correo ya está registrado' });
+        }
+
         // Encriptar la contraseña
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+        // Crear el nuevo técnico
         const newTecnico = new Tecnico({
             nombre,
             email,
@@ -25,12 +41,31 @@ export const createTecnico = async (req, res) => {
             fechaCreacion: new Date()
         });
 
+        // Guardar en la base de datos
         await newTecnico.save();
-        res.status(201).send(newTecnico);
+
+        // Respuesta exitosa
+        res.status(201).send({
+            message: 'Técnico registrado exitosamente.',
+            tecnico: newTecnico
+        });
     } catch (error) {
-        res.status(400).send(error);
+        // Manejar otros errores
+        console.error('Error al crear el técnico:', error);
+
+        if (error.code === 11000) {
+            res.status(400).send({ message: 'El correo ya está registrado.' });
+        } else {
+            res.status(500).send({
+                message: 'Error al procesar la solicitud.',
+                error: error.message
+            });
+        }
     }
 };
+
+
+
 
 // Método para autenticar un técnico (login)
 export const loginTecnico = async (req, res) => {

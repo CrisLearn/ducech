@@ -1,18 +1,23 @@
 import React from 'react';
-import './Sidebar.css'; // Si tienes estilos específicos para el sidebar
+import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ selectedSection, setSelectedSection }) => {
+  const sections = ["Técnicos", "Clientes", "Vehículos", "Mantenimientos", "Reportes"];
+
   return (
     <aside className="sidebar">
-      <nav>
-        <ul>
-          <li><a href="/ducech">Inicio</a></li>
-          <li><a href="/ducech/login">Iniciar Sesión</a></li>
-        </ul>
-      </nav>
+      <h2>Menú</h2>
+      <ul>
+        {sections.map((section) => (
+          <li key={section} className={selectedSection === section ? "active" : ""}>
+            <button onClick={() => setSelectedSection(section)}>
+              {section}
+            </button>
+          </li>
+        ))}
+      </ul>
     </aside>
   );
 };
 
 export default Sidebar;
-

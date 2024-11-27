@@ -1,23 +1,141 @@
+/* General */
 .admin-dashboard {
-    padding: 20px;
-  }
-  
-  .admin-dashboard h1 {
-    text-align: center;
-  }
-  
-  .dashboard-section {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .dashboard-section h2 {
-    margin-bottom: 10px;
-  }
-  
-  .dashboard-section p {
-    margin: 0;
-  }
-  
+  display: flex; /* Ajusta el diseño principal a un contenedor de dos columnas */
+  height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+}
+
+/* Barra lateral */
+.sidebar {
+  width: 250px;
+  height: 100%; /* La barra lateral siempre ocupa toda la altura */
+  background-color: #2e2e2e; /* Gris oscuro Caterpillar */
+  color: #f2c14e; /* Amarillo Caterpillar */
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed; /* Fija la barra en su posición */
+  top: 0;
+  left: 0;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  border-bottom: 1px solid #f2c14e;
+  padding-bottom: 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+  width: 100%;
+}
+
+.sidebar ul li button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 10px 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sidebar ul li button:hover {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+}
+
+.sidebar ul li.active button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  font-weight: bold;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: 250px; /* Deja espacio para la barra lateral fija */
+  flex: 1; /* Permite que el contenido ocupe todo el espacio disponible */
+  display: flex;
+  flex-direction: column;
+  background-color: #1b1b1b; /* Negro Caterpillar */
+  color: #ffffff;
+}
+
+.header {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 15px 20px;
+  text-align: right;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-content {
+  padding: 20px;
+  overflow-y: auto; /* Permite desplazarse si el contenido es más grande */
+}
+
+.dashboard-content h1 {
+  color: #f2c14e;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.dashboard-content p {
+  color: #dddddd;
+  font-size: 16px;
+}
+.tecnicos-list {
+  margin-top: 20px;
+}
+
+.tecnico-item {
+  background-color: #2e2e2e; /* Fondo gris oscuro */
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e; /* Borde amarillo */
+  border-radius: 5px;
+}
+
+.tecnico-item h3 {
+  margin: 0 0 5px;
+}
+
+.tecnico-item p {
+  margin: 5px 0;
+}
+.cliente-item {
+  background-color: #2e2e2e; /* Fondo gris oscuro */
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e; /* Borde amarillo */
+  border-radius: 5px;
+}
+
+.cliente-item h3 {
+  margin: 0 0 5px;
+}
+
+.cliente-item p {
+  margin: 5px 0;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+

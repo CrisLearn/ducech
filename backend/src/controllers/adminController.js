@@ -14,10 +14,30 @@ export const createAdmin = async (req, res) => {
     try {
         const { nombre, email, password } = req.body;
 
+        // Verificar si el correo ya está registrado en Técnico, Cliente o Admin
+        const [existingTecnico, existingCliente, existingAdmin] = await Promise.all([
+            Tecnico.findOne({ email }),
+            Cliente.findOne({ email }),
+            Admin.findOne({ email })
+        ]);
+
+        if (existingTecnico) {
+            return res.status(400).send({ message: 'El correo ya está registrado' });
+        }
+
+        if (existingCliente) {
+            return res.status(400).send({ message: 'El correo ya está registrado' });
+        }
+
+        if (existingAdmin) {
+            return res.status(400).send({ message: 'El correo ya está registrado' });
+        }
+
         // Encriptar la contraseña
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+        // Crear el nuevo administrador
         const newAdmin = new Admin({
             nombre,
             email,
@@ -25,12 +45,30 @@ export const createAdmin = async (req, res) => {
             fechaCreacion: new Date()
         });
 
+        // Guardar en la base de datos
         await newAdmin.save();
-        res.status(201).send(newAdmin);
+
+        // Respuesta exitosa
+        res.status(201).send({
+            message: 'Administrador registrado exitosamente.',
+            admin: newAdmin
+        });
     } catch (error) {
-        res.status(400).send(error);
+        // Manejo de errores
+        console.error('Error al crear el administrador:', error);
+
+        if (error.code === 11000) {
+            res.status(400).send({ message: 'El correo ya está registrado.' });
+        } else {
+            res.status(500).send({
+                message: 'Error al procesar la solicitud.',
+                error: error.message
+            });
+        }
     }
 };
+
+
 
 // Método para autenticar un administrador (login)
 export const loginAdmin = async (req, res) => {
