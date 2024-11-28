@@ -12,7 +12,7 @@ const mantenimientoSchema = new Schema({
         enum: ['cambioAceite', 'cambioPastillasFreno', 'revisionGeneral'],
         required: true
     },
-    marcagaRepuesto: {
+    marcaRepuesto: {
         type: String,
         required: true
     },

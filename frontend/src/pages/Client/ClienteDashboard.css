@@ -1,23 +1,310 @@
 .cliente-dashboard {
-    padding: 20px;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+}
+
+/* Barra lateral */
+.sidebar {
+  width: 250px;
+  height: 100%;
+  background-color: #2e2e2e;
+  color: #f2c14e;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  border-bottom: 1px solid #f2c14e;
+  padding-bottom: 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+  width: 100%;
+}
+
+.sidebar ul li button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 10px 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sidebar ul li button:hover {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+}
+
+.sidebar ul li.active button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  font-weight: bold;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: 250px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+
+.header {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 15px 20px;
+  text-align: right;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.dashboard-content h1 {
+  color: #f2c14e;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.dashboard-content p {
+  color: #dddddd;
+  font-size: 16px;
+}
+
+/* Lista de vehículos */
+.vehiculos-list {
+  margin-top: 20px;
+}
+
+.vehiculo-item {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.vehiculo-item h3 {
+  margin: 0 0 5px;
+}
+
+.vehiculo-item p {
+  margin: 5px 0;
+}
+
+.vehiculo-detalles {
+  margin-top: 10px;
+  background-color: #1b1b1b;
+  padding: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+}
+
+/* Botones */
+button {
+  background-color: #f2c14e;
+  color: black;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2e2e2e;
+  color: #f2c14e;
+}
+
+.add-vehiculo-button {
+  margin-bottom: 20px;
+  background-color: #2e2e2e;
+  color: #f2c14e;
+  padding: 10px;
+}
+
+.add-vehiculo-button:hover {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+}
+
+/* Mensajes */
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.success {
+  color: green;
+  font-weight: bold;
+}
+
+/* Formulario */
+.vehiculo-form {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-top: 20px;
+}
+
+.vehiculo-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
+}
+
+.vehiculo-form input,
+.vehiculo-form select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+
+.vehiculo-form button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+}
+
+.vehiculo-form button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .cliente-dashboard {
+    flex-direction: column;
   }
-  
-  .cliente-dashboard h1 {
-    text-align: center;
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
   }
-  
-  .dashboard-section {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+
+  .main-content {
+    margin-left: 0;
+    margin-top: 60px;
   }
-  
-  .dashboard-section h2 {
-    margin-bottom: 10px;
+
+  .dashboard-content h1 {
+    font-size: 20px;
   }
-  
-  .dashboard-section p {
-    margin: 0;
+}
+
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: 10px;
   }
-  
+
+  .dashboard-content h1 {
+    font-size: 18px;
+  }
+
+  .dashboard-content p {
+    font-size: 12px;
+  }
+}
+/* Estilos generales para la lista */
+.mantenimientos-list {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Estilo para cada elemento de mantenimiento */
+.mantenimiento-item {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mantenimiento-item h3 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.mantenimiento-item p {
+  margin: 5px 0;
+  font-size: 0.95em;
+  color: #555;
+}
+
+.mantenimiento-item hr {
+  margin: 10px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+/* Botones o acciones (opcional) */
+.mantenimiento-item button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.mantenimiento-item button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo para mensajes de error */
+.mantenimientos-list .error {
+  color: red;
+  font-size: 0.9em;
+  margin: 10px 0;
+}
+
+/* Estilo para mensajes vacíos */
+.mantenimientos-list p {
+  color: #777;
+  font-size: 1em;
+  text-align: center;
+}
