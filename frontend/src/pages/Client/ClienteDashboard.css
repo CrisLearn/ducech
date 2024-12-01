@@ -1,9 +1,227 @@
+.cliente-dashboard{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+}
+.cliente-sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: #2e2e2e;
+    color: #f2c14e;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  .cliente-sidebar h2 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    border-bottom: 1px solid #f2c14e;
+    padding-bottom: 10px;
+  }
+  .cliente-sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .cliente-sidebar ul li {
+    margin: 10px 0;
+    width: 100%;
+  }
+  
+  .cliente-sidebar ul li button {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 10px 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .cliente-sidebar ul li button:hover {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+  }
+  
+  .cliente-sidebar ul li.active button {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+    font-weight: bold;
+  }
 
+  .cliente-main-content{
+    margin-left: 250px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #1b1b1b;
+    color: #ffffff;
+  }
+.cliente-header {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+    padding: 15px 20px;
+    text-align: right;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.cliente-dashboard-content {
+    padding: 20px;
+    overflow-y: auto;
+}
+.cliente-dashboard-content h1 {
+    color: #f2c14e;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+.cliente-dashboard-content p {
+    color: #dddddd;
+    font-size: 16px;
+}
 
+.cliente-vehiculos-list {
+    margin-top: 20px;
+}
+.cliente-add-vehiculo-button {
+    margin-bottom: 20px;
+    background-color: #2e2e2e;
+    color: #f2c14e;
+    padding: 10px;
+}
+  
+.cliente-add-vehiculo-button:hover {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+}
+.cliente-vehiculo-form {
+    background-color: #2e2e2e;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #f2c14e;
+    margin-top: 20px;
+}
+.cliente-vehiculo-form label {
+    display: block;
+    margin-bottom: 10px;
+    color: #f2c14e;
+}
+  
+.cliente-vehiculo-form input,
+.cliente-vehiculo-form select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #f2c14e;
+    border-radius: 5px;
+    background-color: #1b1b1b;
+    color: #ffffff;
+}
+  
+.cliente-vehiculo-form button {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+    padding: 10px 20px;
+}
+  
+.cliente-vehiculo-form button:hover {
+    background-color: #1b1b1b;
+    color: #f2c14e;
+}
 
+.cliente-vehiculo-item {
+    background-color: #2e2e2e;
+    color: #ffffff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #f2c14e;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+.cliente-vehiculo-item h3 {
+    margin: 0 0 5px;
+}
+.cliente-vehiculo-item p {
+    margin: 5px 0;
+}
+/*Mantenimientos*/
+.cliente-mantenimientos-list {
+    margin-top: 20px;
+}
+.cliente-add-mantenimiento-button {
+    margin-bottom: 20px;
+    background-color: #2e2e2e;
+    color: #f2c14e;
+    padding: 10px;
+}
+  
+.cliente-add-mantenimiento-button:hover {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+}
+.cliente-mantenimiento-form {
+    background-color: #2e2e2e;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #f2c14e;
+    margin-top: 20px;
+}
+.cliente-mantenimiento-form label {
+    display: block;
+    margin-bottom: 10px;
+    color: #f2c14e;
+}
+  
+.cliente-mantenimiento-form input,
+.cliente-mantenimiento-form textarea,
+.cliente-mantenimiento-form select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #f2c14e;
+    border-radius: 5px;
+    background-color: #1b1b1b;
+    color: #ffffff;
+}
+  
+.cliente-mantenimiento-form button {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+    padding: 10px 20px;
+}
+  
+.cliente-mantenimiento-form button:hover {
+    background-color: #1b1b1b;
+    color: #f2c14e;
+}
 
-
-
-
-
-
+.cliente-mantenimiento-item {
+    background-color: #2e2e2e;
+    color: #ffffff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #f2c14e;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+.cliente-mantenimiento-item h3 {
+    margin: 0 0 5px;
+}
+.cliente-mantenimiento-item p {
+    margin: 5px 0;
+}
