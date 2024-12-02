@@ -8,7 +8,10 @@ import { createCliente,
     generateVehiculosReport,
     createMantenimientoForVehiculo ,
     getAllMantenimientosForCliente,
-    updateVehiculoForCliente
+    updateVehiculoForCliente,
+    eliminarMantenimiento,
+    notificacionesMantenimiento,
+    desactivarMantenimiento
 } from '../controllers/clienteController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
@@ -20,9 +23,12 @@ router.put('/update-cliente', authMiddleware,updateCliente);
 router.post('/registrar-vehiculo', authMiddleware,createVehiculoForCliente);
 router.put('/actualizar-vehiculo/:id', authMiddleware,updateVehiculoForCliente);
 router.get('/vehiculos', authMiddleware,getAllVehiculos);
-router.get('/vehiculo/:id', authMiddleware,getVehiculoById);
+router.get('/vehiculo/:placa', authMiddleware,getVehiculoById);
 router.get('/reporte-vehiculo', authMiddleware,generateVehiculosReport);
 router.post('/registrar-mantenimiento', authMiddleware,createMantenimientoForVehiculo);
 router.get('/mantenimientos', authMiddleware,getAllMantenimientosForCliente);
+router.delete('/delete-mantenimiento/:id', authMiddleware,eliminarMantenimiento);
+router.post('/notificaciones-mantenimiento', authMiddleware,notificacionesMantenimiento);
+router.put('/desactivar-mantenimiento/:id', authMiddleware,desactivarMantenimiento);
 
 export default router;

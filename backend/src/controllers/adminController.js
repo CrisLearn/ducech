@@ -373,3 +373,13 @@ export const generateVehiculosReport = async (req, res) => {
         res.status(500).send(error);
     }
 };
+
+export const getAllMantenimientos = async (req, res) => { 
+    try {
+        // Asumiendo que tienes un modelo llamado Mantenimiento
+        const mantenimientos = await Mantenimiento.find(); 
+        res.send(mantenimientos);
+    } catch (error) { 
+        res.status(500).send({ error: 'Error del servidor', details: error.message }); 
+    } 
+};

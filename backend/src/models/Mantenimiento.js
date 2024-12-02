@@ -32,10 +32,14 @@ const mantenimientoSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    realizado: {
+        type: Boolean,
+        default: false 
+    },
     vehiculo: {
         type: Schema.Types.ObjectId,
         ref: 'Vehiculo',
-        required: true // Esto asegura que un mantenimiento debe estar asociado a un vehículo
+        required: true 
     }
 });
 

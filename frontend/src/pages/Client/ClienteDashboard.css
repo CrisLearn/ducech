@@ -1,235 +1,371 @@
-.cliente-dashboard{
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-    color: #ffffff;
+/* Estilo base */
+.mantenimiento-success {
+  color: green;
+  font-weight: bold;
 }
-.cliente-sidebar {
-    width: 250px;
-    height: 100%;
-    background-color: #2e2e2e;
-    color: #f2c14e;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-  }
-  .cliente-sidebar h2 {
-    margin-bottom: 20px;
-    font-size: 18px;
-    border-bottom: 1px solid #f2c14e;
-    padding-bottom: 10px;
-  }
-  .cliente-sidebar ul {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-  }
-  
-  .cliente-sidebar ul li {
-    margin: 10px 0;
-    width: 100%;
-  }
-  
-  .cliente-sidebar ul li button {
-    width: 100%;
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 16px;
-    padding: 10px 15px;
-    text-align: left;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .cliente-sidebar ul li button:hover {
-    background-color: #f2c14e;
-    color: #2e2e2e;
-  }
-  
-  .cliente-sidebar ul li.active button {
-    background-color: #f2c14e;
-    color: #2e2e2e;
-    font-weight: bold;
-  }
 
-  .cliente-main-content{
-    margin-left: 250px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #1b1b1b;
-    color: #ffffff;
-  }
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+
+.vehiculo-success {
+  color: black !important;
+  background-color: #f2c14e;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.error {
+  color: red;
+  background-color: black;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.cliente-dashboard {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+}
+
+.cliente-sidebar {
+  width: 250px;
+  height: 100%;
+  background-color: #2e2e2e;
+  color: #f2c14e;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.cliente-sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  border-bottom: 1px solid #f2c14e;
+  padding-bottom: 10px;
+}
+
+.cliente-sidebar ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.cliente-sidebar ul li {
+  margin: 10px 0;
+  width: 100%;
+}
+
+.cliente-sidebar ul li button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 10px 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cliente-sidebar ul li button:hover {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+}
+
+.cliente-sidebar ul li.active button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  font-weight: bold;
+}
+
+.cliente-main-content {
+  margin-left: 250px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+
 .cliente-header {
-    background-color: #f2c14e;
-    color: #2e2e2e;
-    padding: 15px 20px;
-    text-align: right;
-    font-size: 16px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 15px 20px;
+  text-align: right;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 .cliente-dashboard-content {
-    padding: 20px;
-    overflow-y: auto;
+  padding: 20px;
+  overflow-y: auto;
 }
+
 .cliente-dashboard-content h1 {
-    color: #f2c14e;
-    font-size: 24px;
-    margin-bottom: 10px;
+  color: #f2c14e;
+  font-size: 24px;
+  margin-bottom: 10px;
 }
+
 .cliente-dashboard-content p {
-    color: #dddddd;
-    font-size: 16px;
+  color: #dddddd;
+  font-size: 16px;
 }
 
 .cliente-vehiculos-list {
-    margin-top: 20px;
+  margin-top: 20px;
 }
+
 .cliente-add-vehiculo-button {
-    margin-bottom: 20px;
-    background-color: #2e2e2e;
-    color: #f2c14e;
-    padding: 10px;
+  margin-bottom: 20px;
+  background-color: #2e2e2e;
+  color: #f2c14e;
+  padding: 10px;
 }
-  
+
 .cliente-add-vehiculo-button:hover {
-    background-color: #f2c14e;
-    color: #2e2e2e;
+  background-color: #f2c14e;
+  color: #2e2e2e;
 }
+
 .cliente-vehiculo-form {
-    background-color: #2e2e2e;
-    padding: 20px;
-    border-radius: 5px;
-    border: 1px solid #f2c14e;
-    margin-top: 20px;
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-top: 20px;
 }
+
 .cliente-vehiculo-form label {
-    display: block;
-    margin-bottom: 10px;
-    color: #f2c14e;
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
 }
-  
+
+.cliente-vehiculo-item label,
+.cliente-vehiculo-item select {
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
+}
+
 .cliente-vehiculo-form input,
 .cliente-vehiculo-form select {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #f2c14e;
-    border-radius: 5px;
-    background-color: #1b1b1b;
-    color: #ffffff;
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
 }
-  
+
+.cliente-vehiculo-item select,
+.cliente-vehiculo-item input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+
 .cliente-vehiculo-form button {
-    background-color: #f2c14e;
-    color: #2e2e2e;
-    padding: 10px 20px;
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
 }
-  
+
 .cliente-vehiculo-form button:hover {
-    background-color: #1b1b1b;
-    color: #f2c14e;
+  background-color: #1b1b1b;
+  color: #f2c14e;
 }
 
 .cliente-vehiculo-item {
-    background-color: #2e2e2e;
-    color: #ffffff;
-    padding: 15px;
-    margin-bottom: 10px;
-    border: 1px solid #f2c14e;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  position: relative;
 }
+
 .cliente-vehiculo-item h3 {
-    margin: 0 0 5px;
+  margin: 0 0 5px;
 }
+
 .cliente-vehiculo-item p {
-    margin: 5px 0;
+  margin: 5px 0;
 }
+
+.cliente-vehiculo-form {
+  margin-top: 10px;
+  background-color: #3a3a3a;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.cliente-vehiculo-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.cliente-vehiculo-item select,
+.cliente-vehiculo-item input {
+  width: 100%;
+  background-color: #1b1b1b;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #f2c14e;
+}
+
+.cliente-vehiculo-form input,
+.cliente-vehiculo-form select,
+.cliente-vehiculo-form button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #f2c14e;
+}
+
 /*Mantenimientos*/
 .cliente-mantenimientos-list {
-    margin-top: 20px;
+  margin-top: 20px;
 }
+
 .cliente-add-mantenimiento-button {
-    margin-bottom: 20px;
-    background-color: #2e2e2e;
-    color: #f2c14e;
-    padding: 10px;
+  margin-bottom: 20px;
+  background-color: #2e2e2e;
+  color: #f2c14e;
+  padding: 10px 15px;
+  border-radius: 5px;
+  display: block;
+  text-align: center;
 }
-  
+
 .cliente-add-mantenimiento-button:hover {
-    background-color: #f2c14e;
-    color: #2e2e2e;
+  background-color: #f2c14e;
+  color: #2e2e2e;
 }
+
 .cliente-mantenimiento-form {
-    background-color: #2e2e2e;
-    padding: 20px;
-    border-radius: 5px;
-    border: 1px solid #f2c14e;
-    margin-top: 20px;
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-top: 20px;
 }
+
 .cliente-mantenimiento-form label {
-    display: block;
-    margin-bottom: 10px;
-    color: #f2c14e;
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
 }
-  
+
 .cliente-mantenimiento-form input,
 .cliente-mantenimiento-form textarea,
 .cliente-mantenimiento-form select {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #f2c14e;
-    border-radius: 5px;
-    background-color: #1b1b1b;
-    color: #ffffff;
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
 }
-  
+
 .cliente-mantenimiento-form button {
-    background-color: #f2c14e;
-    color: #2e2e2e;
-    padding: 10px 20px;
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
 }
-  
+
 .cliente-mantenimiento-form button:hover {
-    background-color: #1b1b1b;
-    color: #f2c14e;
+  background-color: #1b1b1b;
+  color: #f2c14e;
 }
 
 .cliente-mantenimiento-item {
-    background-color: #2e2e2e;
-    color: #ffffff;
-    padding: 15px;
-    margin-bottom: 10px;
-    border: 1px solid #f2c14e;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  position: relative;
 }
+
 .cliente-mantenimiento-item h3 {
-    margin: 0 0 5px;
+  margin: 0;
+  font-size: 1.5em;
+  color: #f2c14e;
+  font-weight: bold;
+  width: 100%;
 }
+
 .cliente-mantenimiento-item p {
-    margin: 5px 0;
+  margin: 5px 0;
+  font-size: 1em;
 }
 
 .cliente-mantenimiento-item .vehiculo-placa {
-    font-size: 1.2em; /* Aumenta el tamaño de la fuente */
-    color: #f2c14e; /* Cambia el color del texto */
-    font-weight: bold; /* Hace que el texto sea en negrita */
-    margin-top: 10px;
-  }
+  font-size: 1.2em;
+  color: #f2c14e;
+  font-weight: bold;
+  margin-top:  10px;
+}
+/* Botón de ver/ocultar detalles */
+.cliente-mantenimiento-item button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cliente-mantenimiento-item button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
+}
+
+/* Detalles del mantenimiento */
+.cliente-mantenimiento-detalles {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #3a3a3a;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+}
+
+/* Estilo de los detalles dentro de la sección */
+.cliente-mantenimiento-detalles p {
+  margin: 5px 0;
+}
+
+/* Ajuste de espacio entre elementos */
+.cliente-mantenimiento-item p,
+.cliente-mantenimiento-item h3 {
+  width: 100%; /* Hace que cada p o h3 ocupe el ancho completo */
+}
   

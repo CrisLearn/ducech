@@ -99,11 +99,11 @@
   font-size: 16px;
 }
 
-.tecnicos-list, .cliente-list, .vehiculo-list {
+.tecnicos-list, .cliente-list, .vehiculo-list, .mantenimientos-list {
   margin-top: 20px;
 }
 
-.tecnico-item, .cliente-item, .vehiculo-item {
+.tecnico-item, .cliente-item, .vehiculo-item, .mantenimientos-list {
   background-color: #2e2e2e; /* Fondo gris oscuro */
   color: #ffffff;
   padding: 15px;
@@ -112,11 +112,11 @@
   border-radius: 5px;
 }
 
-.tecnico-item h3, .cliente-item h3, .vehiculo-item h3 {
+.tecnico-item h3, .cliente-item h3, .vehiculo-item h3, .mantenimientos-list h3 {
   margin: 0 0 5px;
 }
 
-.tecnico-item p, .cliente-item p, .vehiculo-item p {
+.tecnico-item p, .cliente-item p, .vehiculo-item p, .mantenimientos-list p {
   margin: 5px 0;
 }
 

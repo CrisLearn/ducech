@@ -86,7 +86,7 @@ export const loginCliente = async (req, res) => {
         }
 
         // Crear el token JWT
-        const token = jwt.sign({ id: cliente._id }, process.env.JWT_SECRET, { expiresIn: '5h' });
+        const token = jwt.sign({ id: cliente._id }, process.env.JWT_SECRET, { expiresIn: '10h' });
 
         res.send({ token });
     } catch (error) {
@@ -184,6 +184,12 @@ export const createVehiculoForCliente = async (req, res) => {
         const { placa, tipo, marca, modelo, cilindraje, color, kilometrajeActual, observacion } = req.body;
         const clienteId = req.userId; // Obtener el ID del cliente del token
 
+        // Verificar si ya existe un vehículo con la misma placa
+        const vehiculoExistente = await Vehiculo.findOne({ placa: new RegExp(`^${placa}$`, 'i') });
+        if (vehiculoExistente) {
+            return res.status(400).send({ error: 'Placa ya registrada para otro vehículo' });
+        }
+
         const newVehiculo = new Vehiculo({
             placa,
             tipo,
@@ -214,6 +220,7 @@ export const createVehiculoForCliente = async (req, res) => {
         res.status(400).send({ error: 'Error al crear el vehículo. Por favor, revise los datos e intente nuevamente.' });
     }
 };
+
 
 // Método para obtener todos los vehículos del cliente autenticado
 export const getAllVehiculos = async (req, res) => { 
@@ -402,6 +409,130 @@ export const getAllMantenimientosForCliente = async (req, res) => {
         res.status(400).send({ error: 'Error al obtener los mantenimientos. Por favor, intente nuevamente.' });
     }
 };
+
+export const eliminarMantenimiento = async (req, res) => {
+    try {
+        const { id } = req.params; // Obtener el id del mantenimiento de los parámetros de la URL
+        const clienteId = req.userId;
+
+        // Buscar el mantenimiento por su id y asociar el vehículo al que pertenece
+        const mantenimientoEncontrado = await Mantenimiento.findById(id).populate('vehiculo');
+        if (!mantenimientoEncontrado) {
+            return res.status(404).send({ error: 'Mantenimiento no encontrado' });
+        }
+
+        // Verificar que el cliente tiene permisos para eliminar este mantenimiento
+        const cliente = await Cliente.findById(clienteId);
+        if (!cliente || !cliente.vehiculos.includes(mantenimientoEncontrado.vehiculo._id)) {
+            return res.status(403).send({ error: 'Acceso denegado. El cliente no tiene permisos para este vehículo.' });
+        }
+
+        // Eliminar el mantenimiento
+        await Mantenimiento.findByIdAndDelete(id);
+
+        // Eliminar la referencia al mantenimiento en el vehículo correspondiente
+        const vehiculo = await Vehiculo.findById(mantenimientoEncontrado.vehiculo._id);
+        vehiculo.mantenimientos = vehiculo.mantenimientos.filter(m => m.toString() !== id);
+        await vehiculo.save();
+
+        res.status(200).send({ message: 'Mantenimiento eliminado exitosamente' });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(400).send({ error: 'Error al eliminar el mantenimiento. Por favor, intente nuevamente.' });
+    }
+};
+
+
+export const notificacionesMantenimiento = async (req, res) => {
+    try {
+        const { placa, kilometrajeIngresado } = req.body;
+        
+        const vehiculoEncontrado = await Vehiculo.findOne({ placa: new RegExp(`^${placa}$`, 'i') }).populate('mantenimientos');
+
+        if (!vehiculoEncontrado) {
+            return res.status(404).send({ error: 'Vehículo no encontrado' });
+        }
+
+        // Verificar que el kilometraje ingresado no sea menor al kilometraje actual del vehículo
+        const kilometrajeComp = vehiculoEncontrado.kilometrajeActual; // Asegúrate de que 'kilometraje' sea la propiedad correcta en el modelo
+        if (kilometrajeIngresado < kilometrajeComp) {
+            return res.status(400).send({ error: 'El kilometraje ingresado no puede ser menor al kilometraje actual del vehículo.' });
+        }
+        
+        // Obtener la lista de mantenimientos del vehículo que no están realizados
+        const mantenimientos = vehiculoEncontrado.mantenimientos.filter(mantenimiento => !mantenimiento.realizado);
+        const alertas = [];
+
+        for (const mantenimiento of mantenimientos) {
+            const diferenciaKilometraje = kilometrajeIngresado - mantenimiento.kilometrajeCambio;
+
+            if (diferenciaKilometraje > 100) {
+                alertas.push({
+                    mantenimientoId: mantenimiento._id,
+                    mensaje: 'ALERTA: Mantenimiento excedido. Cambio urgente recomendado.'
+                });
+            } else if (diferenciaKilometraje <= 100 && diferenciaKilometraje >= 0) {
+                alertas.push({
+                    mantenimientoId: mantenimiento._id,
+                    mensaje: 'Mantenimiento cumplido. Realizar pronto.'
+                });
+            } else if (diferenciaKilometraje < 0 && Math.abs(diferenciaKilometraje) < 1000) {
+                alertas.push({
+                    mantenimientoId: mantenimiento._id,
+                    mensaje: 'Mantenimiento al día. Recomendado realizar revisión de rutina.'
+                });
+            } else if (diferenciaKilometraje < 0 && Math.abs(diferenciaKilometraje) >= 1000) {
+                alertas.push({
+                    mantenimientoId: mantenimiento._id,
+                    mensaje: 'Mantenimiento pendiente. Revisar pronto.'
+                });
+            }
+        }
+
+        if (alertas.length > 0) {
+            res.status(200).send({
+                mensaje: 'Notificaciones de mantenimiento generadas',
+                alertas
+            });
+        } else {
+            res.status(200).send({
+                mensaje: 'No hay alertas de mantenimiento en este momento.'
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(400).send({ error: 'Error al verificar las notificaciones de mantenimiento. Por favor, revise los datos e intente nuevamente.' });
+    }
+};
+
+
+
+export const desactivarMantenimiento = async (req, res) => {
+    try {
+        const mantenimientoId = req.params.id;
+
+        // Busca el mantenimiento por ID
+        const mantenimiento = await Mantenimiento.findById(mantenimientoId);
+
+        if (!mantenimiento) {
+            return res.status(404).json({ message: 'Mantenimiento no encontrado.' });
+        }
+
+        // Verifica si el mantenimiento ya está realizado
+        if (mantenimiento.realizado) {
+            return res.status(400).json({ message: 'El mantenimiento ya está realizado y no puede desactivarse nuevamente.' });
+        }
+
+        // Actualiza el estado a realizado (true)
+        mantenimiento.realizado = true;
+        await mantenimiento.save();
+
+        res.status(200).json({ message: 'Mantenimiento realizado y desactivado correctamente.', mantenimiento });
+    } catch (err) {
+        res.status(500).json({ message: 'Error al desactivar el mantenimiento.', error: err.message });
+    }
+};
+
 
 
 
