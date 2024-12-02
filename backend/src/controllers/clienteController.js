@@ -135,6 +135,49 @@ export const updateCliente = async (req, res) => {
     }
 };
 
+export const updateVehiculoForCliente = async (req, res) => {
+    try {
+      const { id } = req.params; // Obtener el ID del vehículo desde la URL
+      const {
+        placa,
+        tipo,
+        marca,
+        modelo,
+        cilindraje,
+        color,
+        kilometrajeActual,
+        observacion
+      } = req.body;
+  
+      // Buscar el vehículo por ID y actualizarlo con los nuevos datos
+      const updatedVehiculo = await Vehiculo.findByIdAndUpdate(
+        id,
+        {
+          placa,
+          tipo,
+          marca,
+          modelo,
+          cilindraje,
+          color,
+          kilometrajeActual,
+          observacion,
+          fechaModificacion: new Date()
+        },
+        { new: true } // Esta opción devuelve el documento modificado en lugar del original
+      );
+  
+      if (!updatedVehiculo) {
+        return res.status(404).send({ error: 'Vehículo no encontrado' });
+      }
+  
+      res.status(200).send(updatedVehiculo);
+    } catch (error) {
+      console.error(error); // Agregar log para ver el error en la consola
+      res.status(400).send({ error: 'Error al actualizar el vehículo. Por favor, revise los datos e intente nuevamente.' });
+    }
+};
+  
+
 // Método para crear un nuevo vehículo para el cliente autenticado
 export const createVehiculoForCliente = async (req, res) => {
     try {

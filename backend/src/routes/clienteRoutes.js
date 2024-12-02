@@ -7,7 +7,8 @@ import { createCliente,
     getVehiculoById,
     generateVehiculosReport,
     createMantenimientoForVehiculo ,
-    getAllMantenimientosForCliente
+    getAllMantenimientosForCliente,
+    updateVehiculoForCliente
 } from '../controllers/clienteController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
@@ -17,6 +18,7 @@ router.post('/registrar-cliente', createCliente);
 router.post('/login-cliente', loginCliente);
 router.put('/update-cliente', authMiddleware,updateCliente);
 router.post('/registrar-vehiculo', authMiddleware,createVehiculoForCliente);
+router.put('/actualizar-vehiculo/:id', authMiddleware,updateVehiculoForCliente);
 router.get('/vehiculos', authMiddleware,getAllVehiculos);
 router.get('/vehiculo/:id', authMiddleware,getVehiculoById);
 router.get('/reporte-vehiculo', authMiddleware,generateVehiculosReport);

@@ -32,9 +32,11 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
     kilometrajeCambio: "",
     detalleGeneral: ""
   });
+
+
   const generarReporte = () => {
     const token = localStorage.getItem('token');
-  
+
     fetch('http://localhost:5000/api/cliente/reporte-vehiculo', {
       method: 'GET',
       headers: {
@@ -49,18 +51,20 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       throw new Error('Error en la solicitud');
     })
     .then(blob => {
+      setReporte(blob);
+
       // Crear una URL para el Blob y abrirla en una nueva pestaña
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'reporte-vehiculo.pdf'; // Nombre del archivo
-      document.body.appendChild(a); // Necesario para que funcione en Firefox
+      a.download = 'reporte-vehiculos.pdf'; 
+      document.body.appendChild(a); 
       a.click();
       a.remove();
     })
     .catch(error => console.error('Error:', error));
   };
-  
+
   
   useEffect(() => {
     const fetchData = async () => {
@@ -562,7 +566,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
 
           {selectedSection === "Reportes" && (
             <div>
-              <button onClick={generarReporte}>Generar Reporte de Vehículo</button>
+              <button onClick={generarReporte}>Generar Reporte de Vehículos</button>
               {reporte && ( <div id="reporteContainer"> <pre>{JSON.stringify(reporte, null, 2)}</pre> </div> )}
             </div>
           )}
