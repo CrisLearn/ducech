@@ -10,6 +10,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   const [detallesVisible, setDetallesVisible] = useState({});
   const [formVisible, setFormVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [reporte, setReporte] = useState(null);
 
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     placa: "",
@@ -31,7 +32,36 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
     kilometrajeCambio: "",
     detalleGeneral: ""
   });
-
+  const generarReporte = () => {
+    const token = localStorage.getItem('token');
+  
+    fetch('http://localhost:5000/api/cliente/reporte-vehiculo', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
+      }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-vehiculo.pdf'; // Nombre del archivo
+      document.body.appendChild(a); // Necesario para que funcione en Firefox
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+  };
+  
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -176,6 +206,10 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
           !nuevoMantenimiento.detalleGeneral) {
         throw new Error("Por favor, completa todos los campos del formulario.");
       }
+      const payload = {
+        ...nuevoMantenimiento,
+        placa: nuevoMantenimiento.vehiculo // Ensure placa is sent
+      };
 
       const token = localStorage.getItem("token");
       if (!token) {
@@ -188,7 +222,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(nuevoMantenimiento),
+        body: JSON.stringify(payload), // Use modified payload
       });
 
       if (!response.ok) {
@@ -217,7 +251,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   };
 
   const sections = {
-    Vehiculo: "Mi Vehículo",
     Vehículos: "Gestión de Vehículos: Lista y administra los vehículos registrados.",
     Mantenimientos: "Historial de Mantenimientos: Detalles sobre mantenimientos realizados.",
     Reportes: "Reportes: Visualiza y descarga reportes estadísticos.",
@@ -333,7 +366,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
           <option value="" disabled>Seleccionar vehículo</option>
           {vehiculos.map((vehiculo) => (
             <option key={vehiculo._id} value={vehiculo.placa}>
-              {vehiculo.placa} - {vehiculo.marca}
+              {vehiculo.placa}
             </option>
           ))}
         </select>
@@ -463,7 +496,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
               )}
               
               {vehiculos.map((vehiculo) => (
-                <div key={vehiculo.id} className="cliente-vehiculo-item">
+                <div key={vehiculo._id} className="cliente-vehiculo-item">
                   <h3>{vehiculo.placa}</h3>
                   <p><strong>Marca:</strong> {vehiculo.marca}</p>
                   <p><strong>Color:</strong> {vehiculo.color}</p>
@@ -524,6 +557,13 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {selectedSection === "Reportes" && (
+            <div>
+              <button onClick={generarReporte}>Generar Reporte de Vehículo</button>
+              {reporte && ( <div id="reporteContainer"> <pre>{JSON.stringify(reporte, null, 2)}</pre> </div> )}
             </div>
           )}
         </div>

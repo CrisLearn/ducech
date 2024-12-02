@@ -250,7 +250,6 @@ export const generateVehiculosReport = async (req, res) => {
             if (vehiculo.mantenimientos.length > 0) {
                 doc.fontSize(14).text('Mantenimientos:', { underline: true });
                 vehiculo.mantenimientos.forEach(mantenimiento => {
-                    doc.fontSize(12).text(`Descripción: ${mantenimiento.descripcion}`);
                     doc.fontSize(12).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento}`);
                     doc.fontSize(12).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}`);
                     doc.fontSize(12).text(`Marca del Repuesto: ${mantenimiento.marcagaRepuesto}`);
@@ -317,7 +316,7 @@ export const createMantenimientoForVehiculo = async (req, res) => {
 
         // Guardar el nuevo mantenimiento
         await newMantenimiento.save();
-
+        const populatedMantenimiento = await Mantenimiento.findById(newMantenimiento._id).populate('vehiculo');
         // Añadir el mantenimiento a la lista de mantenimientos del vehículo
         vehiculoEncontrado.mantenimientos.push(newMantenimiento._id);
         await vehiculoEncontrado.save();
