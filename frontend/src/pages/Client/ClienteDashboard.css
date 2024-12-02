@@ -225,3 +225,11 @@
 .cliente-mantenimiento-item p {
     margin: 5px 0;
 }
+
+.cliente-mantenimiento-item .vehiculo-placa {
+    font-size: 1.2em; /* Aumenta el tamaño de la fuente */
+    color: #f2c14e; /* Cambia el color del texto */
+    font-weight: bold; /* Hace que el texto sea en negrita */
+    margin-top: 10px;
+  }
+  

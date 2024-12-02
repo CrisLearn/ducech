@@ -9,7 +9,7 @@ const mantenimientoSchema = new Schema({
     },
     detalleMantenimiento: {
         type: String,
-        enum: ['cambioAceite', 'cambioPastillasFreno', 'revisionGeneral'],
+        enum: ['Cambio de Aceite', 'Cambio de Pastillas de Freno', 'Revisión General'],
         required: true
     },
     marcaRepuesto: {
@@ -31,6 +31,11 @@ const mantenimientoSchema = new Schema({
     fechaCreacion: {
         type: Date,
         default: Date.now
+    },
+    vehiculo: {
+        type: Schema.Types.ObjectId,
+        ref: 'Vehiculo',
+        required: true // Esto asegura que un mantenimiento debe estar asociado a un vehículo
     }
 });
 

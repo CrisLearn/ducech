@@ -277,41 +277,50 @@ export const generateVehiculosReport = async (req, res) => {
 
 export const createMantenimientoForVehiculo = async (req, res) => {
     try {
-        const { descripcion, tipoMantenimiento, detalleMantenimiento, marcagaRepuesto, kilometrajeActual, kilometrajeCambio, detalleGeneral, vehiculoId } = req.body;
-        const clienteId = req.userId; // Obtener el ID del cliente del token
+        // Desestructuración de los campos del cuerpo de la solicitud
+        const {
+            tipoMantenimiento,
+            detalleMantenimiento,
+            marcaRepuesto,
+            kilometrajeActual,
+            kilometrajeCambio,
+            detalleGeneral,
+            placa // Asegúrate de que 'placa' esté incluido en la solicitud
+        } = req.body;
 
-        // Buscar el vehículo por ID y verificar que pertenezca al cliente autenticado
-        const vehiculo = await Vehiculo.findById(vehiculoId).populate('mantenimientos');
-        if (!vehiculo) {
+        const clienteId = req.userId; 
+
+        const vehiculoEncontrado = await Vehiculo.findOne({ placa: new RegExp(`^${placa}$`, 'i') }).populate('mantenimientos');
+
+        if (!vehiculoEncontrado) {
             return res.status(404).send({ error: 'Vehículo no encontrado' });
         }
 
         // Verificar que el vehículo pertenece al cliente autenticado
         const cliente = await Cliente.findById(clienteId);
-        if (!cliente || !cliente.vehiculos.includes(vehiculo._id)) {
+        if (!cliente || !cliente.vehiculos.includes(vehiculoEncontrado._id)) {
             console.log('Permisos del cliente:', cliente ? cliente.vehiculos : 'No se encontró cliente');
             return res.status(403).send({ error: 'Acceso denegado. El cliente no tiene permisos para este vehículo.' });
         }
 
         // Crear el nuevo mantenimiento
         const newMantenimiento = new Mantenimiento({
-            descripcion,
             tipoMantenimiento,
             detalleMantenimiento,
-            marcagaRepuesto,
+            marcaRepuesto,
             kilometrajeActual,
             kilometrajeCambio,
             detalleGeneral,
             fechaCreacion: new Date(),
-            vehiculo: vehiculo._id // Asociar el mantenimiento al vehículo
+            vehiculo: vehiculoEncontrado._id // Asociar el mantenimiento al vehículo
         });
 
         // Guardar el nuevo mantenimiento
         await newMantenimiento.save();
 
         // Añadir el mantenimiento a la lista de mantenimientos del vehículo
-        vehiculo.mantenimientos.push(newMantenimiento._id);
-        await vehiculo.save();
+        vehiculoEncontrado.mantenimientos.push(newMantenimiento._id);
+        await vehiculoEncontrado.save();
 
         res.status(201).send(newMantenimiento);
     } catch (error) {
@@ -319,5 +328,38 @@ export const createMantenimientoForVehiculo = async (req, res) => {
         res.status(400).send({ error: 'Error al crear el mantenimiento. Por favor, revise los datos e intente nuevamente.' });
     }
 };
+
+
+export const getAllMantenimientosForCliente = async (req, res) => {
+    try {
+        const clienteId = req.userId; 
+
+        // Buscar el cliente por su ID y obtener los vehículos asociados, incluyendo los mantenimientos
+        const cliente = await Cliente.findById(clienteId).populate({
+            path: 'vehiculos',
+            populate: { path: 'mantenimientos' }
+        });
+
+        if (!cliente) {
+            return res.status(404).send({ error: 'Cliente no encontrado' });
+        }
+
+        // Recopilar todos los mantenimientos de los vehículos del cliente, incluyendo la placa del vehículo
+        const todosMantenimientos = cliente.vehiculos.flatMap(vehiculo => 
+            vehiculo.mantenimientos.map(mantenimiento => ({
+                ...mantenimiento.toObject(),
+                vehiculo: {
+                    placa: vehiculo.placa
+                }
+            }))
+        );
+
+        res.status(200).send(todosMantenimientos);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(400).send({ error: 'Error al obtener los mantenimientos. Por favor, intente nuevamente.' });
+    }
+};
+
 
 
