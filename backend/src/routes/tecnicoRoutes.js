@@ -12,7 +12,9 @@ import { createTecnico,
     getVehiculoById,
     generateVehiculosReport,
     createMantenimientoForVehiculo,
-    getAllMantenimientos
+    getAllMantenimientos,
+    eliminarMantenimientoPorTecnico,
+    desactivarMantenimientoPorTecnico
  } from '../controllers/tecnicoController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
@@ -32,5 +34,7 @@ router.get('/vehiculo/:id', authMiddleware,getVehiculoById);
 router.get('/reportes-vehiculos', authMiddleware,generateVehiculosReport);
 router.post('/registrar-mantenimiento', authMiddleware,createMantenimientoForVehiculo);
 router.get('/mantenimientos', authMiddleware,getAllMantenimientos);
+router.delete('/delete-mantenimiento/:id', authMiddleware,eliminarMantenimientoPorTecnico);
+router.put('/desactivar-mantenimiento/:id', authMiddleware,desactivarMantenimientoPorTecnico);
 
 export default router;

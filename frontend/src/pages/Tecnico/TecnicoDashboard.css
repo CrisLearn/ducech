@@ -413,3 +413,38 @@ button:hover {
   border-radius: 3px;
   border: 1px solid #f2c14e;
 }
+.tecnico-mantenimiento-form {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-top: 20px;
+}
+
+.tecnico-mantenimiento-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
+}
+.tecnico-mantenimiento-form input,
+.tecnico-mantenimiento-form textarea,
+.tecnico-mantenimiento-form select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+
+.tecnico-mantenimiento-form button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+}
+
+.tecnico-mantenimiento-form button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
+}

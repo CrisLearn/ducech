@@ -534,41 +534,66 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const handleAddMantenimiento = async (e) => {
     e.preventDefault();
     try {
-      // Validación local
-      if (!nuevoMantenimiento.vehiculo || !nuevoMantenimiento.tipoMantenimiento || 
-          !nuevoMantenimiento.detalleMantenimiento || !nuevoMantenimiento.marcaRepuesto || 
-          !nuevoMantenimiento.kilometrajeActual || !nuevoMantenimiento.kilometrajeCambio || 
-          !nuevoMantenimiento.detalleGeneral) {
+      // Extraer los valores del estado 'nuevoMantenimiento'
+      const {
+        vehiculo, // Esto es la placa seleccionada
+        tipoMantenimiento,
+        detalleMantenimiento,
+        marcaRepuesto,
+        kilometrajeActual,
+        kilometrajeCambio,
+        detalleGeneral,
+      } = nuevoMantenimiento;
+  
+      // Validar que todos los campos estén completos
+      if (
+        !vehiculo ||
+        !tipoMantenimiento ||
+        !detalleMantenimiento ||
+        !marcaRepuesto ||
+        !kilometrajeActual ||
+        !kilometrajeCambio ||
+        !detalleGeneral
+      ) {
         throw new Error("Por favor, completa todos los campos del formulario.");
       }
+  
+      // Construir el payload para la solicitud
       const payload = {
-        ...nuevoMantenimiento,
-        placa: nuevoMantenimiento.vehiculo // Ensure placa is sent
+        placa: vehiculo, // Se pasa la placa del vehículo al backend
+        tipoMantenimiento,
+        detalleMantenimiento,
+        marcaRepuesto,
+        kilometrajeActual: parseInt(kilometrajeActual),
+        kilometrajeCambio: parseInt(kilometrajeCambio),
+        detalleGeneral,
       };
-
+  
+      // Obtener token de autenticación del localStorage
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Usuario no autenticado.");
       }
-
-      const response = await fetch("http://localhost:5000/api/cliente/registrar-mantenimiento", {
+  
+      // Enviar la solicitud POST al servidor
+      const response = await fetch("http://localhost:5000/api/tecnico/registrar-mantenimiento", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload), // Use modified payload
+        body: JSON.stringify(payload),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        const errorMessage = errorData.message || "Error al agregar mantenimiento. Verifica los datos y la autenticación.";
+        const errorMessage = errorData.error || "Error al agregar mantenimiento. Verifica los datos.";
         throw new Error(errorMessage);
       }
-
+  
+      // Manejar la respuesta del servidor
       const mantenimientoAgregado = await response.json();
-      setMantenimientos((prevMantenimientos) => [...prevMantenimientos, mantenimientoAgregado]);
-
+      setMantenimientos((prev) => [...prev, mantenimientoAgregado]);
       setNuevoMantenimiento({
         vehiculo: "",
         tipoMantenimiento: "",
@@ -576,14 +601,14 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         marcaRepuesto: "",
         kilometrajeActual: "",
         kilometrajeCambio: "",
-        detalleGeneral: ""
+        detalleGeneral: "",
       });
-      setFormVisible(false);
       showMessage("Mantenimiento agregado correctamente.");
     } catch (err) {
-      showMessage(err.message, 'error');
+      console.error("Error al registrar mantenimiento:", err.message);
+      showMessage(err.message, "error");
     }
-  };
+  };  
   const handleEliminar = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/cliente/delete-mantenimiento/${id}`, {
@@ -625,7 +650,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const handleRealizarMantenimiento = async (id) => {
     try {
       // Llamada a la API para marcar el mantenimiento como realizado
-      const response = await fetch(`http://localhost:5000/api/cliente/desactivar-mantenimiento/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/tecnico/desactivar-mantenimiento/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -657,7 +682,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     }
   };
   const renderMantenimientosForm = () => (
-    <form onSubmit={handleAddMantenimiento} className="cliente-mantenimiento-form">
+    <form onSubmit={handleAddMantenimiento} className="tecnico-mantenimiento-form">
       <label>
         Vehículo:
         <select
@@ -732,11 +757,19 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           name="kilometrajeCambio"
           value={nuevoMantenimiento.kilometrajeCambio || ""}
           onChange={(e) => handleInputChange(e, 'mantenimiento')}
-          min={Math.max(5000, parseInt(nuevoMantenimiento.kilometrajeActual) + 4000)}
+          min={
+            Math.max(
+              5000,
+              isNaN(parseInt(nuevoMantenimiento.kilometrajeActual)) 
+                ? 5000 
+                : parseInt(nuevoMantenimiento.kilometrajeActual) + 4000
+            )
+          }
           max="500000"
           required
         />
       </label>
+
       <label>
         Detalle General:
         <textarea
@@ -915,67 +948,88 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
             </div>
           )}
 
-          {selectedSection === "Mantenimientos" && (
-              <div className="cliente-mantenimientos-list">
-                <button
-                  className="cliente-add-mantenimiento-button"
-                  onClick={() => setFormVisible(!formVisible)}
-                >
-                  {formVisible ? "Cancelar" : "Agregar Mantenimiento"}
+        {selectedSection === "Mantenimientos" && (
+          <div className="cliente-mantenimientos-list">
+            {/* Botón para alternar el formulario */}
+            <button
+              className="cliente-add-mantenimiento-button"
+              onClick={() => setFormVisible(!formVisible)}
+            >
+              {formVisible ? "Cancelar" : "Agregar Mantenimiento"}
+            </button>
+
+            {/* Renderizar formulario si es visible */}
+            {formVisible && renderMantenimientosForm()}
+
+            {/* Mensajes de éxito y error globales */}
+            {successMessage && <p className="success">{successMessage}</p>}
+            {error && <p className="error">{error}</p>}
+
+            {/* Mostrar mensaje si no hay mantenimientos */}
+            {mantenimientos.length === 0 && !error && (
+              <p>No hay mantenimientos registrados</p>
+            )}
+
+            {/* Listar mantenimientos */}
+            {mantenimientos.map((mantenimiento) => (
+              <div key={mantenimiento._id} className="cliente-mantenimiento-item">
+                <h3>{mantenimiento.descripcion || "Sin descripción"}</h3>
+                <p className="vehiculo-placa">
+                  <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo?.placa || "Desconocida"}
+                </p>
+                <p>
+                  <strong>Fecha:</strong> {new Date(mantenimiento.fechaCreacion).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual || "N/A"}
+                </p>
+                <p>
+                  <strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio || "N/A"}
+                </p>
+                <p>
+                  <strong>Detalles:</strong> {mantenimiento.detalleGeneral || "Sin detalles"}
+                </p>
+
+                {/* Botón para alternar detalles */}
+                <button onClick={() => toggleDetalles(mantenimiento._id)}>
+                  {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
                 </button>
 
-                {formVisible && renderMantenimientosForm()}
+                {/* Botón para eliminar mantenimiento */}
+                <button onClick={() => handleEliminar(mantenimiento._id)}>
+                  Eliminar Mantenimiento
+                </button>
 
-                {successMessage && <p className="success">{successMessage}</p>}
-                {error && <p className="error">{error}</p>}
-
-                {mantenimientos.length === 0 && !error && (
-                  <p>No hay mantenimientos registrados</p>
+                {/* Botón para marcar como realizado */}
+                {!mantenimiento.realizado && (
+                  <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
+                    Marcar como Realizado
+                  </button>
                 )}
 
-                {mantenimientos.map((mantenimiento) => (
-                  <div key={mantenimiento._id} className="cliente-mantenimiento-item">
-                    <h3>{mantenimiento.descripcion}</h3>
-                    <p className="vehiculo-placa">
-                      <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo.placa}
-                    </p>
-                    <p><strong>Fecha:</strong> {mantenimiento.fechaCreacion}</p>
-                    <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual}</p>
-                    <p><strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio}</p>
-                    <p><strong>Detalles:</strong> {mantenimiento.detalleGeneral}</p>
+                {/* Mensajes específicos por mantenimiento */}
+                {successMessages[mantenimiento._id] && (
+                  <p className="mantenimiento-success">
+                    {successMessages[mantenimiento._id]}
+                  </p>
+                )}
+                {errorMessages[mantenimiento._id] && (
+                  <p className="error-message">{errorMessages[mantenimiento._id]}</p>
+                )}
 
-                    <button onClick={() => toggleDetalles(mantenimiento._id)}>
-                      {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
-                    </button>
-                    <button onClick={() => handleEliminar(mantenimiento._id)}>
-                      Eliminar Mantenimiento
-                    </button>
-
-                    {/* Mostrar el botón solo si el mantenimiento no ha sido realizado */}
-                    {!mantenimiento.realizado && (
-                      <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
-                        Marcar como Realizado
-                      </button>
-                    )}
-
-                    {/* Muestra el mensaje de éxito o error solo para el mantenimiento actual */}
-                    {successMessages[mantenimiento._id] && (
-                      <p className="mantenimiento-success">{successMessages[mantenimiento._id]}</p>
-                    )}
-                    {errorMessages[mantenimiento._id] && (
-                      <p className="error-message">{errorMessages[mantenimiento._id]}</p>
-                    )}
-                    {detallesVisible[mantenimiento._id] && (
-                      <div className="cliente-mantenimiento-detalles">
-                        <p><strong>Tipo:</strong> {mantenimiento.tipoMantenimiento}</p>
-                        <p><strong>Detalle:</strong> {mantenimiento.detalleMantenimiento}</p>
-                        <p><strong>Marca del Repuesto:</strong> {mantenimiento.marcaRepuesto}</p>
-                      </div>
-                    )}
+                {/* Detalles adicionales si están visibles */}
+                {detallesVisible[mantenimiento._id] && (
+                  <div className="cliente-mantenimiento-detalles">
+                    <p><strong>Tipo:</strong> {mantenimiento.tipoMantenimiento || "N/A"}</p>
+                    <p><strong>Detalle:</strong> {mantenimiento.detalleMantenimiento || "N/A"}</p>
+                    <p><strong>Marca del Repuesto:</strong> {mantenimiento.marcaRepuesto || "N/A"}</p>
                   </div>
-                ))}
+                )}
               </div>
-            )}  
+            ))}
+          </div>
+        )}
+
 
         </div>
       </main>

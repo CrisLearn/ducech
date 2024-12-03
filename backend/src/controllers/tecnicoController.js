@@ -437,18 +437,26 @@ export const generateVehiculosReport = async (req, res) => {
 // Método para crear un nuevo mantenimiento para un vehículo de un cliente registrado por el técnico
 export const createMantenimientoForVehiculo = async (req, res) => {
     try {
-        const { descripcion, tipoMantenimiento, detalleMantenimiento, marcagaRepuesto, kilometrajeActual, kilometrajeCambio, detalleGeneral, vehiculoId } = req.body;
+        const {
+            tipoMantenimiento,
+            detalleMantenimiento,
+            marcaRepuesto,
+            kilometrajeActual,
+            kilometrajeCambio,
+            detalleGeneral,
+            placaVehiculo // Ahora se recibe la placa en lugar del vehiculoId
+        } = req.body;
+
         const tecnicoId = req.userId; // Obtener el ID del técnico del token
 
-
-        // Buscar el vehículo por ID y verificar que pertenezca a un cliente registrado por el técnico
-        const vehiculo = await Vehiculo.findById(vehiculoId).populate('mantenimientos');
+        // Buscar el vehículo por la placa (ignorando mayúsculas/minúsculas)
+        const vehiculo = await Vehiculo.findOne({ placa: new RegExp(`^${placaVehiculo}$`, 'i') }).populate('mantenimientos');
         if (!vehiculo) {
             return res.status(404).send({ error: 'Vehículo no encontrado' });
         }
 
         // Buscar el cliente propietario del vehículo
-        const cliente = await Cliente.findOne({ vehiculos: vehiculoId }).populate('vehiculos');
+        const cliente = await Cliente.findOne({ vehiculos: vehiculo._id }).populate('vehiculos');
         if (!cliente) {
             return res.status(404).send({ error: 'Cliente no encontrado' });
         }
@@ -468,14 +476,14 @@ export const createMantenimientoForVehiculo = async (req, res) => {
 
         // Crear el nuevo mantenimiento
         const newMantenimiento = new Mantenimiento({
-            descripcion,
             tipoMantenimiento,
             detalleMantenimiento,
-            marcagaRepuesto,
+            marcaRepuesto,
             kilometrajeActual,
             kilometrajeCambio,
             detalleGeneral,
-            fechaCreacion: new Date()
+            fechaCreacion: new Date(),
+            vehiculo: vehiculo._id // Vincular con el ID del vehículo encontrado
         });
 
         // Guardar el nuevo mantenimiento
@@ -491,15 +499,149 @@ export const createMantenimientoForVehiculo = async (req, res) => {
         res.status(400).send({ error: 'Error al crear el mantenimiento. Por favor, revise los datos e intente nuevamente.' });
     }
 };
+
+
+
 export const getAllMantenimientos = async (req, res) => { 
     try {
         const tecnicoId = req.userId; // Obtener el ID del tecnico del token
-        const tecnico = await Tecnico.findById(tecnicoId).populate('mantenimientos');
+        const tecnico = await Tecnico.findById(tecnicoId).populate({
+            path: 'clientes',
+            populate: {
+                path: 'vehiculos',
+                populate: {
+                    path: 'mantenimientos'
+                }
+            }
+        });
+
         if (!tecnico) {
             return res.status(404).send({ error: 'Tecnico no encontrado' });
         }
-        res.send(tecnico.mantenimientos);
+
+        // Recopilar todos los mantenimientos de los vehículos de los clientes del técnico
+        const mantenimientos = [];
+        tecnico.clientes.forEach(cliente => {
+            cliente.vehiculos.forEach(vehiculo => {
+                vehiculo.mantenimientos.forEach(mantenimiento => {
+                    mantenimientos.push(mantenimiento);
+                });
+            });
+        });
+
+        res.send(mantenimientos);
     } catch (error) { 
+        console.error(error);
         res.status(500).send(error); 
     } 
+};
+
+export const eliminarMantenimientoPorTecnico = async (req, res) => {
+    try {
+        const { id } = req.params; // Obtener el id del mantenimiento de los parámetros de la URL
+        const tecnicoId = req.userId;
+
+        // Buscar el mantenimiento por su id y asociar el vehículo al que pertenece
+        const mantenimientoEncontrado = await Mantenimiento.findById(id).populate('vehiculo');
+        if (!mantenimientoEncontrado) {
+            return res.status(404).send({ error: 'Mantenimiento no encontrado' });
+        }
+
+        // Verificar que el técnico tiene permisos para eliminar este mantenimiento
+        const tecnico = await Tecnico.findById(tecnicoId).populate({
+            path: 'clientes',
+            populate: {
+                path: 'vehiculos',
+                populate: {
+                    path: 'mantenimientos'
+                }
+            }
+        });
+
+        if (!tecnico) {
+            return res.status(403).send({ error: 'Acceso denegado. El técnico no tiene permisos para este mantenimiento.' });
+        }
+
+        // Verificar si el mantenimiento pertenece a algún vehículo de los clientes del técnico
+        let permisoEliminacion = false;
+        tecnico.clientes.forEach(cliente => {
+            cliente.vehiculos.forEach(vehiculo => {
+                if (vehiculo._id.equals(mantenimientoEncontrado.vehiculo._id)) {
+                    permisoEliminacion = true;
+                }
+            });
+        });
+
+        if (!permisoEliminacion) {
+            return res.status(403).send({ error: 'Acceso denegado. El técnico no tiene permisos para este mantenimiento.' });
+        }
+
+        // Eliminar el mantenimiento
+        await Mantenimiento.findByIdAndDelete(id);
+
+        // Eliminar la referencia al mantenimiento en el vehículo correspondiente
+        const vehiculo = await Vehiculo.findById(mantenimientoEncontrado.vehiculo._id);
+        vehiculo.mantenimientos = vehiculo.mantenimientos.filter(m => m.toString() !== id);
+        await vehiculo.save();
+
+        res.status(200).send({ message: 'Mantenimiento eliminado exitosamente' });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(400).send({ error: 'Error al eliminar el mantenimiento. Por favor, intente nuevamente.' });
+    }
+};
+
+export const desactivarMantenimientoPorTecnico = async (req, res) => {
+    try {
+        const mantenimientoId = req.params.id;
+        const tecnicoId = req.userId;
+
+        // Busca el mantenimiento por ID y popula el vehículo asociado
+        const mantenimiento = await Mantenimiento.findById(mantenimientoId).populate('vehiculo');
+        if (!mantenimiento) {
+            return res.status(404).json({ message: 'Mantenimiento no encontrado.' });
+        }
+
+        // Verifica si el mantenimiento ya está realizado
+        if (mantenimiento.realizado) {
+            return res.status(400).json({ message: 'El mantenimiento ya está realizado y no puede desactivarse nuevamente.' });
+        }
+
+        // Verificar que el técnico tiene permisos para desactivar este mantenimiento
+        const tecnico = await Tecnico.findById(tecnicoId).populate({
+            path: 'clientes',
+            populate: {
+                path: 'vehiculos',
+                populate: {
+                    path: 'mantenimientos'
+                }
+            }
+        });
+
+        if (!tecnico) {
+            return res.status(403).json({ message: 'Acceso denegado. El técnico no tiene permisos para este mantenimiento.' });
+        }
+
+        // Verificar si el mantenimiento pertenece a algún vehículo de los clientes del técnico
+        let permisoDesactivacion = false;
+        tecnico.clientes.forEach(cliente => {
+            cliente.vehiculos.forEach(vehiculo => {
+                if (vehiculo._id.equals(mantenimiento.vehiculo._id)) {
+                    permisoDesactivacion = true;
+                }
+            });
+        });
+
+        if (!permisoDesactivacion) {
+            return res.status(403).json({ message: 'Acceso denegado. El técnico no tiene permisos para este mantenimiento.' });
+        }
+
+        // Actualiza el estado a realizado (true)
+        mantenimiento.realizado = true;
+        await mantenimiento.save();
+
+        res.status(200).json({ message: 'Mantenimiento realizado y desactivado correctamente.', mantenimiento });
+    } catch (err) {
+        res.status(500).json({ message: 'Error al desactivar el mantenimiento.', error: err.message });
+    }
 };
