@@ -781,6 +781,14 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
 
             {selectedSection === "Mantenimientos" && (
               <div className="cliente-mantenimientos-list">
+                <input
+      type="number"
+      min="5000"
+      max="50000"
+      className="kilometraje-input"
+      placeholder="Ingresa tu kilometraje actual"
+    />
+    <button className="enviar-notificacion-button">Enviar Notificación</button>
                 <button
                   className="cliente-add-mantenimiento-button"
                   onClick={() => setFormVisible(!formVisible)}

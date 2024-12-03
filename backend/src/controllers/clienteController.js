@@ -6,6 +6,8 @@ import Cliente from '../models/Cliente.js';
 import Vehiculo from '../models/Vehiculo.js';
 import Mantenimiento from '../models/Mantenimiento.js';
 import PDFDocument from 'pdfkit';
+import nodemailer from 'nodemailer';
+
 
 // Método para crear un nuevo cliente
 export const createCliente = async (req, res) => {
@@ -504,7 +506,6 @@ export const notificacionesMantenimiento = async (req, res) => {
         res.status(400).send({ error: 'Error al verificar las notificaciones de mantenimiento. Por favor, revise los datos e intente nuevamente.' });
     }
 };
-
 
 
 export const desactivarMantenimiento = async (req, res) => {

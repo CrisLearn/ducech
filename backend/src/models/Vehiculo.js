@@ -40,10 +40,16 @@ const vehiculoSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'Mantenimiento' 
     }],
+    cliente: { 
+        type: Schema.Types.ObjectId, 
+        ref: 'Cliente' // Relación con el modelo Cliente
+    },
     fechaCreacion: {
         type: Date,
         default: Date.now
     }
+
+    
 });
 
 const Vehiculo = mongoose.model('Vehiculo', vehiculoSchema);

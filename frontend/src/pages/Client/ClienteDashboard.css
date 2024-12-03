@@ -1,3 +1,33 @@
+
+.right-aligned-controls input,
+.right-aligned-controls button {
+  margin-left: 10px; /* Espacio entre los elementos */
+}
+.right-aligned-controls {
+  display: flex;
+  align-items: center; /* Alinea verticalmente los elementos */
+}
+
+
+.kilometraje-input {
+  margin-left: 10px; /* Espacio entre el input y los botones */
+  padding: 5px;
+  width: 200px; /* Ajusta el ancho según sea necesario */
+}
+
+.enviar-notificacion-button,
+.cliente-add-mantenimiento-button {
+  margin-left: 10px; /* Espacio entre los botones */
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.enviar-notificacion-button {
+  background-color: #f2c14e; /* Color de fondo del botón */
+  color: black; /* Color del texto del botón */
+  border: none;
+  border-radius: 4px;
+}
 /* Estilo base */
 .mantenimiento-success {
   color: green;
