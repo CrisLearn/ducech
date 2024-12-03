@@ -130,8 +130,11 @@ export const updateTecnico = async (req, res) => {
 // Método para crear un nuevo cliente y asignarlo al técnico autenticado
 export const createClienteForTecnico = async (req, res) => {
     try {
-        const { nombre, email, password, telefono, direccion } = req.body;
+        const { nombre, email, telefono, direccion } = req.body;
         const tecnicoId = req.userId; // Obtener el ID del técnico del token
+
+        // Crear una contraseña aleatoria basada en el nombre más "123"
+        const password = `${nombre}123`;
 
         // Encriptar la contraseña
         const saltRounds = 10;
@@ -199,6 +202,34 @@ export const getClienteById = async (req, res) => {
     }
 };
 
+export const updateClienteForTecnico = async (req, res) => {
+    try {
+      const { clienteId, nombre, email, telefono, direccion } = req.body;
+      const tecnicoId = req.userId; // Obtener el ID del técnico del token
+  
+      // Buscar el cliente por ID
+      const cliente = await Cliente.findById(clienteId);
+      if (!cliente) {
+        return res.status(404).send({ error: 'Cliente no encontrado' });
+      }
+  
+      // Actualizar la información del cliente sin cambiar la contraseña
+      cliente.nombre = nombre;
+      cliente.email = email;
+      cliente.telefono = telefono;
+      cliente.direccion = direccion;
+      cliente.fechaActualizacion = new Date();
+  
+      await cliente.save();
+  
+      res.status(200).send(cliente);
+    } catch (error) {
+      console.error(error); // Agregar log para ver el error en la consola
+      res.status(400).send({ error: 'Error al actualizar el cliente. Por favor, revise los datos e intente nuevamente.' });
+    }
+  };
+  
+  
 
 export const generateClientesReport = async (req, res) => {
     try {

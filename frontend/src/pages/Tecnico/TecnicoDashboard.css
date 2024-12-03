@@ -261,3 +261,55 @@ button:hover {
     padding: 6px 8px;
   }
 }
+.tecnico-cliente-form {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-top: 20px;
+}
+.tecnico-cliente-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
+}
+.tecnico-cliente-form input,
+.tecnico-cliente-form select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.tecnico-cliente-form button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+}
+
+.tecnico-cliente-form button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
+}
+.tecnico-cliente-form {
+  margin-top: 10px;
+  background-color: #3a3a3a;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.tecnico-cliente-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+.tecnico-cliente-form input,
+.tecnico-cliente-form select,
+.tecnico-cliente-form button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #f2c14e;
+}
