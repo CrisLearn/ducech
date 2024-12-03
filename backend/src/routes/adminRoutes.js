@@ -12,7 +12,8 @@ import { createAdmin,
     getAllVehiculos,
     getVehiculoById,
     getAllMantenimientos,
-    generateVehiculosReport 
+    generateVehiculosReport,
+    generateMantenimientosReport 
 } from '../controllers/adminController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
@@ -32,5 +33,6 @@ router.get('/vehiculos', authMiddleware,getAllVehiculos);
 router.get('/vehiculo/:id', authMiddleware,getVehiculoById);
 router.get('/mantenimientos', authMiddleware,getAllMantenimientos);
 router.get('/reportes-vehiculos', authMiddleware,generateVehiculosReport);
+router.get('/reportes-mantenimientos', authMiddleware,generateMantenimientosReport);
 
 export default router;

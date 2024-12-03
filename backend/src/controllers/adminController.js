@@ -350,7 +350,6 @@ export const generateVehiculosReport = async (req, res) => {
             if (vehiculo.mantenimientos.length > 0) {
                 doc.fontSize(14).text('Mantenimientos:', { underline: true });
                 vehiculo.mantenimientos.forEach(mantenimiento => {
-                    doc.fontSize(12).text(`Descripción: ${mantenimiento.descripcion}`);
                     doc.fontSize(12).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento}`);
                     doc.fontSize(12).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}`);
                     doc.fontSize(12).text(`Marca del Repuesto: ${mantenimiento.marcagaRepuesto}`);
@@ -376,10 +375,50 @@ export const generateVehiculosReport = async (req, res) => {
 
 export const getAllMantenimientos = async (req, res) => { 
     try {
-        // Asumiendo que tienes un modelo llamado Mantenimiento
-        const mantenimientos = await Mantenimiento.find(); 
-        res.send(mantenimientos);
+      // Asumiendo que tienes un modelo llamado Mantenimiento
+      const mantenimientos = await Mantenimiento.find().populate('vehiculo', 'placa'); 
+      res.send(mantenimientos);
     } catch (error) { 
-        res.status(500).send({ error: 'Error del servidor', details: error.message }); 
+      res.status(500).send({ error: 'Error del servidor', details: error.message }); 
     } 
+  };
+  
+export const generateMantenimientosReport = async (req, res) => {
+    try {
+        const mantenimientos = await Mantenimiento.find().populate('vehiculo');
+
+        // Crear el documento PDF
+        const doc = new PDFDocument();
+
+        // Configurar el encabezado de la respuesta para enviar un PDF
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=reporte-mantenimientos.pdf');
+
+        // Enviar el documento PDF en el cuerpo de la respuesta
+        doc.pipe(res);
+
+        // Añadir contenido al PDF
+        doc.fontSize(20).text('Reporte de Mantenimientos', { align: 'center' });
+        doc.moveDown();
+
+        mantenimientos.forEach(mantenimiento => {
+            doc.fontSize(14).text(`Placa del Vehículo: ${mantenimiento.vehiculo.placa}`);
+            doc.fontSize(14).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento}`);
+            doc.fontSize(14).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}`);
+            doc.fontSize(14).text(`Marca del Repuesto: ${mantenimiento.marcaRepuesto}`);
+            doc.fontSize(14).text(`Kilometraje Actual: ${mantenimiento.kilometrajeActual}`);
+            doc.fontSize(14).text(`Kilometraje del Cambio: ${mantenimiento.kilometrajeCambio}`);
+            doc.fontSize(14).text(`Detalle General: ${mantenimiento.detalleGeneral}`);
+            doc.fontSize(14).text(`Fecha: ${mantenimiento.fechaCreacion.toISOString().split('T')[0]}`);
+            doc.fontSize(14).text(`Realizado: ${mantenimiento.realizado ? "SI":"NO"}`);
+            doc.moveDown();
+        });
+
+        // Finalizar el PDF
+        doc.end();
+    } catch (error) {
+        console.error('Error al generar el PDF:', error);
+        res.status(500).send(error);
+    }
 };
+

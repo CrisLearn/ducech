@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
+import { FaWrench, FaUser, FaCar, FaClipboardList } from 'react-icons/fa';
 
 const AdminDashboard = ({ adminName = "Administrador" }) => {
   const [selectedSection, setSelectedSection] = useState("Técnicos");
@@ -19,17 +20,17 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
         if (!token) {
           throw new Error("No se encontró un token de autenticación. Por favor, inicia sesión.");
         }
-
+  
         const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
+  
         if (!response.ok) {
           throw new Error("Error al obtener los datos. Verifica tu autenticación.");
         }
-
+  
         const data = await response.json();
         setState(data);
         setError("");
@@ -39,7 +40,7 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
         setState([]);
       }
     };
-
+  
     switch (selectedSection) {
       case "Técnicos":
         fetchData("http://localhost:5000/api/admin/tecnicos", setTecnicos);
@@ -51,15 +52,20 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
         fetchData("http://localhost:5000/api/admin/vehiculos", setVehiculos);
         break;
       case "Mantenimientos":
-        fetchData("http://localhost:5000/api/admin/mantenimientos", setMantenimientos);
-        break;
-      case "Reportes":
-        fetchData("http://localhost:5000/api/admin/reportes-tecnicos", setReportes);
+        fetchData("http://localhost:5000/api/admin/mantenimientos", (data) => {
+          // Asegurarse de que cada mantenimiento tiene la información del vehículo
+          const mantenimientosConVehiculo = data.map(mantenimiento => ({
+            ...mantenimiento,
+            vehiculo: mantenimiento.vehiculo || { placa: "Información no disponible" }
+          }));
+          setMantenimientos(mantenimientosConVehiculo);
+        });
         break;
       default:
         break;
     }
   }, [selectedSection]);
+  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -73,31 +79,128 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
     }));
   };
 
-  const generarReporte = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No se encontró un token de autenticación. Por favor, inicia sesión.");
+  const generarReporteTecnicos = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:5000/api/admin/reportes-tecnicos', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       }
-
-      const response = await fetch("http://localhost:5000/api/admin/reportes-tecnicos", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al generar el reporte. Verifica tu autenticación.");
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
       }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      setReporte(blob);
 
-      const data = await response.json();
-      setReporte(data);
-    } catch (err) {
-      console.error("Error en la llamada a la API para generar el reporte:", err);
-      setError(err.message || "Error desconocido");
-    }
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-tecnicos.pdf'; 
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+  };
+  const generarReporteClientes = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:5000/api/admin/reportes-clientes', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
+      }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      setReporte(blob);
+
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-clientes.pdf'; 
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+  };
+  const generarReporteVehiculos = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:5000/api/admin/reportes-vehiculos', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
+      }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      setReporte(blob);
+
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-vehiculos.pdf'; 
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+  };
+  const generarReporteMantenimientos = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:5000/api/admin/reportes-mantenimientos', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
+      }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      setReporte(blob);
+
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-mantenimientos.pdf'; 
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
   };
 
+  
   const sections = {
     Técnicos: "Gestión de Técnicos: Aquí puedes agregar, editar o eliminar técnicos.",
     Clientes: "Gestión de Clientes: Aquí puedes administrar clientes registrados.",
@@ -209,14 +312,22 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
               ) : (
                 mantenimientos.map((mantenimiento) => (
                   <div key={mantenimiento._id} className="mantenimiento-item">
-                    <h3>ID de Mantenimiento: {mantenimiento._id}</h3>
+                    <h3>Placa del Vehículo: {mantenimiento.vehiculo.placa}</h3>
                     <p><strong>Tipo de Mantenimiento:</strong> {mantenimiento.tipoMantenimiento || "Información no disponible"}</p>
                     <p><strong>Descripción:</strong> {mantenimiento.detalleMantenimiento || "Información no disponible"}</p>
-                    <p><strong>Marca de Repuesto:</strong> {mantenimiento.marcaRepuesto || "Información no disponible"}</p>
-                    <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual || "Información no disponible"}</p>
-                    <p><strong>Kilometraje de Próximo Cambio:</strong> {mantenimiento.kilometrajeCambio || "Información no disponible"}</p>
-                    <p><strong>Detalles Generales:</strong> {mantenimiento.detalleGeneral || "Información no disponible"}</p>
-                    <p><strong>Fecha de Creación:</strong> {new Date(mantenimiento.fechaCreacion).toLocaleDateString() || "Información no disponible"}</p>
+                    <p><strong>Realizado:</strong> {mantenimiento.realizado ? "Sí" : "No"}</p>
+                    <button onClick={() => toggleDetalles(mantenimiento._id)}>
+                      {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
+                    </button>
+                    {detallesVisible[mantenimiento._id] && (
+                      <div className='mantenimiento-detalles'>
+                        <p><strong>Marca de Repuesto:</strong> {mantenimiento.marcaRepuesto || "Información no disponible"}</p>
+                        <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual || "Información no disponible"}</p>
+                        <p><strong>Kilometraje de Próximo Cambio:</strong> {mantenimiento.kilometrajeCambio || "Información no disponible"}</p>
+                        <p><strong>Detalles Generales:</strong> {mantenimiento.detalleGeneral || "Información no disponible"}</p>
+                        <p><strong>Fecha del Mantenimiento:</strong> {new Date(mantenimiento.fechaCreacion).toLocaleDateString() || "Información no disponible"}</p>
+                      </div>
+                    )}
                     <hr />
                   </div>
                 ))
@@ -224,16 +335,53 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
             </div>
           )}
 
+
+
           {selectedSection === "Reportes" && (
-            <div className="reportes-list">
-              <button onClick={generarReporte}>Generar reporte de vehículos</button>
-              {reporte ? (
-                <pre>{JSON.stringify(reporte, null, 2)}</pre>
-              ) : (
-                <p>Aún no se ha generado ningún reporte.</p>
-              )}
+            <div className='reportes'>
+              <div>
+                <button onClick={generarReporteTecnicos}>
+                  <FaWrench style={{ marginRight: '8px' }} /> Generar Reporte de Técnicos
+                </button>
+                {reporte && (
+                  <div id="reporteContainer">
+                    <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                  </div>
+                )}
+              </div>
+              <div>
+                <button onClick={generarReporteClientes}>
+                  <FaUser style={{ marginRight: '8px' }} /> Generar Reporte de Clientes
+                </button>
+                {reporte && (
+                  <div id="reporteContainer">
+                    <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                  </div>
+                )}
+              </div>
+              <div>
+                <button onClick={generarReporteVehiculos}>
+                  <FaCar style={{ marginRight: '8px' }} /> Generar Reporte de Vehículos
+                </button>
+                {reporte && (
+                  <div id="reporteContainer">
+                    <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                  </div>
+                )}
+              </div>
+              <div>
+                <button onClick={generarReporteMantenimientos}>
+                  <FaClipboardList style={{ marginRight: '8px' }} /> Generar Reporte de Mantenimientos
+                </button>
+                {reporte && (
+                  <div id="reporteContainer">
+                    <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                  </div>
+                )}
+              </div>
             </div>
           )}
+
         </div>
       </main>
     </div>
