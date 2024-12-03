@@ -7,11 +7,12 @@ import { createTecnico,
     getClienteById,
     updateClienteForTecnico,
     generateClientesReport,
-    createVehiculoForTecnicio,
+    createVehiculoForTecnico,
     getAllVehiculos,
     getVehiculoById,
     generateVehiculosReport,
-    createMantenimientoForVehiculo
+    createMantenimientoForVehiculo,
+    getAllMantenimientos
  } from '../controllers/tecnicoController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
@@ -25,10 +26,11 @@ router.get('/clientes', authMiddleware,getAllClientes);
 router.get('/cliente/:id', authMiddleware,getClienteById);
 router.put('/update-cliente/:id', authMiddleware,updateClienteForTecnico);
 router.get('/reportes-clientes', authMiddleware,generateClientesReport);
-router.post('/registrar-vehiculo', authMiddleware,createVehiculoForTecnicio);
+router.post('/registrar-vehiculo', authMiddleware,createVehiculoForTecnico);
 router.get('/vehiculos', authMiddleware,getAllVehiculos);
 router.get('/vehiculo/:id', authMiddleware,getVehiculoById);
 router.get('/reportes-vehiculos', authMiddleware,generateVehiculosReport);
 router.post('/registrar-mantenimiento', authMiddleware,createMantenimientoForVehiculo);
+router.get('/mantenimientos', authMiddleware,getAllMantenimientos);
 
 export default router;

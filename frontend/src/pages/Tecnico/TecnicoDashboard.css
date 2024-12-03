@@ -313,3 +313,103 @@ button:hover {
   border-radius: 3px;
   border: 1px solid #f2c14e;
 }
+.tecnico-cliente-item label,
+.tecnico-cliente-item select {
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
+}
+.tecnico-cliente-item select,
+.tecnico-cliente-item input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.tecnico-cliente-item select,
+.tecnico-cliente-item input {
+  width: 100%;
+  background-color: #1b1b1b;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #f2c14e;
+}
+.tecnico-client-item {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  position: relative;
+}
+
+
+.tecnico-client-item h3 {
+  margin: 0 0 5px;
+}
+
+.tecnico-client-item p {
+  margin: 5px 0;
+}
+
+.tecnico-vehiculo-form {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-top: 20px;
+}
+
+.tecnico-vehiculo-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
+}
+
+
+
+.tecnico-vehiculo-form input,
+.tecnico-vehiculo-form select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.tecnico-vehiculo-form button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+}
+
+.tecnico-vehiculo-form button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
+}
+.tecnico-vehiculo-form {
+  margin-top: 10px;
+  background-color: #3a3a3a;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.tecnico-vehiculo-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+.tecnico-vehiculo-form input,
+.tecnico-vehiculo-form select,
+.tecnico-vehiculo-form button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #f2c14e;
+}

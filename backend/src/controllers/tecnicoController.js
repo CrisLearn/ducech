@@ -204,30 +204,33 @@ export const getClienteById = async (req, res) => {
 
 export const updateClienteForTecnico = async (req, res) => {
     try {
-      const { clienteId, nombre, email, telefono, direccion } = req.body;
-      const tecnicoId = req.userId; // Obtener el ID del técnico del token
+      const { id } = req.params; // Obtener el ID del cliente desde la URL
+      const { nombre, email, telefono, direccion } = req.body;
   
-      // Buscar el cliente por ID
-      const cliente = await Cliente.findById(clienteId);
-      if (!cliente) {
+      // Buscar el cliente por ID y actualizarlo con los nuevos datos
+      const updatedCliente = await Cliente.findByIdAndUpdate(
+        id,
+        {
+          nombre,
+          email,
+          telefono,
+          direccion,
+          fechaActualizacion: new Date()
+        },
+        { new: true } // Esta opción devuelve el documento modificado en lugar del original
+      );
+  
+      if (!updatedCliente) {
         return res.status(404).send({ error: 'Cliente no encontrado' });
       }
   
-      // Actualizar la información del cliente sin cambiar la contraseña
-      cliente.nombre = nombre;
-      cliente.email = email;
-      cliente.telefono = telefono;
-      cliente.direccion = direccion;
-      cliente.fechaActualizacion = new Date();
-  
-      await cliente.save();
-  
-      res.status(200).send(cliente);
+      res.status(200).send(updatedCliente);
     } catch (error) {
       console.error(error); // Agregar log para ver el error en la consola
       res.status(400).send({ error: 'Error al actualizar el cliente. Por favor, revise los datos e intente nuevamente.' });
     }
   };
+  
   
   
 
@@ -281,10 +284,16 @@ export const generateClientesReport = async (req, res) => {
     }
 };
 
-export const createVehiculoForTecnicio = async (req, res) => {
+export const createVehiculoForTecnico = async (req, res) => {
     try {
-        const { placa, tipo, marca, modelo, cilindraje, color, kilometrajeActual, observacion } = req.body;
-        const tecnicoId = req.userId; // Obtener el ID del cliente del token
+        const { placa, tipo, marca, modelo, cilindraje, color, kilometrajeActual, observacion, clienteId } = req.body;
+        const tecnicoId = req.userId; // Obtener el ID del técnico del token
+
+        // Verificar si el cliente existe
+        const cliente = await Cliente.findById(clienteId);
+        if (!cliente) {
+            return res.status(404).send({ error: 'Cliente no encontrado' });
+        }
 
         const newVehiculo = new Vehiculo({
             placa,
@@ -301,10 +310,14 @@ export const createVehiculoForTecnicio = async (req, res) => {
         // Guardar el nuevo vehículo
         await newVehiculo.save();
 
-        // Buscar el cliente por ID y añadir el vehículo a su lista de vehículos
+        // Añadir el vehículo a la lista de vehículos del cliente
+        cliente.vehiculos.push(newVehiculo._id);
+        await cliente.save();
+
+        // Asignar el vehículo al técnico también si es necesario (opcional)
         const tecnico = await Tecnico.findById(tecnicoId);
         if (!tecnico) {
-            return res.status(404).send({ error: 'Tecnico no encontrado' });
+            return res.status(404).send({ error: 'Técnico no encontrado' });
         }
 
         tecnico.vehiculos.push(newVehiculo._id);
@@ -316,6 +329,7 @@ export const createVehiculoForTecnicio = async (req, res) => {
         res.status(400).send({ error: 'Error al crear el vehículo. Por favor, revise los datos e intente nuevamente.' });
     }
 };
+
 
 export const getAllVehiculos = async (req, res) => { 
     try {
@@ -476,4 +490,16 @@ export const createMantenimientoForVehiculo = async (req, res) => {
         console.error('Error:', error);
         res.status(400).send({ error: 'Error al crear el mantenimiento. Por favor, revise los datos e intente nuevamente.' });
     }
+};
+export const getAllMantenimientos = async (req, res) => { 
+    try {
+        const tecnicoId = req.userId; // Obtener el ID del tecnico del token
+        const tecnico = await Tecnico.findById(tecnicoId).populate('mantenimientos');
+        if (!tecnico) {
+            return res.status(404).send({ error: 'Tecnico no encontrado' });
+        }
+        res.send(tecnico.mantenimientos);
+    } catch (error) { 
+        res.status(500).send(error); 
+    } 
 };
