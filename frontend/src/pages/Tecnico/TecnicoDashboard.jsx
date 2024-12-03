@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './TecnicoDashboard.css';
+import { FaWrench, FaUser, FaCar, FaClipboardList } from 'react-icons/fa';
 
 const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const [selectedSection, setSelectedSection] = useState("Técnicos");
@@ -12,7 +13,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const [formVisible, setFormVisible] = useState(false);
   const [successMessages, setSuccessMessages] = useState({});
   const [errorMessages, setErrorMessages] = useState({});
-
+  const [reporte, setReporte] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -521,7 +522,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   </form>
 
   );
-
   const [nuevoMantenimiento, setNuevoMantenimiento] = useState({
     vehiculo: "",
     tipoMantenimiento: "",
@@ -534,66 +534,41 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const handleAddMantenimiento = async (e) => {
     e.preventDefault();
     try {
-      // Extraer los valores del estado 'nuevoMantenimiento'
-      const {
-        vehiculo, // Esto es la placa seleccionada
-        tipoMantenimiento,
-        detalleMantenimiento,
-        marcaRepuesto,
-        kilometrajeActual,
-        kilometrajeCambio,
-        detalleGeneral,
-      } = nuevoMantenimiento;
-  
-      // Validar que todos los campos estén completos
-      if (
-        !vehiculo ||
-        !tipoMantenimiento ||
-        !detalleMantenimiento ||
-        !marcaRepuesto ||
-        !kilometrajeActual ||
-        !kilometrajeCambio ||
-        !detalleGeneral
-      ) {
+      // Validación local
+      if (!nuevoMantenimiento.vehiculo || !nuevoMantenimiento.tipoMantenimiento || 
+          !nuevoMantenimiento.detalleMantenimiento || !nuevoMantenimiento.marcaRepuesto || 
+          !nuevoMantenimiento.kilometrajeActual || !nuevoMantenimiento.kilometrajeCambio || 
+          !nuevoMantenimiento.detalleGeneral) {
         throw new Error("Por favor, completa todos los campos del formulario.");
       }
-  
-      // Construir el payload para la solicitud
       const payload = {
-        placa: vehiculo, // Se pasa la placa del vehículo al backend
-        tipoMantenimiento,
-        detalleMantenimiento,
-        marcaRepuesto,
-        kilometrajeActual: parseInt(kilometrajeActual),
-        kilometrajeCambio: parseInt(kilometrajeCambio),
-        detalleGeneral,
+        ...nuevoMantenimiento,
+        placa: nuevoMantenimiento.vehiculo // Ensure placa is sent
       };
-  
-      // Obtener token de autenticación del localStorage
+
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Usuario no autenticado.");
       }
-  
-      // Enviar la solicitud POST al servidor
+
       const response = await fetch("http://localhost:5000/api/tecnico/registrar-mantenimiento", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload), // Use modified payload
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        const errorMessage = errorData.error || "Error al agregar mantenimiento. Verifica los datos.";
+        const errorMessage = errorData.message || "Error al agregar mantenimiento. Verifica los datos y la autenticación.";
         throw new Error(errorMessage);
       }
-  
-      // Manejar la respuesta del servidor
+
       const mantenimientoAgregado = await response.json();
-      setMantenimientos((prev) => [...prev, mantenimientoAgregado]);
+      setMantenimientos((prevMantenimientos) => [...prevMantenimientos, mantenimientoAgregado]);
+
       setNuevoMantenimiento({
         vehiculo: "",
         tipoMantenimiento: "",
@@ -601,14 +576,14 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         marcaRepuesto: "",
         kilometrajeActual: "",
         kilometrajeCambio: "",
-        detalleGeneral: "",
+        detalleGeneral: ""
       });
+      setFormVisible(false);
       showMessage("Mantenimiento agregado correctamente.");
     } catch (err) {
-      console.error("Error al registrar mantenimiento:", err.message);
-      showMessage(err.message, "error");
+      showMessage(err.message, 'error');
     }
-  };  
+  };
   const handleEliminar = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/cliente/delete-mantenimiento/${id}`, {
@@ -784,6 +759,97 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     </form>
   );
 
+  const generarReporteClientes = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:5000/api/tecnico/reportes-clientes', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
+      }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      setReporte(blob);
+
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-clientes.pdf'; 
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+  };
+  const generarReporteVehiculos = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:5000/api/tecnico/reportes-vehiculos', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
+      }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      setReporte(blob);
+
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-vehiculos.pdf'; 
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+  };
+  const generarReporteMantenimientos = () => {
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:5000/api/tecnico/reportes-mantenimientos', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.blob(); // Obtener el contenido como Blob
+      }
+      throw new Error('Error en la solicitud');
+    })
+    .then(blob => {
+      setReporte(blob);
+
+      // Crear una URL para el Blob y abrirla en una nueva pestaña
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte-mantenimientos.pdf'; 
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+  };
+
   const sections = {
     Clientes: "Gestión de Clientes: Aquí puedes tecnicoistrar clientes registrados.",
     Vehículos: "Gestión de Vehículos: Lista y tecnicoistra los vehículos registrados.",
@@ -948,87 +1014,102 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
             </div>
           )}
 
-        {selectedSection === "Mantenimientos" && (
-          <div className="cliente-mantenimientos-list">
-            {/* Botón para alternar el formulario */}
-            <button
-              className="cliente-add-mantenimiento-button"
-              onClick={() => setFormVisible(!formVisible)}
-            >
-              {formVisible ? "Cancelar" : "Agregar Mantenimiento"}
-            </button>
-
-            {/* Renderizar formulario si es visible */}
-            {formVisible && renderMantenimientosForm()}
-
-            {/* Mensajes de éxito y error globales */}
-            {successMessage && <p className="success">{successMessage}</p>}
-            {error && <p className="error">{error}</p>}
-
-            {/* Mostrar mensaje si no hay mantenimientos */}
-            {mantenimientos.length === 0 && !error && (
-              <p>No hay mantenimientos registrados</p>
-            )}
-
-            {/* Listar mantenimientos */}
-            {mantenimientos.map((mantenimiento) => (
-              <div key={mantenimiento._id} className="cliente-mantenimiento-item">
-                <h3>{mantenimiento.descripcion || "Sin descripción"}</h3>
-                <p className="vehiculo-placa">
-                  <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo?.placa || "Desconocida"}
-                </p>
-                <p>
-                  <strong>Fecha:</strong> {new Date(mantenimiento.fechaCreacion).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual || "N/A"}
-                </p>
-                <p>
-                  <strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio || "N/A"}
-                </p>
-                <p>
-                  <strong>Detalles:</strong> {mantenimiento.detalleGeneral || "Sin detalles"}
-                </p>
-
-                {/* Botón para alternar detalles */}
-                <button onClick={() => toggleDetalles(mantenimiento._id)}>
-                  {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
+          {selectedSection === "Mantenimientos" && (
+              <div className="cliente-mantenimientos-list">
+                <button
+                  className="cliente-add-mantenimiento-button"
+                  onClick={() => setFormVisible(!formVisible)}
+                >
+                  {formVisible ? "Cancelar" : "Agregar Mantenimiento"}
                 </button>
 
-                {/* Botón para eliminar mantenimiento */}
-                <button onClick={() => handleEliminar(mantenimiento._id)}>
-                  Eliminar Mantenimiento
-                </button>
+                {formVisible && renderMantenimientosForm()}
 
-                {/* Botón para marcar como realizado */}
-                {!mantenimiento.realizado && (
-                  <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
-                    Marcar como Realizado
-                  </button>
+                {successMessage && <p className="success">{successMessage}</p>}
+                {error && <p className="error">{error}</p>}
+
+                {mantenimientos.length === 0 && !error && (
+                  <p>No hay mantenimientos registrados</p>
                 )}
 
-                {/* Mensajes específicos por mantenimiento */}
-                {successMessages[mantenimiento._id] && (
-                  <p className="mantenimiento-success">
-                    {successMessages[mantenimiento._id]}
-                  </p>
-                )}
-                {errorMessages[mantenimiento._id] && (
-                  <p className="error-message">{errorMessages[mantenimiento._id]}</p>
-                )}
+                {mantenimientos.map((mantenimiento) => (
+                  <div key={mantenimiento._id} className="cliente-mantenimiento-item">
+                    <h3>{mantenimiento.descripcion}</h3>
+                    <p className="vehiculo-placa">
+                      <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo.placa}
+                    </p>
+                    <p><strong>Fecha:</strong> {mantenimiento.fechaCreacion}</p>
+                    <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual}</p>
+                    <p><strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio}</p>
+                    <p><strong>Detalles:</strong> {mantenimiento.detalleGeneral}</p>
 
-                {/* Detalles adicionales si están visibles */}
-                {detallesVisible[mantenimiento._id] && (
-                  <div className="cliente-mantenimiento-detalles">
-                    <p><strong>Tipo:</strong> {mantenimiento.tipoMantenimiento || "N/A"}</p>
-                    <p><strong>Detalle:</strong> {mantenimiento.detalleMantenimiento || "N/A"}</p>
-                    <p><strong>Marca del Repuesto:</strong> {mantenimiento.marcaRepuesto || "N/A"}</p>
+                    <button onClick={() => toggleDetalles(mantenimiento._id)}>
+                      {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
+                    </button>
+                    <button onClick={() => handleEliminar(mantenimiento._id)}>
+                      Eliminar Mantenimiento
+                    </button>
+
+                    {/* Mostrar el botón solo si el mantenimiento no ha sido realizado */}
+                    {!mantenimiento.realizado && (
+                      <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
+                        Marcar como Realizado
+                      </button>
+                    )}
+
+                    {/* Muestra el mensaje de éxito o error solo para el mantenimiento actual */}
+                    {successMessages[mantenimiento._id] && (
+                      <p className="mantenimiento-success">{successMessages[mantenimiento._id]}</p>
+                    )}
+                    {errorMessages[mantenimiento._id] && (
+                      <p className="error-message">{errorMessages[mantenimiento._id]}</p>
+                    )}
+                    {detallesVisible[mantenimiento._id] && (
+                      <div className="cliente-mantenimiento-detalles">
+                        <p><strong>Tipo:</strong> {mantenimiento.tipoMantenimiento}</p>
+                        <p><strong>Detalle:</strong> {mantenimiento.detalleMantenimiento}</p>
+                        <p><strong>Marca del Repuesto:</strong> {mantenimiento.marcaRepuesto}</p>
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+          )}
+
+            {selectedSection === "Reportes" && (
+              <div className='reportes'>
+                <div>
+                  <button onClick={generarReporteClientes}>
+                    <FaUser style={{ marginRight: '8px' }} /> Generar Reporte de Clientes
+                  </button>
+                  {reporte && (
+                    <div id="reporteContainer">
+                      <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <button onClick={generarReporteVehiculos}>
+                    <FaCar style={{ marginRight: '8px' }} /> Generar Reporte de Vehículos
+                  </button>
+                  {reporte && (
+                    <div id="reporteContainer">
+                      <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <button onClick={generarReporteMantenimientos}>
+                    <FaClipboardList style={{ marginRight: '8px' }} /> Generar Reporte de Mantenimientos
+                  </button>
+                  {reporte && (
+                    <div id="reporteContainer">
+                      <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
 
         </div>
