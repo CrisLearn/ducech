@@ -1,6 +1,11 @@
-.header {
-    background-color: #f8f9fa;
-    padding: 10px;
-    text-align: center;
-  }
-  
+.header-image {
+  width: 300px; /* o cualquier tamaño que prefieras */
+  height: auto;
+  display: block;
+  margin: 0 auto; /* Esto centrará la imagen */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.header-1 {
+  background-color: #2e2e2e;
+}

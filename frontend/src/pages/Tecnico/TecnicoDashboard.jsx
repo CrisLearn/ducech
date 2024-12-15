@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './TecnicoDashboard.css';
-import { FaWrench, FaUser, FaCar, FaClipboardList } from 'react-icons/fa';
+import Header from '../../components/Layout/Header';
+import { FaWrench, FaUser, FaCar, FaClipboardList, FaDoorClosed } from 'react-icons/fa';
 
 const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const [selectedSection, setSelectedSection] = useState("Técnicos");
@@ -393,6 +394,31 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     } catch (error) {
       console.error("Error al obtener los vehículos:", error);
       setError("Error al obtener los vehículos");
+    }
+  };
+  const fetchPerfil = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Usuario no autenticado.");
+      }
+      const response = await fetch('http://localhost:5000/api/admin/perfil-admin', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setVehiculos(data);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || "Error al obtener el perfil");
+      }
+    } catch (error) {
+      console.error("Error al obtener lel perfil:", error);
+      setError("Error al obtener el perfil");
     }
   };
   useEffect(() => {
@@ -878,11 +904,14 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
 
       {/* Contenido principal */}
       <main className="main-content">
+        
         <header className="header">
-          <span>Bienvenido</span>
+          <button className="perfil-button" onClick={handleLogout}>
+            <FaUser style={{ marginRight: '8px' }} />Perfil
+          </button>
           <button className="logout-button" onClick={handleLogout}>
-            Salir
-              </button>
+            <FaDoorClosed style={{ marginRight: '8px'}} /> Salir5/
+          </button>
         </header>
         <div className="dashboard-content">
           <h1>{selectedSection}</h1>
