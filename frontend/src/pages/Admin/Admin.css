@@ -73,3 +73,33 @@
     background-color: null;
     color: #000000;
 }
+.dashboard-admin h1 {
+    color: #000000;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+  
+.dashboard-admin p {
+    color: #dddddd;
+    font-size: 16px;
+}
+
+/*Estilos de la lista de tecnicos*/
+.tecnicos-list-admin {
+    margin-top: 20px;
+}
+.tecnico-item-admin {
+    background-color: null; 
+    color: #f2c14e;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #f2c14e;
+    border-radius: 5px;
+}
+.tecnico-item-admin h3 {
+    margin: 0 0 5px;
+}
+.tecnico-item-admin p {
+    margin: 5px 0;
+    color: #000000;
+}

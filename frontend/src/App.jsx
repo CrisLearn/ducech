@@ -14,7 +14,7 @@ const App = () => {
     <Router>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/" element={<AdmPage />} />
+        <Route path="/" element={<AdminDashboard />} />
         <Route path="/ducech" element={<LandingPage />} />
         <Route path="/ducech/login" element={<LoginPage />} />
         <Route path="/ducech/registro" element={<Registro />} />
@@ -24,7 +24,7 @@ const App = () => {
           path="/ducech/admin"
           element={
             <PrivateRoute>
-              <AdminDashboard />
+              <AdmPage />
             </PrivateRoute>
           }
         />

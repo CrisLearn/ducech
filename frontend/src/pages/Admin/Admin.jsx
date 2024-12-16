@@ -113,6 +113,8 @@ const AdmPage = ({ adminName = "Administrador"}) => {
                                     tecnicos.map((tecnico) => (
                                         <div key={tecnico._id} className="tecnico-item-admin">
                                             <h3>{tecnico.nombre}</h3>
+                                            <p>Email:{tecnico.email}</p>
+                                            <p>Teléfono:{tecnico.telefono}</p>
                                         </div>
                                     ))
                                 )}
