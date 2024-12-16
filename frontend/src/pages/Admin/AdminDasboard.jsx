@@ -335,8 +335,6 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
             </div>
           )}
 
-
-
           {selectedSection === "Reportes" && (
             <div className='reportes'>
               <div>

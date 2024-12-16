@@ -7,12 +7,14 @@ import TecnicoDashboard from './pages/Tecnico/TecnicoDashboard';
 import ClientDashboard from './pages/Client/ClientDashboard';
 import Registro from './pages/Log/RegisterPage';
 import PrivateRoute from './services/PrivateRoutes'; 
+import AdmPage from './pages/Admin/Admin'
 
 const App = () => {
   return (
     <Router>
       <Routes>
         {/* Rutas públicas */}
+        <Route path="/" element={<AdmPage />} />
         <Route path="/ducech" element={<LandingPage />} />
         <Route path="/ducech/login" element={<LoginPage />} />
         <Route path="/ducech/registro" element={<Registro />} />
