@@ -1,11 +1,18 @@
 .header-image {
-  width: 300px; /* o cualquier tamaño que prefieras */
-  height: auto;
-  display: block;
-  margin: 0 auto; /* Esto centrará la imagen */
-  margin-top: 10px;
-  margin-bottom: 10px;
+  width: 300px; /* Controla el ancho de la imagen */
+  height: auto; /* Mantén la proporción de la imagen */
+  display: block; /* Asegura que la imagen sea un bloque */
+  margin: auto; /* Centraliza la imagen y aplica márgenes superior e inferior */
 }
+
 .header-1 {
-  background-color: #2e2e2e;
+  position: fixed; /* Fija el Header */
+  top: 0; /* Lo posiciona en la parte superior de la ventana */
+  left: 0; /* Lo alinea con el borde izquierdo */
+  width: 100%; /* Lo expande a todo el ancho */
+  background-color: #2e2e2e; /* Color de fondo oscuro */
+  z-index: 1000; /* Asegura que el Header esté encima de otros elementos */
+  padding: 10px 0; /* Agrega espaciado interno para un diseño cómodo */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Agrega una ligera sombra para destacar el Header */
 }
+

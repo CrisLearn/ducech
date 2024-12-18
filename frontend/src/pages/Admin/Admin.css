@@ -1,0 +1,108 @@
+/*Cabecera*/
+.header-admin {
+    margin-top: 80px; /* Ajusta el margen superior para evitar que el contenido quede oculto */
+}
+
+.admin-dashboard {
+    display: flex; /* Ajusta el diseño principal a un contenedor de dos columnas */
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    height: calc(100vh - 80px); /* Altura total menos la del header */
+}
+.sidebar-admin {
+    width: 250px;
+    height: calc(100vh - 80px); /* Ajusta la altura para que reste el tamaño del header */
+    background-color: #2e2e2e; /* Gris oscuro Caterpillar */
+    color: #f2c14e; /* Amarillo Caterpillar */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed; /* Fija la barra en su posición */
+    top: 80px; /* Asegura que el sidebar inicie justo debajo del header */
+    left: 0;
+    transition: transform 0.3s ease; /* Agregado para la animación de la barra lateral */
+}
+.sidebar-admin h2 {
+    margin-bottom: 20px;
+    font-size: 30px;
+    border-bottom: 2px solid #f2c14e;
+    padding-bottom: 10px;
+}
+.sidebar-admin ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .sidebar-admin ul li {
+    margin: 10px 0;
+    width: 100%;
+  }
+  
+  .sidebar-admin ul li button {
+    width: 100%;
+    background: black;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 10px 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .sidebar-admin ul li button:hover {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .sidebar-admin li.active button {
+    background-color: #f2c14e;
+    color: #2e2e2e;
+    font-weight: bold;
+
+  }
+  .buttons-admin {
+    margin-top: auto; /* Empuja este contenedor al final del sidebar */
+}
+
+.buttons-admin button {
+    margin-bottom: 10px;
+    margin-left: 35px; /* Espaciado entre los botones */
+    margin-right: 30px; /* Espaciado entre los botones */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f2c14e; /* Botón azul */
+    color: #000000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.buttons-admin button:hover {
+    background-color: #ffffff; /* Cambia el color al pasar el cursor */
+}
+
+/*Diseños del contenido*/
+.content-admin {
+    flex-grow: 1; /* Permite que ocupe el espacio restante a la derecha del sidebar */
+    margin-left: 250px; /* Asegura que comience después del sidebar */
+    height: calc(100vh - 80px); /* Mantén la altura debajo del header */
+    background-color: black; /* Color de fondo */
+    padding: 20px; /* Opcional: Padding para el contenido */
+    overflow-y: auto;
+    color: #f2c14e; /* Habilita el scroll vertical si es necesario */
+}
+
+.item-tecnicos-admin, .item-clientes-admin {
+    background-color: #2e2e2e; /* Fondo gris oscuro */
+    color: #ffffff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #f2c14e; /* Borde amarillo */
+    border-radius: 5px;
+  }

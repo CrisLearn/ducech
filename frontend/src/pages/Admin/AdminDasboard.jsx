@@ -200,7 +200,6 @@ const AdminDashboard = ({ adminName = "Administrador" }) => {
     .catch(error => console.error('Error:', error));
   };
 
-  
   const sections = {
     Técnicos: "Gestión de Técnicos: Aquí puedes agregar, editar o eliminar técnicos.",
     Clientes: "Gestión de Clientes: Aquí puedes administrar clientes registrados.",
