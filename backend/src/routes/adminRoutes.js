@@ -21,7 +21,7 @@ const router = express.Router();
 
 router.post('/registrar-admin', createAdmin);
 router.post('/login-admin', loginAdmin);
-router.get('/perfil-admin', getAdminProfile);
+router.get('/perfil-admin',authMiddleware, getAdminProfile);
 router.put('/update-admin', authMiddleware,updateAdmin);
 router.get('/tecnicos', authMiddleware,getAllTecnicos);
 router.get('/tecnico/:id', authMiddleware,getTecnicoById);

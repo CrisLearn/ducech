@@ -14,7 +14,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   const [successMessages, setSuccessMessages] = useState({});
   const [errorMessages, setErrorMessages] = useState({});
 
-
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     placa: "",
     tipo: "sedan",
@@ -34,9 +33,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
     kilometrajeActual: "",
     kilometrajeCambio: "",
     detalleGeneral: ""
-  });
-
-
+  })
   const generarReporte = () => {
     const token = localStorage.getItem('token');
 
@@ -67,8 +64,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
     })
     .catch(error => console.error('Error:', error));
   };
-
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -128,7 +123,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
 
     fetchData();
   }, [selectedSection]);
-
   const handleInputChange = (e, formType) => {
     const { name, value } = e.target;
     if (formType === 'vehiculo') {
@@ -143,7 +137,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       }));
     }
   };
-
   const toggleDetalles = (id) => {
     setDetallesVisible((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -152,7 +145,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
     localStorage.removeItem("token");
     window.location.href = "/ducech/login";
   };
-
   const showMessage = (message, type = 'success') => {
     if (type === 'success') {
       setSuccessMessage(message);
@@ -162,7 +154,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       setTimeout(() => setError(""), 5000);
     }
   };
-
   const handleAddVehiculo = async (e) => {
     e.preventDefault();
     try {
@@ -208,9 +199,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       setError(err.message);
     }
   };
-  
-  
-
   const handleAddMantenimiento = async (e) => {
     e.preventDefault();
     try {
@@ -264,7 +252,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       showMessage(err.message, 'error');
     }
   };
-
   const handleUpdate = async (e, id) => {
     e.preventDefault();
     const form = e.target;
@@ -325,8 +312,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       setError("Error al enviar la solicitud");
     }
   };  
-
-
   const renderSVG = (tipo) => {
     switch (tipo.toLowerCase()) {
       case "sedan":
@@ -335,7 +320,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         return <Sedan />; 
     }
   };
-
   const renderVehiculosForm = () => (
     <form onSubmit={handleAddVehiculo} className="cliente-vehiculo-form">
       <label>
@@ -442,9 +426,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       <button type="submit">Guardar</button>
     </form>
   );
-  
-  
-
   const renderMantenimientosForm = () => (
     <form onSubmit={handleAddMantenimiento} className="cliente-mantenimiento-form">
       <label>
@@ -539,8 +520,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       <button type="submit">Guardar</button>
     </form>
   );
-  
-
   const handleEliminar = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/cliente/delete-mantenimiento/${id}`, {
@@ -579,7 +558,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       }));
     }
   };
-
   const handleRealizarMantenimiento = async (id) => {
     try {
       // Llamada a la API para marcar el mantenimiento como realizado
@@ -614,8 +592,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       });
     }
   };
-  
-
     const sections = {
     Vehículos: "Gestión de Vehículos: Lista y administra los vehículos registrados.",
     Mantenimientos: "Historial de Mantenimientos: Detalles sobre mantenimientos realizados.",

@@ -100,27 +100,27 @@ export const loginAdmin = async (req, res) => {
 
 export const getAdminProfile = async (req, res) => {
     try {
-        // Obtén el ID del admin desde la solicitud (por ejemplo, del token JWT o de los parámetros)
-        const adminId = req.params.id || req.user.id; // Asume que tienes middleware de autenticación
+        // Obtener el ID del administrador desde el middleware de autenticación
+        const adminId = req.userId;
 
-        // Busca al administrador en la base de datos
+        // Buscar el administrador por ID
         const admin = await Admin.findById(adminId);
-
         if (!admin) {
-            return res.status(404).json({ error: 'Administrador no encontrado' });
+            return res.status(404).send({ error: 'Administrador no encontrado' });
         }
 
-        // Retorna los datos del perfil
-        return res.status(200).json({
+        // Retornar los datos del perfil
+        res.send({
             id: admin._id,
             nombre: admin.nombre,
-            email: admin.email
+            email: admin.email,
         });
     } catch (error) {
         console.error('Error al obtener el perfil del administrador:', error);
-        return res.status(500).json({ error: 'Error interno del servidor' });
+        res.status(500).send({ error: 'Error interno del servidor' });
     }
 };
+
 
 // Método para actualizar los datos del administrador
 export const updateAdmin = async (req, res) => {

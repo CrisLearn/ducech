@@ -4,7 +4,7 @@ import Header from '../../components/Layout/Header'
 import { FaWrench, FaUser, FaDoorOpen, FaCar, FaClipboardList } from 'react-icons/fa';
 
 const AdmPage = () => {
-    const [selectedSection, setSelectedSection] = useState("Técnicos");
+    const [selectedSection, setSelectedSection] = useState("Perfil");
     const [tecnicos, setTecnicos] = useState([]);
     const [clientes, setClientes] = useState([]);
     const [vehiculos, setVehiculos] = useState([]);
@@ -13,57 +13,62 @@ const AdmPage = () => {
     const [error, setError] = useState("");
     const [detallesVisible, setDetallesVisible] = useState({});
     const [reporte, setReporte] = useState(null);
+    const [perfil, setPerfil] = useState(null);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [formVisible, setFormVisible] = useState(false);
     useEffect(() => {
-        const fetchData = async (url, setState) => {
-          try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-              throw new Error("No se encontró un token de autenticación. Por favor, inicia sesión.");
-            }
-      
-            const response = await fetch(url, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-      
-            if (!response.ok) {
-              throw new Error("Error al obtener los datos. Verifica tu autenticación.");
-            }
-      
-            const data = await response.json();
-            setState(data);
-            setError("");
-          } catch (err) {
-            console.error("Error en la llamada a la API:", err);
-            setError(err.message || "Error desconocido");
-            setState([]);
+      const fetchData = async (url, setState) => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            throw new Error("No se encontró un token de autenticación. Por favor, inicia sesión.");
           }
-        };
-      
-        switch (selectedSection) {
-          case "Técnicos":
-            fetchData("http://localhost:5000/api/admin/tecnicos", setTecnicos);
-            break;
-          case "Clientes":
-            fetchData("http://localhost:5000/api/admin/clientes", setClientes);
-            break;
-          case "Vehículos":
-            fetchData("http://localhost:5000/api/admin/vehiculos", setVehiculos);
-            break;
-          case "Mantenimientos":
-            fetchData("http://localhost:5000/api/admin/mantenimientos", (data) => {
-              // Asegurarse de que cada mantenimiento tiene la información del vehículo
-              const mantenimientosConVehiculo = data.map(mantenimiento => ({
-                ...mantenimiento,
-                vehiculo: mantenimiento.vehiculo || { placa: "Información no disponible" }
-              }));
-              setMantenimientos(mantenimientosConVehiculo);
-            });
-            break;
-          default:
-            break;
+    
+          const response = await fetch(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error("Error al obtener los datos. Verifica tu autenticación.");
+          }
+    
+          const data = await response.json();
+          setState(data);
+          setError("");
+        } catch (err) {
+          console.error("Error en la llamada a la API:", err);
+          setError(err.message || "Error desconocido");
+          setState(null); // Cambié a `null` para diferenciar datos cargados de errores
         }
+      };
+    
+      switch (selectedSection) {
+        case "Técnicos":
+          fetchData("http://localhost:5000/api/admin/tecnicos", setTecnicos);
+          break;
+        case "Clientes":
+          fetchData("http://localhost:5000/api/admin/clientes", setClientes);
+          break;
+        case "Vehículos":
+          fetchData("http://localhost:5000/api/admin/vehiculos", setVehiculos);
+          break;
+        case "Mantenimientos":
+          fetchData("http://localhost:5000/api/admin/mantenimientos", (data) => {
+            const mantenimientosConVehiculo = data.map((mantenimiento) => ({
+              ...mantenimiento,
+              vehiculo: mantenimiento.vehiculo || { placa: "Información no disponible" },
+            }));
+            setMantenimientos(mantenimientosConVehiculo);
+          });
+          break;
+        case "Perfil":
+          fetchData("http://localhost:5000/api/admin/perfil-admin", setPerfil);
+          break;
+        default:
+          break;
+      }
     }, [selectedSection]);
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -75,6 +80,56 @@ const AdmPage = () => {
           [id]: !prev[id],
         }));
     };
+    const handleUpdate = async (e, id) => {
+      e.preventDefault();
+      const form = e.target;
+      const updatedAdmin = {
+        nombre: form.nombre.value,
+        password: form.password.value,
+        
+      };
+    
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Usuario no autenticado.");
+        }
+        const response = await fetch(
+          `http://localhost:5000/api/admin/update-admin`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(updatedAdmin),
+          }
+        );
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Perfil Actualizado:", data);
+    
+    
+          // Muestra el mensaje de éxito
+          setSuccessMessage("Administrador actualizado correctamente");
+          setError(null);
+    
+          // Limpia el mensaje de éxito después de 3 segundos
+          setTimeout(() => setSuccessMessage(""), 3000);
+    
+          // Opcional: Oculta el formulario
+          setFormVisible(false);
+        } else {
+          const errorData = await response.json();
+          console.error("Error al actualizar el administrador:", errorData);
+          setError("Administrador ya registrado");
+        }
+      } catch (error) {
+        console.error("Error al enviar la solicitud:", error);
+        setError("Error al enviar la solicitud");
+      }
+    }; 
     const generarReporteTecnicos = () => {
         const token = localStorage.getItem('token');
     
@@ -221,7 +276,7 @@ const AdmPage = () => {
                         <button onClick={handleLogout}>
                             <FaDoorOpen/>
                         </button>
-                        <button>
+                        <button onClick={() => setSelectedSection("Perfil")}>
                             <FaUser/>
                         </button>
                     </div>
@@ -259,8 +314,8 @@ const AdmPage = () => {
                 ))
               )}
             </div>
-          )}
-          {selectedSection === "Vehículos" && (
+                    )}
+                    {selectedSection === "Vehículos" && (
                       <div className="vehiculos-list">
                         {vehiculos.length === 0 ? (
                           <p>Cargando vehículos...</p>
@@ -287,7 +342,6 @@ const AdmPage = () => {
                         )}
                       </div>
                     )}
-          
                     {selectedSection === "Mantenimientos" && (
                       <div className="mantenimientos-list">
                         {mantenimientos.length === 0 ? (
@@ -317,7 +371,6 @@ const AdmPage = () => {
                         )}
                       </div>
                     )}
-          
                     {selectedSection === "Reportes" && (
                       <div className='reportes'>
                         <div>
@@ -362,6 +415,57 @@ const AdmPage = () => {
                         </div>
                       </div>
                     )}
+                    {selectedSection === "Perfil" && (
+                      <div className="perfil">
+                        {perfil ? (
+                          <div className="perfil-admin">
+                            <h3>Editar Perfil del Administrador</h3>
+                            <form onSubmit={(e) => handleUpdate(e)}>
+                              <label htmlFor="nombre"><strong>Nombre:</strong></label>
+                              <input
+                                type="text"
+                                id="nombre"
+                                name="nombre"
+                                defaultValue={perfil.nombre}
+                                maxLength="50"
+                                pattern="^[a-zA-Z\s]{1,50}$"
+                                title="El nombre debe tener solo letras y espacios (máximo 50 caracteres)."
+                                required
+                              />
+
+                              <label htmlFor="email"><strong>Correo Electrónico:</strong></label>
+                              <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                defaultValue={perfil.email}
+                                disabled // No editable
+                              />
+
+                              <label htmlFor="password"><strong>Nueva Contraseña:</strong></label>
+                              <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Ingrese una nueva contraseña (opcional)"
+                                minLength="8"
+                                maxLength="50"
+                                title="La contraseña debe tener al menos 8 caracteres."
+                              />
+
+                              <input type="submit" value="Actualizar" />
+                              {/* Mensajes de éxito o error debajo del botón */}
+                              {successMessage && <p className="perfil-success">{successMessage}</p>}
+                              {error && <p className="error">{error}</p>}
+                            </form>
+                          </div>
+                        ) : (
+                          <p>Cargando perfil...</p>
+                        )}
+                      </div>
+                    )}
+
+
                 </main>
             </div>
         </div>
