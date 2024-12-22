@@ -98,14 +98,6 @@
     color: #f2c14e; /* Habilita el scroll vertical si es necesario */
 }
 
-.item-tecnicos-admin, .item-clientes-admin {
-  background-color: #2e2e2e; /* Fondo gris oscuro */
-  color: #ffffff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e; /* Borde amarillo */
-  border-radius: 5px;
-}
 
 /*Estilos formulario perfil*/
 .perfil-admin label, 
@@ -150,3 +142,109 @@
   border-radius: 3px;
   border: 1px solid #f2c14e;
 }
+
+/*Estilos para el dashboard de tecnicos*/
+.list-tecnicos-admin {
+  margin-top: 20px;
+}
+.item-tecnicos-admin {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.item-tecnicos-admin h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+.item-tecnicos-admin hr {
+  margin: 0 0 5px;
+}
+
+/*Estilos para el dashboard de clientes*/
+.list-clientes-admin {
+  margin-top: 20px;
+}
+.item-clientes-admin {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.item-clientes-admin h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+.item-clientes-admin hr {
+  margin: 0 0 5px;
+}
+
+/*Estilos para el dashboard de clientes*/
+.list-vehiculos-admin {
+  margin-top: 20px;
+}
+.item-vehiculos-admin {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.item-vehiculos-admin h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+.item-tecnicos-admin hr {
+  margin: 0 0 5px;
+}
+/*Estilos para el dashboard de mantenimientos*/
+.list-mantenimientos-admin {
+  margin-top: 20px;
+}
+.item-mantenimientos-admin {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.item-mantenimientos-admin h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+.item-mantenimientos-admin hr {
+  margin-bottom: 5px;
+}
+
+.contenido {
+  display: flex;
+  gap: 50px; /* Espaciado entre los elementos */
+  align-items: center;
+  margin-bottom: 5px; 
+  margin-top: 10px;
+}
+
+.reportes {
+  text-align: center; /* Centra todo el contenido del contenedor */
+}
+
+.botones-reportes button {
+  width: 400px;
+  font-size: 20px;
+  padding: 16px 20px;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  
+}
+
+
+
+

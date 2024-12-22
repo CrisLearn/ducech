@@ -4,7 +4,7 @@ import Header from '../../components/Layout/Header'
 import { FaWrench, FaUser, FaDoorOpen, FaCar, FaClipboardList } from 'react-icons/fa';
 
 const AdmPage = () => {
-    const [selectedSection, setSelectedSection] = useState("Perfil");
+    const [selectedSection, setSelectedSection] = useState("Técnicos");
     const [tecnicos, setTecnicos] = useState([]);
     const [clientes, setClientes] = useState([]);
     const [vehiculos, setVehiculos] = useState([]);
@@ -291,8 +291,10 @@ const AdmPage = () => {
                           tecnicos.map((tecnico) => (
                             <div key={tecnico._id} className="item-tecnicos-admin">
                               <h3>{tecnico.nombre}</h3>
+                              <div className='contenido'>
                               <p><strong>Email:</strong> {tecnico.email}</p>
                               <p><strong>Teléfono:</strong> {tecnico.telefono}</p>
+                              </div>
                               <hr />
                             </div>
                           ))
@@ -300,40 +302,45 @@ const AdmPage = () => {
                       </div>
                     )}
                     {selectedSection === "Clientes" && (
-            <div className="list-clientes-admin">
-              {clientes.length === 0 ? (
-                <p>Cargando clientes...</p>
-              ) : (
-                clientes.map((cliente) => (
-                  <div key={cliente._id} className="item-clientes-admin">
-                    <h3>{cliente.nombre}</h3>
-                    <p><strong>Email:</strong> {cliente.email}</p>
-                    <p><strong>Teléfono:</strong> {cliente.telefono}</p>
-                    <hr />
-                  </div>
-                ))
-              )}
-            </div>
+                      <div className="list-clientes-admin">
+                        {clientes.length === 0 ? (
+                          <p>Cargando clientes...</p>
+                        ) : (
+                          clientes.map((cliente) => (
+                            <div key={cliente._id} className="item-clientes-admin">
+                              <h3>{cliente.nombre}</h3>
+                              <div className='contenido'>
+                              <p><strong>Email:</strong> {cliente.email}</p>
+                              <p><strong>Teléfono:</strong> {cliente.telefono}</p>
+                              </div>
+                              <hr />
+                            </div>
+                          ))
+                        )}
+                      </div>
                     )}
                     {selectedSection === "Vehículos" && (
-                      <div className="vehiculos-list">
+                      <div className="list-vehiculos-admin">
                         {vehiculos.length === 0 ? (
                           <p>Cargando vehículos...</p>
                         ) : (
                           vehiculos.map((vehiculo) => (
-                            <div key={vehiculo._id} className="vehiculo-item">
+                            <div key={vehiculo._id} className="item-vehiculos-admin">
                               <h3>{vehiculo.placa}</h3>
+                              <div className='contenido'>
                               <p><strong>Marca:</strong> {vehiculo.marca}</p>
                               <p><strong>Color:</strong> {vehiculo.color}</p>
+                              </div>
                               <button onClick={() => toggleDetalles(vehiculo._id)}>
                                 {detallesVisible[vehiculo._id] ? "Ocultar detalles" : "Ver detalles"}
                               </button>
                               {detallesVisible[vehiculo._id] && (
-                                <div className="vehiculo-detalles">
+                                <div className="contenido">
                                   <p><strong>Tipo:</strong> {vehiculo.tipo}</p>
                                   <p><strong>Modelo:</strong> {vehiculo.modelo}</p>
                                   <p><strong>Motor:</strong> {vehiculo.cilindraje}</p>
                                   <p><strong>Kilometraje:</strong> {vehiculo.kilometrajeActual}</p>
+                                  
                                 </div>
                               )}
                               <hr />
@@ -343,21 +350,23 @@ const AdmPage = () => {
                       </div>
                     )}
                     {selectedSection === "Mantenimientos" && (
-                      <div className="mantenimientos-list">
+                      <div className="list-mantenimientos-admin">
                         {mantenimientos.length === 0 ? (
                           <p>Cargando mantenimientos...</p>
                         ) : (
                           mantenimientos.map((mantenimiento) => (
-                            <div key={mantenimiento._id} className="mantenimiento-item">
+                            <div key={mantenimiento._id} className="item-mantenimientos-admin">
                               <h3>Placa del Vehículo: {mantenimiento.vehiculo.placa}</h3>
+                              <div className='contenido'>
                               <p><strong>Tipo de Mantenimiento:</strong> {mantenimiento.tipoMantenimiento || "Información no disponible"}</p>
                               <p><strong>Descripción:</strong> {mantenimiento.detalleMantenimiento || "Información no disponible"}</p>
                               <p><strong>Realizado:</strong> {mantenimiento.realizado ? "Sí" : "No"}</p>
+                              </div>
                               <button onClick={() => toggleDetalles(mantenimiento._id)}>
                                 {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
                               </button>
                               {detallesVisible[mantenimiento._id] && (
-                                <div className='mantenimiento-detalles'>
+                                <div className='contenido'>
                                   <p><strong>Marca de Repuesto:</strong> {mantenimiento.marcaRepuesto || "Información no disponible"}</p>
                                   <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual || "Información no disponible"}</p>
                                   <p><strong>Kilometraje de Próximo Cambio:</strong> {mantenimiento.kilometrajeCambio || "Información no disponible"}</p>
@@ -373,13 +382,14 @@ const AdmPage = () => {
                     )}
                     {selectedSection === "Reportes" && (
                       <div className='reportes'>
+                        <div className='botones-reportes'>
                         <div>
                           <button onClick={generarReporteTecnicos}>
                             <FaWrench style={{ marginRight: '8px' }} /> Generar Reporte de Técnicos
                           </button>
                           {reporte && (
                             <div id="reporteContainer">
-                              <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                              
                             </div>
                           )}
                         </div>
@@ -389,7 +399,7 @@ const AdmPage = () => {
                           </button>
                           {reporte && (
                             <div id="reporteContainer">
-                              <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                              
                             </div>
                           )}
                         </div>
@@ -399,7 +409,7 @@ const AdmPage = () => {
                           </button>
                           {reporte && (
                             <div id="reporteContainer">
-                              <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                              
                             </div>
                           )}
                         </div>
@@ -409,9 +419,10 @@ const AdmPage = () => {
                           </button>
                           {reporte && (
                             <div id="reporteContainer">
-                              <pre>{JSON.stringify(reporte, null, 2)}</pre>
+                              
                             </div>
                           )}
+                        </div>
                         </div>
                       </div>
                     )}
@@ -419,7 +430,7 @@ const AdmPage = () => {
                       <div className="perfil">
                         {perfil ? (
                           <div className="perfil-admin">
-                            <h3>Editar Perfil del Administrador</h3>
+                            <h3>Editar Mi Perfil</h3>
                             <form onSubmit={(e) => handleUpdate(e)}>
                               <label htmlFor="nombre"><strong>Nombre:</strong></label>
                               <input
