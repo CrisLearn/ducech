@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/Home/LandingPage';
 import LoginPage from './pages/Log/LoginPage';
-import AdminDashboard from './pages/Admin/AdminDasboard';
+
 import TecnicoDashboard from './pages/Tecnico/TecnicoDashboard';
 import ClientDashboard from './pages/Client/ClientDashboard';
 import Registro from './pages/Log/RegisterPage';
@@ -14,7 +14,6 @@ const App = () => {
     <Router>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/" element={<AdminDashboard />} />
         <Route path="/ducech" element={<LandingPage />} />
         <Route path="/ducech/login" element={<LoginPage />} />
         <Route path="/ducech/registro" element={<Registro />} />

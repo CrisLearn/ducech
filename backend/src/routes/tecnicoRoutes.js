@@ -1,7 +1,8 @@
 import express from 'express';
 import { createTecnico, 
     loginTecnico, 
-    updateTecnico, 
+    updateTecnico,
+    getTecnicoProfile, 
     createClienteForTecnico, 
     getAllClientes, 
     getClienteById,
@@ -22,6 +23,7 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 router.post('/registrar-tecnico', createTecnico);
+router.get('/perfil-tecnico', authMiddleware, getTecnicoProfile);
 router.post('/login-tecnico', loginTecnico);
 router.put('/update-tecnico', authMiddleware,updateTecnico);
 router.post('/registrar-cliente', authMiddleware,createClienteForTecnico);

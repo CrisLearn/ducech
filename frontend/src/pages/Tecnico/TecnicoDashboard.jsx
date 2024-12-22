@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './TecnicoDashboard.css';
-import Header from '../../components/Layout/Header';
-import { FaWrench, FaUser, FaCar, FaClipboardList, FaDoorClosed } from 'react-icons/fa';
+import Header from '../../components/Layout/Header'
+import { FaDoorOpen, FaUser, FaCar, FaClipboardList, FaDoorClosed } from 'react-icons/fa';
 
 const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
-  const [selectedSection, setSelectedSection] = useState("Técnicos");
+  const [selectedSection, setSelectedSection] = useState("Perfil");
   const [clientes, setClientes] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
   const [mantenimientos, setMantenimientos] = useState([]);
@@ -15,6 +15,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const [successMessages, setSuccessMessages] = useState({});
   const [errorMessages, setErrorMessages] = useState({});
   const [reporte, setReporte] = useState(null);
+  const [perfil, setPerfil] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,7 +81,26 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           const data = await response.json();
           setMantenimientos(data);
           setError("");
-        }
+        }else if (selectedSection === "Perfil") {
+          const response = await fetch(
+            "http://localhost:5000/api/tecnico/perfil-tecnico",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error(
+              "Error al obtener la lista de mantenimientos. Verifica tu autenticación"
+            );
+          }
+          
+          const data = await response.json();
+          setPerfil(data);
+          setError("");
+        } 
       } catch (err) {
         setError(err.message);
         if (selectedSection === "Clientes") {
@@ -89,20 +109,21 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           setVehiculos([]);
         } else if (selectedSection === "Mantenimientos") {
           setMantenimientos([]);
+        } else if (selectedSection === "Perfil") {
+          setPerfil([]);
         }
       }
     };
 
     fetchData();
   }, [selectedSection]);
-
+  
   const toggleDetalles = (id) => {
     setDetallesVisible((prev) => ({
       ...prev,
       [id]: !prev[id], // Alterna la visibilidad de los detalles para el vehículo con el id específico
     }));
   };
-
   const handleLogout = () => {
     // Elimina el token del almacenamiento local
     localStorage.removeItem("token");
@@ -110,7 +131,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     // Redirige a la página de login
     window.location.href = "/ducech/login"; // Cambia la URL si es necesario
   };
-
   const handleInputChange = (e, formType) => {
     const { name, value } = e.target;
     if (formType === 'cliente') {
@@ -130,7 +150,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
       }));
     }
   };
-
   const showMessage = (message, type = 'success') => {
     if (type === 'success') {
       setSuccessMessage(message);
@@ -140,7 +159,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
       setTimeout(() => setError(""), 5000);
     }
   };
-
   const [nuevoCliente, setNuevoCliente] = useState({
     nombre: '',
     email: '',
@@ -315,7 +333,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
       <button type="submit">Guardar</button>
     </form>
   );
-
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     placa: "",
     tipo: "sedan",
@@ -423,8 +440,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   };
   useEffect(() => {
     fetchVehiculos();
-  }, []);
-    
+  }, []); 
   const renderVehiculosForm = () => (
     <form onSubmit={handleAddVehiculo} className="tecnico-vehiculo-form">
       <label>
@@ -784,7 +800,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
       <button type="submit">Guardar</button>
     </form>
   );
-
   const generarReporteClientes = () => {
     const token = localStorage.getItem('token');
 
@@ -875,50 +890,93 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     })
     .catch(error => console.error('Error:', error));
   };
-
+  const handleUpdateTecnico = async (e, id) => {
+    e.preventDefault();
+    const form = e.target;
+    const updatedAdmin = {
+      nombre: form.nombre.value,
+      password: form.password.value,
+      
+    };
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Usuario no autenticado.");
+      }
+      const response = await fetch(
+        `http://localhost:5000/api/tecnico/update-tecnico`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedAdmin),
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Perfil Actualizado:", data);
+  
+  
+        // Muestra el mensaje de éxito
+        setSuccessMessage("Administrador actualizado correctamente");
+        setError(null);
+  
+        // Limpia el mensaje de éxito después de 3 segundos
+        setTimeout(() => setSuccessMessage(""), 3000);
+  
+        // Opcional: Oculta el formulario
+        setFormVisible(false);
+      } else {
+        const errorData = await response.json();
+        console.error("Error al actualizar el administrador:", errorData);
+        setError("Administrador ya registrado");
+      }
+    } catch (error) {
+      console.error("Error al enviar la solicitud:", error);
+      setError("Error al enviar la solicitud");
+    }
+  }; 
   const sections = {
     Clientes: "Gestión de Clientes: Aquí puedes tecnicoistrar clientes registrados.",
     Vehículos: "Gestión de Vehículos: Lista y tecnicoistra los vehículos registrados.",
     Mantenimientos: "Historial de Mantenimientos: Detalles sobre mantenimientos realizados.",
     Reportes: "Reportes: Visualiza y descarga reportes estadísticos.",
   };
-
   return (
-    <div className="tecnico-dashboard">
+    <div className='header-tecnico'>
+      <Header/>
+      <div className="tecnico-dashboard">
       {/* Barra lateral */}
-      <aside className="sidebar">
-        <h2>Menú</h2>
-        <ul>
-          {Object.keys(sections).map((section) => (
-            <li
-              key={section}
-              className={selectedSection === section ? "active" : ""}
-            >
-              <button onClick={() => setSelectedSection(section)}>
-                {section}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </aside>
-
+        <aside className="sidebar-tecnico">
+          <h2>Opciones</h2>
+          <ul>
+            {Object.keys(sections).map((section) => (
+              <li key={section} className={selectedSection === section ? "active" : ""}>
+                <button onClick={() => setSelectedSection(section)}>
+                  {section}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <div className="buttons-tecnico">
+            <button onClick={handleLogout}>
+              <FaDoorOpen/>
+            </button>
+            <button onClick={() => setSelectedSection("Perfil")}>
+              <FaUser/>
+            </button>
+          </div>
+        </aside>
       {/* Contenido principal */}
-      <main className="main-content">
-        
-        <header className="header">
-          <button className="perfil-button" onClick={handleLogout}>
-            <FaUser style={{ marginRight: '8px' }} />Perfil
-          </button>
-          <button className="logout-button" onClick={handleLogout}>
-            <FaDoorClosed style={{ marginRight: '8px'}} /> Salir5/
-          </button>
-        </header>
-        <div className="dashboard-content">
-          <h1>{selectedSection}</h1>
-          <p>{sections[selectedSection]}</p>
-
+      <main className="content-tecnico">
+        <h1>{selectedSection}</h1>
+        <div>
           {selectedSection === "Clientes" && (
-            <div className="vehiculos-list">
+            <div className="list-clientes-tecnico">
               <button className='tecnico-add-cliente-button'
               onClick={() => {
                 setFormVisible(!formVisible);
@@ -933,18 +991,21 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                 <p>No hay clientes registrados</p>
               )}
               {clientes.map((cliente) => (
-                <div key={cliente._id} className='tecnico-cliente-item'>
+                <div key={cliente._id} className='item-clientes-tecnico'>
                   <h3>{cliente.nombre}</h3>
-                  <p><strong>Correo:</strong> {cliente.email}</p>
-                  <p><strong>Teléfono:</strong> {cliente.telefono}</p>
+                  <p><strong><span className='highlight-tecnico'>Correo:</span></strong> {cliente.email}</p>
+                  <p><strong><span className='highlight-tecnico'>Teléfono:</span></strong> {cliente.telefono}</p>
+                  <div>
                   <button onClick={() => toggleDetalles(cliente._id)}>
                     {detallesVisible[cliente._id] ? "Ocultar detalles" : "Ver detalles"}
                   </button>
+                  </div>
                   {detallesVisible[cliente._id] && (
-                    <div>
+                    <div className='contenido-tecnico'>
                       <form onSubmit={(e) => handleUpdate(e, cliente._id)}>
+                        <div>
                         <label>
-                          Nombre:
+                          <span className='highlight-tecnico'>Nombre:</span>
                           <input
                             type="text"
                             name="nombre"
@@ -955,9 +1016,10 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                             title="El nombre debe contener solo letras y un máximo de 50 caracteres"
                           />
                         </label>
-
+                        </div>
+                        <div>
                         <label>
-                          Email:
+                          <span className="highlight-tecnico">Email:</span>
                           <input
                             type="email"
                             name="email"
@@ -966,9 +1028,10 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                             title="Ingrese un correo electrónico válido"
                           />
                         </label>
-
+                        </div>
+                        <div>
                         <label>
-                          Teléfono:
+                          <span className="highlight-tecnico">Teléfono:</span>
                           <input
                             type="tel"
                             name="telefono"
@@ -978,9 +1041,10 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                             title="El teléfono debe contener exactamente 10 dígitos"
                           />
                         </label>
-
+                        </div>
+                        <div>
                         <label>
-                          Dirección:
+                          <span className='highlight-tecnico'>Dirección:</span>
                           <input
                             type="text"
                             name="direccion"
@@ -990,7 +1054,8 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                             title="La dirección debe tener un máximo de 100 caracteres"
                           />
                         </label>
-                        <input type="submit" value="Actualizar" />
+                        </div>
+                        <input className="actualizar-button" type="submit" value="Actualizar" />
                           {/* Mensajes de éxito o error debajo del botón */}
                           {successMessage && <p className="cliente-success">{successMessage}</p>}
                           {error && <p className="error">{error}</p>}
@@ -1001,7 +1066,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
               ))}
             </div>
           )}
-
           {selectedSection === "Vehículos" && (
             <div className="tecnico-vehiculos-list">
               <button
@@ -1042,7 +1106,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
               ))}
             </div>
           )}
-
           {selectedSection === "Mantenimientos" && (
               <div className="cliente-mantenimientos-list">
                 <button
@@ -1104,8 +1167,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                 ))}
               </div>
           )}
-
-            {selectedSection === "Reportes" && (
+          {selectedSection === "Reportes" && (
               <div className='reportes'>
                 <div>
                   <button onClick={generarReporteClientes}>
@@ -1138,11 +1200,89 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                   )}
                 </div>
               </div>
+          )}
+          {selectedSection === "Perfil" && (
+            <div className="perfil">
+            {perfil ? (
+              <div className="perfil-tecnico">
+                <h3>Editar Mi Perfil</h3>
+                <form onSubmit={(e) => handleUpdateTecnico(e)}>
+                  <label htmlFor='rol'><strong>Rol:</strong>
+                  <input
+                    defaultValue={"Tecnico"}
+                    readOnly
+                  />
+                  </label>
+                  <label htmlFor="nombre"><strong>Nombre:</strong></label>
+                  <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    defaultValue={perfil.nombre}
+                    maxLength="50"
+                    pattern="^[a-zA-Z\s]{1,50}$"
+                    title="El nombre debe tener solo letras y espacios (máximo 50 caracteres)."
+                    required
+                  />
+
+                  <label htmlFor="email"><strong>Correo Electrónico:</strong></label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    defaultValue={perfil.email}
+                    
+                  />
+                  <label htmlFor="telefono"><strong>Telefono:</strong></label>
+                  <input
+                    type="tel"
+                    name="telefono"
+                    defaultValue={perfil.telefono}
+                    required
+                    pattern="^\d{10}$" // Exactamente 10 dígitos
+                    title="El teléfono debe contener exactamente 10 dígitos"
+                  />
+                  <label htmlFor="taller"><strong>Taller:</strong></label>
+                  <input
+                    type="taller"
+                    id="taller"
+                    name="taller"
+                    defaultValue={perfil.taller}
+                    
+                  />
+                  <label htmlFor="direccion"><strong>Dirección:</strong></label>
+                  <input
+                    type="text"
+                    id="direccion"
+                    name="direccion"
+                    defaultValue={perfil.direccion}
+                  />
+
+                  <label htmlFor="password"><strong>Nueva Contraseña:</strong></label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Ingrese una nueva contraseña (opcional)"
+                    minLength="8"
+                    maxLength="50"
+                    title="La contraseña debe tener al menos 8 caracteres."
+                  />
+
+                  <input type="submit" value="Actualizar" />
+                  {/* Mensajes de éxito o error debajo del botón */}
+                  {successMessage && <p className="perfil-success">{successMessage}</p>}
+                  {error && <p className="error">{error}</p>}
+                </form>
+              </div>
+            ) : (
+              <p>Cargando perfil...</p>
             )}
-
-
-        </div>
+          </div>
+          )}          
+        </div>  
       </main>
+    </div>
     </div>
   );
 };

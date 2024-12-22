@@ -1,50 +1,49 @@
-/* General */
+/*Cabecera*/
+.header-tecnico {
+  margin-top: 80px; /* Ajusta el margen superior para evitar que el contenido quede oculto */
+}
 .tecnico-dashboard {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  font-family: Arial, sans-serif;
-  color: #ffffff;
+  display: flex; /* Ajusta el diseño principal a un contenedor de dos columnas */
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    height: calc(100vh - 80px);
 }
 
-/* Barra lateral */
-.sidebar {
+/*Barra Lateral*/
+.sidebar-tecnico {
   width: 250px;
-  height: 100%;
-  background-color: #2e2e2e;
-  color: #f2c14e;
+  height: calc(100vh - 80px); /* Ajusta la altura para que reste el tamaño del header */
+  background-color: #2e2e2e; /* Gris oscuro Caterpillar */
+  color: #f2c14e; /* Amarillo Caterpillar */
   padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: fixed;
-  top: 0;
+  position: fixed; /* Fija la barra en su posición */
+  top: 80px; /* Asegura que el sidebar inicie justo debajo del header */
   left: 0;
+  transition: transform 0.3s ease; /* Agregado para la animación de la barra lateral */
 }
-
-.sidebar h2 {
+.sidebar-tecnico h2 {
   margin-bottom: 20px;
-  font-size: 18px;
-  border-bottom: 1px solid #f2c14e;
+  font-size: 30px;
+  border-bottom: 2px solid #f2c14e;
   padding-bottom: 10px;
 }
-
-.sidebar ul {
+.sidebar-tecnico ul {
   list-style: none;
   padding: 0;
   width: 100%;
 }
-
-.sidebar ul li {
+.sidebar-tecnico ul li {
   margin: 10px 0;
   width: 100%;
 }
-
-.sidebar ul li button {
+.sidebar-tecnico ul li button {
   width: 100%;
-  background: none;
-  border: none;
+  background: black;
+  border-radius: 8px;
   color: #ffffff;
   font-size: 16px;
   padding: 10px 15px;
@@ -52,399 +51,139 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-.sidebar ul li button:hover {
+.sidebar-tecnico ul li button:hover {
   background-color: #f2c14e;
   color: #2e2e2e;
+  font-size: 16px;
+  font-weight: bold;
 }
-
-.sidebar ul li.active button {
+.sidebar-tecnico li.active button {
   background-color: #f2c14e;
   color: #2e2e2e;
   font-weight: bold;
+
+}
+.buttons-tecnico {
+  margin-top: auto; /* Empuja este contenedor al final del sidebar */
+}
+.buttons-tecnico button {
+  margin-bottom: 10px;
+  margin-left: 35px; /* Espaciado entre los botones */
+  margin-right: 30px; /* Espaciado entre los botones */
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f2c14e; /* Botón azul */
+  color: #000000;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* Contenido principal */
-.main-content {
-  margin-left: 250px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.buttons-tecnico button:hover {
+  background-color: #ffffff; /* Cambia el color al pasar el cursor */
+}
+
+/*Estilo para las opciones*/
+.content-tecnico {
+  flex-grow: 1; /* Permite que ocupe el espacio restante a la derecha del sidebar */
+  margin-left: 250px; /* Asegura que comience después del sidebar */
+  height: calc(100vh - 80px); /* Mantén la altura debajo del header */
+  background-color: black; /* Color de fondo */
+  padding: 20px; /* Opcional: Padding para el contenido */
+  overflow-y: auto;
+  color: #f2c14e; /* Habilita el scroll vertical si es necesario */
+}
+
+/*Estilos del Perfil*/
+.perfil-tecnico label, 
+.perfil-tecnico select {
+  display: block;
+  margin-bottom: 10px;
+  color: #f2c14e;
+}
+.perfil-tecnico select,
+.perfil-tecnico input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
   background-color: #1b1b1b;
   color: #ffffff;
 }
-
-.header {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-  padding: 15px 20px;
-  text-align: right;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.dashboard-content {
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.dashboard-content h1 {
-  color: #f2c14e;
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.dashboard-content p {
-  color: #dddddd;
-  font-size: 16px;
-}
-
-/* Lista de clientes */
-.cliente-list {
-  margin-top: 20px;
-}
-
-.cliente-item {
+.perfil-tecnico {
   background-color: #2e2e2e;
   color: #ffffff;
   padding: 15px;
   margin-bottom: 10px;
   border: 1px solid #f2c14e;
   border-radius: 5px;
-}
-
-.cliente-item h3 {
-  margin: 0 0 5px;
-}
-
-.cliente-item p {
-  margin: 5px 0;
-}
-
-/* Lista de vehículos */
-.vehiculo-list {
-  margin-top: 20px;
-}
-
-.vehiculo-item {
-  background-color: #2e2e2e;
-  color: #ffffff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: relative;
 }
-
-.vehiculo-item h3 {
+.perfil-tecnico h3 {
   margin: 0 0 5px;
 }
-
-.vehiculo-item p {
+.perfil-tecnico p {
   margin: 5px 0;
 }
-
-.vehiculo-detalles {
-  margin-top: 10px;
+.perfil-tecnico select,
+.perfil-tecnico input {
+  width: 100%;
   background-color: #1b1b1b;
-  padding: 10px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 3px;
   border: 1px solid #f2c14e;
-  border-radius: 5px;
 }
 
-/* Botón */
-button {
-  background-color: #f2c14e;
-  color: black;
-  border: none;
-  padding: 10px 15px;
+/*Estilos para Clientes*/
+.list-clientes-admin {
+  margin-top: 20px;
+}
+.item-clientes-tecnico {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.item-clientes-tecnico h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+.item-clientes-tecnico hr {
+  margin-bottom: 5px;
+}
+.item-clientes-tecnico button {
+  width: 25%;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-button:hover {
-  background-color: #2e2e2e;
+.item-clientes-tecnico button:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+.item-clientes-tecnico span {
   color: #f2c14e;
 }
-
-/* Mensajes de error */
-.error {
-  color: red;
+.tecnico-add-cliente-button {
+  width: 25%;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
   font-weight: bold;
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-  .tecnico-dashboard {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    box-shadow: none;
-  }
-
-  .main-content {
-    margin-left: 0;
-    margin-top: 60px; /* Space for the header */
-  }
-
-  .header {
-    text-align: center;
-  }
-
-  .sidebar ul li button {
-    font-size: 14px;
-    padding: 8px;
-  }
-
-  .dashboard-content h1 {
-    font-size: 20px;
-  }
-
-  .dashboard-content p {
-    font-size: 14px;
-  }
-
-  .cliente-item,
-  .vehiculo-item,
-  .vehiculo-detalles {
-    padding: 10px;
-    margin-bottom: 8px;
-  }
-
-  button {
-    padding: 8px 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    padding: 10px;
-  }
-
-  .sidebar ul li button {
-    font-size: 12px;
-    padding: 6px;
-  }
-
-  .dashboard-content {
-    padding: 10px;
-  }
-
-  .header {
-    font-size: 14px;
-  }
-
-  .dashboard-content h1 {
-    font-size: 18px;
-  }
-
-  .dashboard-content p {
-    font-size: 12px;
-  }
-
-  .cliente-item,
-  .vehiculo-item,
-  .vehiculo-detalles {
-    padding: 8px;
-    margin-bottom: 6px;
-  }
-
-  button {
-    padding: 6px 8px;
-  }
-}
-.tecnico-cliente-form {
-  background-color: #2e2e2e;
-  padding: 20px;
   border-radius: 5px;
-  border: 1px solid #f2c14e;
-  margin-top: 20px;
-}
-.tecnico-cliente-form label {
-  display: block;
+  cursor: pointer;
+  transition: background-color 0.3s;
   margin-bottom: 10px;
-  color: #f2c14e;
 }
-.tecnico-cliente-form input,
-.tecnico-cliente-form select {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e;
-  border-radius: 5px;
-  background-color: #1b1b1b;
+.tecnico-add-client-button:hover {
+  background-color: #000000;
   color: #ffffff;
-}
-.tecnico-cliente-form button {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-  padding: 10px 20px;
-}
-
-.tecnico-cliente-form button:hover {
-  background-color: #1b1b1b;
-  color: #f2c14e;
-}
-.tecnico-cliente-form {
-  margin-top: 10px;
-  background-color: #3a3a3a;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.tecnico-cliente-form label {
-  display: block;
-  margin-bottom: 5px;
-}
-.tecnico-cliente-form input,
-.tecnico-cliente-form select,
-.tecnico-cliente-form button {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #f2c14e;
-}
-.tecnico-cliente-item label,
-.tecnico-cliente-item select {
-  display: block;
-  margin-bottom: 10px;
-  color: #f2c14e;
-}
-.tecnico-cliente-item select,
-.tecnico-cliente-item input {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e;
-  border-radius: 5px;
-  background-color: #1b1b1b;
-  color: #ffffff;
-}
-.tecnico-cliente-item select,
-.tecnico-cliente-item input {
-  width: 100%;
-  background-color: #1b1b1b;
-  margin-bottom: 10px;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #f2c14e;
-}
-.tecnico-client-item {
-  background-color: #2e2e2e;
-  color: #ffffff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e;
-  border-radius: 5px;
-  position: relative;
-}
-
-
-.tecnico-client-item h3 {
-  margin: 0 0 5px;
-}
-
-.tecnico-client-item p {
-  margin: 5px 0;
-}
-
-.tecnico-vehiculo-form {
-  background-color: #2e2e2e;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #f2c14e;
-  margin-top: 20px;
-}
-
-.tecnico-vehiculo-form label {
-  display: block;
-  margin-bottom: 10px;
-  color: #f2c14e;
-}
-
-
-
-.tecnico-vehiculo-form input,
-.tecnico-vehiculo-form select {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e;
-  border-radius: 5px;
-  background-color: #1b1b1b;
-  color: #ffffff;
-}
-.tecnico-vehiculo-form button {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-  padding: 10px 20px;
-}
-
-.tecnico-vehiculo-form button:hover {
-  background-color: #1b1b1b;
-  color: #f2c14e;
-}
-.tecnico-vehiculo-form {
-  margin-top: 10px;
-  background-color: #3a3a3a;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.tecnico-vehiculo-form label {
-  display: block;
-  margin-bottom: 5px;
-}
-.tecnico-vehiculo-form input,
-.tecnico-vehiculo-form select,
-.tecnico-vehiculo-form button {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #f2c14e;
-}
-.tecnico-mantenimiento-form {
-  background-color: #2e2e2e;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #f2c14e;
-  margin-top: 20px;
-}
-
-.tecnico-mantenimiento-form label {
-  display: block;
-  margin-bottom: 10px;
-  color: #f2c14e;
-}
-.tecnico-mantenimiento-form input,
-.tecnico-mantenimiento-form textarea,
-.tecnico-mantenimiento-form select {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e;
-  border-radius: 5px;
-  background-color: #1b1b1b;
-  color: #ffffff;
-}
-
-.tecnico-mantenimiento-form button {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-  padding: 10px 20px;
-}
-
-.tecnico-mantenimiento-form button:hover {
-  background-color: #1b1b1b;
-  color: #f2c14e;
 }

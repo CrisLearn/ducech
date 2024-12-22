@@ -64,7 +64,30 @@ export const createTecnico = async (req, res) => {
     }
 };
 
+export const getTecnicoProfile = async (req, res) => {
+    try {
+        // Obtener el ID del administrador desde el middleware de autenticación
+        const tecnicoId = req.userId;
 
+        // Buscar el administrador por ID
+        const tecnico = await Tecnico.findById(tecnicoId);
+        if (!tecnico) {
+            return res.status(404).send({ error: 'tecncio no encontrado' });
+        }
+
+        // Retornar los datos del perfil
+        res.send({
+            nombre: tecnico.nombre,
+            email: tecnico.email,
+            telefono: tecnico.telefono,
+            taller: tecnico.taller,
+            direccion: tecnico.direccion,
+        });
+    } catch (error) {
+        console.error('Error al obtener el perfil del tecncio:', error);
+        res.status(500).send({ error: 'Error interno del servidor' });
+    }
+};
 
 
 // Método para autenticar un técnico (login)

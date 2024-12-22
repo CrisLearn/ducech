@@ -66,8 +66,8 @@
     font-weight: bold;
 
   }
-  .buttons-admin {
-    margin-top: auto; /* Empuja este contenedor al final del sidebar */
+.buttons-admin {
+  margin-top: auto; /* Empuja este contenedor al final del sidebar */
 }
 
 .buttons-admin button {

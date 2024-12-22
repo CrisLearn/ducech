@@ -266,9 +266,9 @@ const AdmPage = () => {
                     <ul>
                         {Object.keys(sections).map((section) => (
                         <li key={section} className={selectedSection === section ? "active" : ""}>
-                            <button onClick={() => setSelectedSection(section)}>
-                                {section}
-                             </button>
+                          <button onClick={() => setSelectedSection(section)}>
+                            {section}
+                          </button>
                         </li>
                         ))}
                     </ul>
