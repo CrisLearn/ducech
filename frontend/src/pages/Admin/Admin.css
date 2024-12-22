@@ -183,7 +183,7 @@
   margin: 0 0 5px;
 }
 
-/*Estilos para el dashboard de clientes*/
+/*Estilos para el dashboard de vehiculos*/
 .list-vehiculos-admin {
   margin-top: 20px;
 }
@@ -199,9 +199,24 @@
   margin: 0 0 5px;
   font-weight: bold;
 }
-.item-tecnicos-admin hr {
-  margin: 0 0 5px;
+.item-vehiculos-admin hr {
+  margin-bottom: 5px;
 }
+.item-vehiculos-admin button {
+  width: 25%;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.item-vehiculos-admin button:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
 /*Estilos para el dashboard de mantenimientos*/
 .list-mantenimientos-admin {
   margin-top: 20px;
@@ -221,6 +236,20 @@
 .item-mantenimientos-admin hr {
   margin-bottom: 5px;
 }
+.item-mantenimientos-admin button {
+  width: 25%;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.item-mantenimientos-admin button:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
 
 .contenido {
   display: flex;
@@ -229,7 +258,12 @@
   margin-bottom: 5px; 
   margin-top: 10px;
 }
+.highlight {
+  color: #f2c14e; /* Cambia este valor por el color deseado */
+  font-weight: bold; /* Opcional: si quieres que resalten más */
+}
 
+/*Estilos reportes*/
 .reportes {
   text-align: center; /* Centra todo el contenido del contenedor */
 }

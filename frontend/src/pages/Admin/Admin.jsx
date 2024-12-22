@@ -4,7 +4,7 @@ import Header from '../../components/Layout/Header'
 import { FaWrench, FaUser, FaDoorOpen, FaCar, FaClipboardList } from 'react-icons/fa';
 
 const AdmPage = () => {
-    const [selectedSection, setSelectedSection] = useState("Técnicos");
+    const [selectedSection, setSelectedSection] = useState("Perfil");
     const [tecnicos, setTecnicos] = useState([]);
     const [clientes, setClientes] = useState([]);
     const [vehiculos, setVehiculos] = useState([]);
@@ -284,16 +284,26 @@ const AdmPage = () => {
                 <main className="content-admin">
                     <h1>{selectedSection}</h1>
                     {selectedSection === "Técnicos" && (
-                        <div className="list-tecnicos-admin">
+                      <div className="list-tecnicos-admin">
                         {tecnicos.length === 0 ? (
                           <p>Cargando técnicos...</p>
                         ) : (
                           tecnicos.map((tecnico) => (
                             <div key={tecnico._id} className="item-tecnicos-admin">
                               <h3>{tecnico.nombre}</h3>
-                              <div className='contenido'>
-                              <p><strong>Email:</strong> {tecnico.email}</p>
-                              <p><strong>Teléfono:</strong> {tecnico.telefono}</p>
+                              <div className="contenido">
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Email:</span>
+                                  </strong>{" "}
+                                  {tecnico.email}
+                                </p>
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Teléfono:</span>
+                                  </strong>{" "}
+                                  {tecnico.telefono}
+                                </p>
                               </div>
                               <hr />
                             </div>
@@ -309,9 +319,19 @@ const AdmPage = () => {
                           clientes.map((cliente) => (
                             <div key={cliente._id} className="item-clientes-admin">
                               <h3>{cliente.nombre}</h3>
-                              <div className='contenido'>
-                              <p><strong>Email:</strong> {cliente.email}</p>
-                              <p><strong>Teléfono:</strong> {cliente.telefono}</p>
+                              <div className="contenido">
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Email:</span>
+                                  </strong>{" "}
+                                  {cliente.email}
+                                </p>
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Teléfono:</span>
+                                  </strong>{" "}
+                                  {cliente.telefono}
+                                </p>
                               </div>
                               <hr />
                             </div>
@@ -327,20 +347,49 @@ const AdmPage = () => {
                           vehiculos.map((vehiculo) => (
                             <div key={vehiculo._id} className="item-vehiculos-admin">
                               <h3>{vehiculo.placa}</h3>
-                              <div className='contenido'>
-                              <p><strong>Marca:</strong> {vehiculo.marca}</p>
-                              <p><strong>Color:</strong> {vehiculo.color}</p>
+                              <div className="contenido">
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Marca:</span>
+                                  </strong>{" "}
+                                  {vehiculo.marca}
+                                </p>
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Color:</span>
+                                  </strong>{" "}
+                                  {vehiculo.color}
+                                </p>
                               </div>
                               <button onClick={() => toggleDetalles(vehiculo._id)}>
                                 {detallesVisible[vehiculo._id] ? "Ocultar detalles" : "Ver detalles"}
                               </button>
                               {detallesVisible[vehiculo._id] && (
                                 <div className="contenido">
-                                  <p><strong>Tipo:</strong> {vehiculo.tipo}</p>
-                                  <p><strong>Modelo:</strong> {vehiculo.modelo}</p>
-                                  <p><strong>Motor:</strong> {vehiculo.cilindraje}</p>
-                                  <p><strong>Kilometraje:</strong> {vehiculo.kilometrajeActual}</p>
-                                  
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Tipo:</span>
+                                    </strong>{" "}
+                                    {vehiculo.tipo}
+                                  </p>
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Modelo:</span>
+                                    </strong>{" "}
+                                    {vehiculo.modelo}
+                                  </p>
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Motor:</span>
+                                    </strong>{" "}
+                                    {vehiculo.cilindraje}
+                                  </p>
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Kilometraje:</span>
+                                    </strong>{" "}
+                                    {vehiculo.kilometrajeActual}
+                                  </p>
                                 </div>
                               )}
                               <hr />
@@ -357,21 +406,66 @@ const AdmPage = () => {
                           mantenimientos.map((mantenimiento) => (
                             <div key={mantenimiento._id} className="item-mantenimientos-admin">
                               <h3>Placa del Vehículo: {mantenimiento.vehiculo.placa}</h3>
-                              <div className='contenido'>
-                              <p><strong>Tipo de Mantenimiento:</strong> {mantenimiento.tipoMantenimiento || "Información no disponible"}</p>
-                              <p><strong>Descripción:</strong> {mantenimiento.detalleMantenimiento || "Información no disponible"}</p>
-                              <p><strong>Realizado:</strong> {mantenimiento.realizado ? "Sí" : "No"}</p>
+                              <div className="contenido">
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Tipo de Mantenimiento:</span>
+                                  </strong>{" "}
+                                  {mantenimiento.tipoMantenimiento || "Información no disponible"}
+                                </p>
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Descripción:</span>
+                                  </strong>{" "}
+                                  {mantenimiento.detalleMantenimiento || "Información no disponible"}
+                                </p>
+                                <p>
+                                  <strong>
+                                    <span className="highlight">Realizado:</span>
+                                  </strong>{" "}
+                                  {mantenimiento.realizado ? "Sí" : "No"}
+                                </p>
                               </div>
                               <button onClick={() => toggleDetalles(mantenimiento._id)}>
-                                {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
+                                {detallesVisible[mantenimiento._id]
+                                  ? "Ocultar detalles"
+                                  : "Ver detalles"}
                               </button>
                               {detallesVisible[mantenimiento._id] && (
-                                <div className='contenido'>
-                                  <p><strong>Marca de Repuesto:</strong> {mantenimiento.marcaRepuesto || "Información no disponible"}</p>
-                                  <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual || "Información no disponible"}</p>
-                                  <p><strong>Kilometraje de Próximo Cambio:</strong> {mantenimiento.kilometrajeCambio || "Información no disponible"}</p>
-                                  <p><strong>Detalles Generales:</strong> {mantenimiento.detalleGeneral || "Información no disponible"}</p>
-                                  <p><strong>Fecha del Mantenimiento:</strong> {new Date(mantenimiento.fechaCreacion).toLocaleDateString() || "Información no disponible"}</p>
+                                <div className="contenido">
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Marca de Repuesto:</span>
+                                    </strong>{" "}
+                                    {mantenimiento.marcaRepuesto || "Información no disponible"}
+                                  </p>
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Kilometraje Actual:</span>
+                                    </strong>{" "}
+                                    {mantenimiento.kilometrajeActual || "Información no disponible"}
+                                  </p>
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">
+                                        Kilometraje de Próximo Cambio:
+                                      </span>
+                                    </strong>{" "}
+                                    {mantenimiento.kilometrajeCambio || "Información no disponible"}
+                                  </p>
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Detalles Generales:</span>
+                                    </strong>{" "}
+                                    {mantenimiento.detalleGeneral || "Información no disponible"}
+                                  </p>
+                                  <p>
+                                    <strong>
+                                      <span className="highlight">Fecha del Mantenimiento:</span>
+                                    </strong>{" "}
+                                    {new Date(mantenimiento.fechaCreacion).toLocaleDateString() ||
+                                      "Información no disponible"}
+                                  </p>
                                 </div>
                               )}
                               <hr />
@@ -381,48 +475,48 @@ const AdmPage = () => {
                       </div>
                     )}
                     {selectedSection === "Reportes" && (
-                      <div className='reportes'>
-                        <div className='botones-reportes'>
-                        <div>
-                          <button onClick={generarReporteTecnicos}>
-                            <FaWrench style={{ marginRight: '8px' }} /> Generar Reporte de Técnicos
-                          </button>
-                          {reporte && (
-                            <div id="reporteContainer">
-                              
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <button onClick={generarReporteClientes}>
-                            <FaUser style={{ marginRight: '8px' }} /> Generar Reporte de Clientes
-                          </button>
-                          {reporte && (
-                            <div id="reporteContainer">
-                              
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <button onClick={generarReporteVehiculos}>
-                            <FaCar style={{ marginRight: '8px' }} /> Generar Reporte de Vehículos
-                          </button>
-                          {reporte && (
-                            <div id="reporteContainer">
-                              
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <button onClick={generarReporteMantenimientos}>
-                            <FaClipboardList style={{ marginRight: '8px' }} /> Generar Reporte de Mantenimientos
-                          </button>
-                          {reporte && (
-                            <div id="reporteContainer">
-                              
-                            </div>
-                          )}
-                        </div>
+                      <div className="reportes">
+                        <div className="botones-reportes">
+                          <div>
+                            <button onClick={generarReporteTecnicos} className="btn-reporte">
+                              <FaWrench style={{ marginRight: '8px' }} /> Generar Reporte de Técnicos
+                            </button>
+                            {reporte && (
+                              <div id="reporteContainer" className="reporte-tecnicos">
+                                {/* Contenido del reporte de técnicos */}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <button onClick={generarReporteClientes} className="btn-reporte">
+                              <FaUser style={{ marginRight: '8px' }} /> Generar Reporte de Clientes
+                            </button>
+                            {reporte && (
+                              <div id="reporteContainer" className="reporte-clientes">
+                                {/* Contenido del reporte de clientes */}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <button onClick={generarReporteVehiculos} className="btn-reporte">
+                              <FaCar style={{ marginRight: '8px' }} /> Generar Reporte de Vehículos
+                            </button>
+                            {reporte && (
+                              <div id="reporteContainer" className="reporte-vehiculos">
+                                {/* Contenido del reporte de vehículos */}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <button onClick={generarReporteMantenimientos} className="btn-reporte">
+                              <FaClipboardList style={{ marginRight: '8px' }} /> Generar Reporte de Mantenimientos
+                            </button>
+                            {reporte && (
+                              <div id="reporteContainer" className="reporte-mantenimientos">
+                                {/* Contenido del reporte de mantenimientos */}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -432,6 +526,12 @@ const AdmPage = () => {
                           <div className="perfil-admin">
                             <h3>Editar Mi Perfil</h3>
                             <form onSubmit={(e) => handleUpdate(e)}>
+                              <label htmlFor='rol'><strong>Rol:</strong>
+                              <input
+                                defaultValue={"Administrador"}
+                                readOnly
+                              />
+                              </label>
                               <label htmlFor="nombre"><strong>Nombre:</strong></label>
                               <input
                                 type="text"
