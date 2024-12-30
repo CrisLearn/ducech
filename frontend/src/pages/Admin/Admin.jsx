@@ -475,47 +475,27 @@ const AdmPage = () => {
                       </div>
                     )}
                     {selectedSection === "Reportes" && (
-                      <div className="reportes">
-                        <div className="botones-reportes">
+                      <div className="reportes-admin">
+                        <div className="botones-reportes-admin">
                           <div>
                             <button onClick={generarReporteTecnicos} className="btn-reporte">
-                              <FaWrench style={{ marginRight: '8px' }} /> Generar Reporte de Técnicos
+                              <FaWrench style={{ marginRight: '8px' }} size={24}/> Generar Reporte de Técnicos
                             </button>
-                            {reporte && (
-                              <div id="reporteContainer" className="reporte-tecnicos">
-                                {/* Contenido del reporte de técnicos */}
-                              </div>
-                            )}
                           </div>
                           <div>
                             <button onClick={generarReporteClientes} className="btn-reporte">
-                              <FaUser style={{ marginRight: '8px' }} /> Generar Reporte de Clientes
+                              <FaUser style={{ marginRight: '8px' }} size={24} /> Generar Reporte de Clientes
                             </button>
-                            {reporte && (
-                              <div id="reporteContainer" className="reporte-clientes">
-                                {/* Contenido del reporte de clientes */}
-                              </div>
-                            )}
                           </div>
                           <div>
                             <button onClick={generarReporteVehiculos} className="btn-reporte">
-                              <FaCar style={{ marginRight: '8px' }} /> Generar Reporte de Vehículos
+                              <FaCar style={{ marginRight: '8px' }} size={24} /> Generar Reporte de Vehículos
                             </button>
-                            {reporte && (
-                              <div id="reporteContainer" className="reporte-vehiculos">
-                                {/* Contenido del reporte de vehículos */}
-                              </div>
-                            )}
                           </div>
                           <div>
                             <button onClick={generarReporteMantenimientos} className="btn-reporte">
-                              <FaClipboardList style={{ marginRight: '8px' }} /> Generar Reporte de Mantenimientos
+                              <FaClipboardList style={{ marginRight: '8px' }} size={24} /> Generar Reporte de Mantenimientos
                             </button>
-                            {reporte && (
-                              <div id="reporteContainer" className="reporte-mantenimientos">
-                                {/* Contenido del reporte de mantenimientos */}
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
