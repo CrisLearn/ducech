@@ -9,6 +9,7 @@ import { createTecnico,
     updateClienteForTecnico,
     generateClientesReport,
     createVehiculoForTecnico,
+    updateVehiculoForTecnico,
     getAllVehiculos,
     getVehiculoById,
     generateVehiculosReport,
@@ -30,6 +31,7 @@ router.post('/registrar-cliente', authMiddleware,createClienteForTecnico);
 router.get('/clientes', authMiddleware,getAllClientes);
 router.get('/cliente/:id', authMiddleware,getClienteById);
 router.put('/update-cliente/:id', authMiddleware,updateClienteForTecnico);
+router.put('/update-vehiculo/:id', authMiddleware,updateVehiculoForTecnico);
 router.get('/reportes-clientes', authMiddleware,generateClientesReport);
 router.post('/registrar-vehiculo', authMiddleware,createVehiculoForTecnico);
 router.get('/vehiculos', authMiddleware,getAllVehiculos);

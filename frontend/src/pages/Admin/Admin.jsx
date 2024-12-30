@@ -282,7 +282,7 @@ const AdmPage = () => {
                     </div>
                 </aside>
                 <main className="content-admin">
-                    <h1>{selectedSection}</h1>
+                    <h1>{selectedSection} Admin</h1>
                     {selectedSection === "Técnicos" && (
                       <div className="list-tecnicos-admin">
                         {tecnicos.length === 0 ? (
@@ -544,10 +544,12 @@ const AdmPage = () => {
                                 title="La contraseña debe tener al menos 8 caracteres."
                               />
 
-                              <input type="submit" value="Actualizar" />
-                              {/* Mensajes de éxito o error debajo del botón */}
-                              {successMessage && <p className="perfil-success">{successMessage}</p>}
-                              {error && <p className="error">{error}</p>}
+                              <div className='actualizar-button'>
+                                <input type="submit" value="Actualizar" />
+                                {/* Mensajes de éxito o error debajo del botón */}
+                                {successMessage && <p className="perfil-success">{successMessage}</p>}
+                                {error && <p className="error">{error}</p>}
+                              </div>
                             </form>
                           </div>
                         ) : (

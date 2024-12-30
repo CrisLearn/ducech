@@ -265,6 +265,66 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
       setError("Error al enviar la solicitud");
     }
   };
+  const handleUpdateVehiculo = async (e, id) => {
+    e.preventDefault();
+    const form = e.target;
+    const updatedVehiculo = {
+      tipo: form.tipo.value,
+      marca: form.marca.value,
+      modelo: form.modelo.value,
+      color: form.color.value,
+      cilindraje: form.cilindraje.value,
+      kilometrajeActual: form.kilometrajeActual.value,
+      observacion: form.observacion.value,
+    };
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Usuario no autenticado.");
+      }
+      const response = await fetch(
+        `http://localhost:5000/api/tecnico/update-vehiculo/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedVehiculo),
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Vehiculo Actualizado Correctamente:", data);
+  
+        // Actualiza la lista de clientes en el estado
+        setVehiculos((prevVehiculos) =>
+          prevVehiculos.map((vehiculo) =>
+            vehiculo._id === id ? { ...vehiculo, ...updatedVehiculo } : vehiculo
+          )
+        );
+  
+        // Muestra el mensaje de éxito
+        setSuccessMessage("Vehiculo actualizado correctamente");
+        setError(null);
+  
+        // Limpia el mensaje de éxito después de 3 segundos
+        setTimeout(() => setSuccessMessage(""), 3000);
+  
+        // Opcional: Oculta el formulario
+        setFormVisible(false);
+      } else {
+        const errorData = await response.json();
+        console.error("Error al actualizar el vehiculo:", errorData);
+        setError(errorData.error || "Error al actualizar el vehiculo");
+      }
+    } catch (error) {
+      console.error("Error al enviar la solicitud:", error);
+      setError("Error al enviar la solicitud");
+    }
+  };
   const renderClientesForm = () => (
     <form onSubmit={handleAddCliente} className="form-clientes-tecnico">
       <label>
@@ -699,7 +759,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     }
   };
   const renderMantenimientosForm = () => (
-    <form onSubmit={handleAddMantenimiento} className="tecnico-mantenimiento-form">
+    <form onSubmit={handleAddMantenimiento} className="form-mantenimientos-tecnico">
       <label>
         Vehículo:
         <select
@@ -762,9 +822,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           name="kilometrajeActual"
           value={nuevoMantenimiento.kilometrajeActual}
           onChange={(e) => handleInputChange(e, 'mantenimiento')}
-          min="5000"
-          max="500000"
-          required
+          readOnly
         />
       </label>
       <label>
@@ -1006,6 +1064,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                     <div className='contenido-tecnico'>
                       <form onSubmit={(e) => handleUpdate(e, cliente._id)}>
                         <div>
+                          <h4>Actualiza la Información de tu Cliente</h4>
                         <label>
                           <span className='highlight-tecnico'>Nombre:</span>
                           <input
@@ -1081,29 +1140,135 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
 
               {formVisible && renderVehiculosForm()}
 
-              {vehiculos.length === 0 && !error && (
-                <p>No hay vehículos registrados</p>
-              )}
+              {vehiculos.length === 0 && !error && <p>No hay vehículos registrados</p>}
 
               {vehiculos.map((vehiculo) => (
-                <div key={vehiculo._id} className="item-vehiculo-tecnico">
+                <div key={vehiculo._id} className="item-vehiculos-tecnico">
                   <h3>{vehiculo.placa}</h3>
-                  <p><strong>Marca:</strong> {vehiculo.marca}</p>
-                  <p><strong>Modelo:</strong> {vehiculo.modelo}</p>
-                  <p><strong>Color:</strong> {vehiculo.color}</p>
-                  <button onClick={() => toggleDetalles(vehiculo._id)}>
-                    {detallesVisible[vehiculo._id] ? "Ocultar detalles" : "Ver detalles"}
-                  </button>
-                  
+                  <div className="etiquetas-horizontales">
+                    <p>
+                      <strong><span className='highlight-tecnico'>Marca:</span></strong> {vehiculo.marca}
+                    </p>
+                    <p>
+                      <strong><span className='highlight-tecnico'>Modelo:</span></strong> {vehiculo.modelo}
+                    </p>
+                    <p>
+                      <strong><span className='highlight-tecnico'>Color:</span></strong> {vehiculo.color}
+                    </p>
+                  </div>
+                  <div>
+                    <button onClick={() => toggleDetalles(vehiculo._id)}>
+                      {detallesVisible[vehiculo._id] ? "Ocultar detalles" : "Ver detalles"}
+                    </button>
+                  </div>
                   {detallesVisible[vehiculo._id] && (
-                    <div className="cliente-vehiculo-detalles">
-                      <p><strong>Tipo:</strong> {vehiculo.tipo}</p>
-                      <p><strong>Marca:</strong> {vehiculo.marca}</p>
-                      <p><strong>Modelo:</strong> {vehiculo.modelo}</p>
-                      <p><strong>Cilindraje:</strong> {vehiculo.cilindraje}</p>
-                      <p><strong>Color:</strong> {vehiculo.color}</p>
-                      <p><strong>Kilometraje Actual:</strong> {vehiculo.kilometrajeActual}</p>
-                      <p><strong>Observación:</strong> {vehiculo.observacion}</p>
+                    <div className="contenido-tecnico">
+                      <form onSubmit={(e) => handleUpdateVehiculo(e, vehiculo._id)}>
+                        <div>
+                          <h4>Actualiza la Información del Vehículo</h4>
+                          <label>
+                            <span className="highlight-tecnico">Placa:</span>
+                            <input
+                              type="text"
+                              name="placa"
+                              value={vehiculo.placa}
+                              readOnly
+                            />
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            <span className="highlight-tecnico">Tipo:</span>
+                            <select
+                              name="tipo"
+                              value={nuevoVehiculo.tipo || ""}
+                              onChange={(e) =>
+                                setNuevoVehiculo({
+                                  ...nuevoVehiculo,
+                                  tipo: e.target.value,
+                                })
+                              }
+                              required
+                            >
+                              <option value="">Seleccione un tipo</option>
+                              <option value="sedan">Sedan</option>
+                              <option value="suv">SUV</option>
+                            </select>
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            <span className="highlight-tecnico">Marca:</span>
+                            <input
+                              type="text"
+                              name="marca"
+                              defaultValue={vehiculo.marca}
+                              maxLength="50"
+                              required
+                            />
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            <span className="highlight-tecnico">Modelo:</span>
+                            <input
+                              type="text"
+                              name="modelo"
+                              defaultValue={vehiculo.modelo}
+                              maxLength="50"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-tecnico">Color:</span>
+                            <input
+                              type="text"
+                              name="color"
+                              defaultValue={vehiculo.color}
+                              maxLength="50"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-tecnico">Cilindraje:</span>
+                            <input
+                              type="number"
+                              name="cilindraje"
+                              defaultValue={vehiculo.cilindraje}
+                              min="1000"
+                              max="5000"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-tecnico">Kilometraje Actual:</span>
+                            <input
+                              type="number"
+                              name="kilometrajeActual"
+                              defaultValue={vehiculo.kilometrajeActual}
+                              min={vehiculo.kilometrajeActual} 
+                              max="500000"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-tecnico">Observación:</span>
+                            <input
+                              type="text"
+                              name="observacion"
+                              defaultValue={vehiculo.observacion}
+                              maxLength="50"
+                            />
+                          </label>
+                        </div>
+                        <div className="actualizar-button">
+                          <input type="submit" value="Actualizar" />
+                          {successMessage && (
+                            <p className="cliente-success">{successMessage}</p>
+                          )}
+                          {error && <p className="error">{error}</p>}
+                        </div>
+                      </form>
                     </div>
                   )}
                 </div>
@@ -1111,9 +1276,9 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
             </div>
           )}
           {selectedSection === "Mantenimientos" && (
-              <div className="cliente-mantenimientos-list">
+              <div className="list-mantenimientos-tecnico">
                 <button
-                  className="cliente-add-mantenimiento-button"
+                  className="tecnico-add-mantenimiento-button"
                   onClick={() => setFormVisible(!formVisible)}
                 >
                   {formVisible ? "Cancelar" : "Agregar Mantenimiento"}
@@ -1129,7 +1294,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                 )}
 
                 {mantenimientos.map((mantenimiento) => (
-                  <div key={mantenimiento._id} className="cliente-mantenimiento-item">
+                  <div key={mantenimiento._id} className="item-mantenimientos-tecnico">
                     <h3>{mantenimiento.descripcion}</h3>
                     <p className="vehiculo-placa">
                       <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo.placa}

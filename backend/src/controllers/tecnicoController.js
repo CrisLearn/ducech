@@ -253,6 +253,38 @@ export const updateClienteForTecnico = async (req, res) => {
       res.status(400).send({ error: 'Error al actualizar el cliente. Por favor, revise los datos e intente nuevamente.' });
     }
   };
+
+export const updateVehiculoForTecnico = async (req, res) => {
+    try {
+      const { id } = req.params; // Obtener el ID del cliente desde la URL
+      const { tipo, marca, modelo, cilindraje, color, kilometrajeActual, observacion } = req.body;
+  
+      // Buscar el cliente por ID y actualizarlo con los nuevos datos
+      const updatedVehiculos = await Vehiculo.findByIdAndUpdate(
+        id,
+        {
+          tipo,
+          marca,
+          modelo,
+          cilindraje,
+          color,
+          kilometrajeActual,
+          observacion,
+          fechaActualizacion: new Date()
+        },
+        { new: true } // Esta opción devuelve el documento modificado en lugar del original
+      );
+  
+      if (!updatedVehiculos) {
+        return res.status(404).send({ error: 'Vehiculo no encontrado' });
+      }
+  
+      res.status(200).send(updatedVehiculos);
+    } catch (error) {
+      console.error(error); // Agregar log para ver el error en la consola
+      res.status(400).send({ error: 'Error al actualizar el vehiculo. Por favor, revise los datos e intente nuevamente.' });
+    }
+  };
   
   
   

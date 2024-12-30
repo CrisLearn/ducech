@@ -622,7 +622,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         </header>
         
         <div className="cliente-dashboard-content">
-          <h1>{selectedSection}</h1>
+          <h1>{selectedSection} Admin</h1>
           <p>{sections[selectedSection]}</p>
 
           {selectedSection === "Vehiculo" && (

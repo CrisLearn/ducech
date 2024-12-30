@@ -216,6 +216,7 @@
 .item-clientes-tecnico button:hover {
   background-color: #000000;
   color: #ffffff;
+  width: 25%;
 }
 .item-clientes-tecnico span {
   color: #f2c14e;
@@ -237,7 +238,7 @@
   display: block;
   margin-bottom: 5px;
 }
-.contenido-tecnico input {
+.contenido-tecnico input, select {
   width: calc(100% - 22px);
   padding: 10px;
   margin-bottom: 10px;
@@ -301,5 +302,115 @@
 }
 .form-vehiculos-tecnico button:hover {
   background-color: #1b1b1b;
+  color: #f2c14e;
+}
+.item-vehiculos-tecnico {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.item-vehiculos-tecnico h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+.item-vehiculos-tecnico hr {
+  margin-bottom: 5px;
+}
+.item-vehiculos-tecnico button {
+  width: 25%;
+  padding: 10px;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.item-vehiculos-tecnico button:hover {
+  background-color: #000000;
+  color: #ffffff;
+  width: 25%;
+}
+.item-vehiculos-tecnico span {
+  color: #f2c14e;
+}
+.item-vehiculos-tecnico button {
+  width: 25%;
+  padding: 10px;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.item-vehiculos-tecnico button:hover {
+  background-color: #000000;
+  color: #ffffff;
+  width: 25%;
+}
+
+/*Estilos para los mantenimientos*/
+.list-mantenimientos-tecnico {
+  margin-top: 10px;
+}
+.tecnico-add-mantenimiento-button {
+  margin-bottom: 20px;
+  background-color: #f2c14e;
+  color: #000000;
+  padding: 10px;
+  font-size: 17px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.tecnico-add-mantenimiento-button:hover {
+  background-color: #2e2e2e;
+  color: #f2c14e;
+}
+.form-mantenimientos-tecnico {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-bottom: 20px;
+  
+}
+.form-mantenimientos-tecnico label, textarea {
+  display: block;
+  margin-bottom: 5px;
+  color: #f2c14e;
+}
+.form-mantenimientos-tecnico input, textarea,
+.form-mantenimientos-tecnico select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.form-mantenimientos-tecnico button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.form-mantenimientos-tecnico button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
+}
+
+
+
+
+
+.highlight-tecnico {
   color: #f2c14e;
 }

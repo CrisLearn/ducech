@@ -142,6 +142,11 @@
   border-radius: 3px;
   border: 1px solid #f2c14e;
 }
+.actualizar-button input {
+  background-color: #f2c14e;
+  color: #000000;
+  font-weight: bold;
+}
 
 /*Estilos para el dashboard de tecnicos*/
 .list-tecnicos-admin {
