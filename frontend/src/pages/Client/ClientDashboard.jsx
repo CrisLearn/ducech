@@ -140,7 +140,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   const toggleDetalles = (id) => {
     setDetallesVisible((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = "/ducech/login";
@@ -758,12 +757,12 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
             {selectedSection === "Mantenimientos" && (
               <div className="cliente-mantenimientos-list">
                 <input
-      type="number"
-      min="5000"
-      max="50000"
-      className="kilometraje-input"
-      placeholder="Ingresa tu kilometraje actual"
-    />
+                  type="number"
+                  min="5000"
+                  max="50000"
+                  className="kilometraje-input"
+                  placeholder="Ingresa tu kilometraje actual"
+                />
     <button className="enviar-notificacion-button">Enviar Notificación</button>
                 <button
                   className="cliente-add-mantenimiento-button"
@@ -824,9 +823,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
                 ))}
               </div>
             )}
-
-
-
           {selectedSection === "Reportes" && (
             <div>
               <button onClick={generarReporte}>Generar Reporte de Vehículos</button>

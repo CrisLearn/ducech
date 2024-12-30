@@ -266,7 +266,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     }
   };
   const renderClientesForm = () => (
-    <form onSubmit={handleAddCliente} className="tecnico-cliente-form">
+    <form onSubmit={handleAddCliente} className="form-clientes-tecnico">
       <label>
         Nombre:
         <input
@@ -442,7 +442,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     fetchVehiculos();
   }, []); 
   const renderVehiculosForm = () => (
-    <form onSubmit={handleAddVehiculo} className="tecnico-vehiculo-form">
+    <form onSubmit={handleAddVehiculo} className="form-vehiculos-tecnico">
       <label>
           Cliente:
           <select 
@@ -973,7 +973,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         </aside>
       {/* Contenido principal */}
       <main className="content-tecnico">
-        <h1>{selectedSection}</h1>
+        <h1>{selectedSection} Técnico</h1>
         <div>
           {selectedSection === "Clientes" && (
             <div className="list-clientes-tecnico">
@@ -993,8 +993,10 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
               {clientes.map((cliente) => (
                 <div key={cliente._id} className='item-clientes-tecnico'>
                   <h3>{cliente.nombre}</h3>
+                  <div className='etiquetas-horizontales'>
                   <p><strong><span className='highlight-tecnico'>Correo:</span></strong> {cliente.email}</p>
                   <p><strong><span className='highlight-tecnico'>Teléfono:</span></strong> {cliente.telefono}</p>
+                  </div>
                   <div>
                   <button onClick={() => toggleDetalles(cliente._id)}>
                     {detallesVisible[cliente._id] ? "Ocultar detalles" : "Ver detalles"}
@@ -1055,10 +1057,12 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                           />
                         </label>
                         </div>
-                        <input className="actualizar-button" type="submit" value="Actualizar" />
+                        <div className='actualizar-button'>
+                        <input  type="submit" value="Actualizar" />
                           {/* Mensajes de éxito o error debajo del botón */}
                           {successMessage && <p className="cliente-success">{successMessage}</p>}
                           {error && <p className="error">{error}</p>}
+                        </div>
                       </form>
                     </div>
                   )}
@@ -1067,9 +1071,9 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
             </div>
           )}
           {selectedSection === "Vehículos" && (
-            <div className="tecnico-vehiculos-list">
+            <div className="list-vehiculos-tecnico">
               <button
-                className="cliente-add-vehiculo-button"
+                className="tecnico-add-vehiculo-button"
                 onClick={() => setFormVisible(!formVisible)}
               >
                 {formVisible ? "Cancelar" : "Agregar Vehículo"}
@@ -1082,7 +1086,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
               )}
 
               {vehiculos.map((vehiculo) => (
-                <div key={vehiculo._id} className="cliente-vehiculo-item">
+                <div key={vehiculo._id} className="item-vehiculo-tecnico">
                   <h3>{vehiculo.placa}</h3>
                   <p><strong>Marca:</strong> {vehiculo.marca}</p>
                   <p><strong>Modelo:</strong> {vehiculo.modelo}</p>

@@ -137,8 +137,55 @@
 }
 
 /*Estilos para Clientes*/
-.list-clientes-admin {
-  margin-top: 20px;
+.list-clientes-tecnico {
+  margin-top: 10px;
+}
+.tecnico-add-cliente-button {
+  margin-bottom: 20px;
+  background-color: #f2c14e;
+  color: #000000;
+  padding: 10px;
+  font-size: 17px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.tecnico-add-cliente-button:hover {
+  background-color: #2e2e2e;
+  color: #f2c14e;
+}
+.form-clientes-tecnico {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-bottom: 20px;
+  
+}
+.form-clientes-tecnico label {
+  display: block;
+  margin-bottom: 5px;
+  color: #f2c14e;
+}
+.form-clientes-tecnico input,
+.form-clientes-tecnico select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.form-clientes-tecnico button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.form-clientes-tecnico button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
 }
 .item-clientes-tecnico {
   background-color: #2e2e2e;
@@ -157,6 +204,7 @@
 }
 .item-clientes-tecnico button {
   width: 25%;
+  padding: 10px;
   background: #f2c14e;
   color: #000000;
   font-size: 17px;
@@ -172,18 +220,86 @@
 .item-clientes-tecnico span {
   color: #f2c14e;
 }
-.tecnico-add-cliente-button {
-  width: 25%;
-  background: #f2c14e;
-  color: #000000;
-  font-size: 17px;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-bottom: 10px;
+.etiquetas-horizontales {
+  display: flex;
+  align-items: center;
+  gap: 50px;
 }
-.tecnico-add-client-button:hover {
-  background-color: #000000;
+.contenido-tecnico {
+  margin-top: 10px;
+  background-color: #4e4e4e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-bottom: 20px;
+}
+.contenido-tecnico label {
+  display: block;
+  margin-bottom: 5px;
+}
+.contenido-tecnico input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
   color: #ffffff;
+}
+.actualizar-button input {
+  background-color: #f2c14e;
+  color: #000000;
+  font-weight: bold;
+}
+
+/*Estilo para los vehiculos del tecnico*/
+.list-vehiculos-tecnico {
+  margin-top: 10px;
+}
+.tecnico-add-vehiculo-button {
+  margin-bottom: 20px;
+  background-color: #f2c14e;
+  color: #000000;
+  padding: 10px;
+  font-size: 17px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.tecnico-add-vehiculo-button:hover {
+  background-color: #2e2e2e;
+  color: #f2c14e;
+}
+.form-vehiculos-tecnico {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-bottom: 20px;
+  
+}
+.form-vehiculos-tecnico label {
+  display: block;
+  margin-bottom: 5px;
+  color: #f2c14e;
+}
+.form-vehiculos-tecnico input,
+.form-vehiculos-tecnico select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.form-vehiculos-tecnico button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.form-vehiculos-tecnico button:hover {
+  background-color: #1b1b1b;
+  color: #f2c14e;
 }
