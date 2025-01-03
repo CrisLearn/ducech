@@ -1299,11 +1299,12 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                     <p className="vehiculo-placa">
                       <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo.placa}
                     </p>
-                    <p><strong>Fecha:</strong> {mantenimiento.fechaCreacion}</p>
-                    <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual}</p>
-                    <p><strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio}</p>
-                    <p><strong>Detalles:</strong> {mantenimiento.detalleGeneral}</p>
-
+                    <div className='etiquetas-horizontales'>
+                      <p><strong>Fecha:</strong> {mantenimiento.fechaCreacion}</p>
+                      <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual}</p>
+                      <p><strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio}</p>
+                      <p><strong>Detalles:</strong> {mantenimiento.detalleGeneral}</p>
+                    </div>
                     <button onClick={() => toggleDetalles(mantenimiento._id)}>
                       {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
                     </button>
