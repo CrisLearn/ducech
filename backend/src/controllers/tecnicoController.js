@@ -726,76 +726,102 @@ export const desactivarMantenimientoPorTecnico = async (req, res) => {
 
 export const generateMantenimientosReport = async (req, res) => {
     try {
-        // Validar que req.user existe y contiene un _id
-        if (!req.user || !req.user._id) {
-            return res.status(400).send({ error: 'Usuario no autenticado o ID de usuario faltante' });
-        }
+        const tecnicoId = req.userId;
+        const tecnico = await Tecnico.findById(tecnicoId).populate({
+            path: 'clientes',
+            populate: {
+                path: 'vehiculos', // Populate vehicles of each client
+            },
+        });
 
-        const tecnicoId = req.user._id;
-
-        // Buscar al técnico y obtener los IDs de los clientes asignados
-        const tecnico = await Tecnico.findById(tecnicoId).populate('clientes');
         if (!tecnico) {
-            return res.status(404).send({ error: 'Técnico no encontrado' });
+            return res.status(400).send({ error: 'No se encontró al técnico' });
         }
 
-        // Validar que el técnico tenga clientes asignados
-        if (!tecnico.clientes || tecnico.clientes.length === 0) {
+        const clientes = tecnico.clientes;
+
+        if (!clientes || clientes.length === 0) {
             return res.status(404).send({ error: 'No se encontraron clientes asignados al técnico' });
         }
 
-        const clienteIds = tecnico.clientes.map(cliente => cliente._id);
-
-        // Buscar mantenimientos de vehículos registrados de los clientes asignados al técnico
-        const mantenimientos = await Mantenimiento.find()
-            .populate({
-                path: 'vehiculo',
-                match: { propietario: { $in: clienteIds } },
-            })
-            .exec();
-
-        // Filtrar los mantenimientos que tienen vehículos asignados
-        const mantenimientosFiltrados = mantenimientos.filter(mantenimiento => mantenimiento.vehiculo);
-
-        // Validar si hay mantenimientos disponibles
-        if (mantenimientosFiltrados.length === 0) {
-            return res.status(404).send({ error: 'No se encontraron mantenimientos para los clientes del técnico' });
-        }
-
-        // Crear el documento PDF
         const doc = new PDFDocument();
-
-        // Configurar el encabezado de la respuesta para enviar un PDF
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=reporte-mantenimientos.pdf');
-
-        // Enviar el documento PDF en el cuerpo de la respuesta
         doc.pipe(res);
 
-        // Añadir contenido al PDF
         doc.fontSize(20).text('Reporte de Mantenimientos', { align: 'center' });
         doc.moveDown();
 
-        mantenimientosFiltrados.forEach(mantenimiento => {
-            doc.fontSize(14).text(`Placa del Vehículo: ${mantenimiento.vehiculo.placa || 'Desconocida'}`);
-            doc.fontSize(14).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento || 'No especificado'}`);
-            doc.fontSize(14).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento || 'No especificado'}`);
-            doc.fontSize(14).text(`Marca del Repuesto: ${mantenimiento.marcaRepuesto || 'No especificado'}`);
-            doc.fontSize(14).text(`Kilometraje Actual: ${mantenimiento.kilometrajeActual || 'No especificado'}`);
-            doc.fontSize(14).text(`Kilometraje del Cambio: ${mantenimiento.kilometrajeCambio || 'No especificado'}`);
-            doc.fontSize(14).text(`Detalle General: ${mantenimiento.detalleGeneral || 'No especificado'}`);
-            doc.fontSize(14).text(`Fecha: ${mantenimiento.fechaCreacion ? mantenimiento.fechaCreacion.toISOString().split('T')[0] : 'No disponible'}`);
-            doc.fontSize(14).text(`Realizado: ${mantenimiento.realizado ? 'SI' : 'NO'}`);
-            doc.moveDown();
-        });
+        for (const cliente of clientes) {
+            if (!cliente) {
+                console.warn('Cliente no definido.');
+                continue;
+            }
 
-        // Finalizar el PDF
+            const vehiculos = cliente.vehiculos;
+            if (!vehiculos || vehiculos.length === 0) {
+                console.warn(`El cliente ${cliente.nombre} no tiene vehículos asignados.`);
+                doc.fontSize(14).text(`Cliente: ${cliente.nombre} - No tiene vehículos asignados.`);
+                doc.moveDown();
+                continue;
+            }
+
+            doc.fontSize(14).text(`Cliente: ${cliente.nombre}`);
+            doc.moveDown();
+
+            for (const vehiculo of vehiculos) {
+                if (!vehiculo) {
+                    console.warn('Vehículo no definido.');
+                    continue;
+                }
+
+                // Check if vehicle has maintenance information
+                if (!vehiculo.mantenimientos || vehiculo.mantenimientos.length === 0) {
+                    console.warn(`El vehículo con placa ${vehiculo.placa} no tiene mantenimientos.`);
+                    doc.fontSize(14).text(`Placa: ${vehiculo.placa} - Sin mantenimientos registrados.`);
+                    doc.moveDown();
+                    continue;
+                }
+
+                // Add vehicle details to the PDF
+                doc.fontSize(14).text(`Placa: ${vehiculo.placa}`);
+                doc.moveDown();
+                
+                doc.fontSize(12).text('Mantenimientos:', { underline: true });
+                doc.moveDown();
+                
+                for (const mantenimiento of vehiculo.mantenimientos) {
+                    if (!mantenimiento) {
+                        console.warn(`Mantenimiento de vehículo ${vehiculo.placa} no está definido.`);
+                        continue;
+                    }
+                
+                    // Log para verificar los valores de mantenimiento
+                    console.log('Mantenimiento:', mantenimiento);
+                
+                    doc.fontSize(10).text(`Descripción: ${mantenimiento.descripcion || 'N/A'}`);
+                    doc.fontSize(10).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento || 'N/A'}`);
+                    doc.fontSize(10).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento || 'N/A'}`);
+                    doc.fontSize(10).text(`Marca del Repuesto: ${mantenimiento.marcaRepuesto || 'N/A'}`);
+                    doc.fontSize(10).text(`Kilometraje Actual: ${mantenimiento.kilometrajeActual || 'N/A'}`);
+                    doc.fontSize(10).text(`Kilometraje del Cambio: ${mantenimiento.kilometrajeCambio || 'N/A'}`);
+                    doc.fontSize(10).text(`Detalle General: ${mantenimiento.detalleGeneral || 'N/A'}`);
+                    doc.fontSize(10).text(`Fecha: ${mantenimiento.fechaCreacion ? mantenimiento.fechaCreacion.toISOString().split('T')[0] : 'N/A'}`);
+                    doc.moveDown();
+                }
+                
+                
+                doc.moveDown();
+            }
+        }
+
         doc.end();
     } catch (error) {
         console.error('Error al generar el PDF:', error);
-        res.status(500).send({ error: 'Error interno del servidor', detalles: error.message });
+        res.status(500).send({ error: 'Error interno del servidor' });
     }
 };
+
 
 
 

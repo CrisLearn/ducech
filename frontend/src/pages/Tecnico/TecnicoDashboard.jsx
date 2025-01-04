@@ -688,7 +688,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   };
   const handleEliminar = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cliente/delete-mantenimiento/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/tecnico/delete-mantenimiento/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -765,7 +765,16 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         <select
           name="vehiculo"
           value={nuevoMantenimiento.vehiculo}
-          onChange={(e) => handleInputChange(e, 'mantenimiento')}
+          onChange={(e) => {
+            handleInputChange(e, 'mantenimiento');
+            const vehiculoSeleccionado = vehiculos.find(
+              (vehiculo) => vehiculo.placa === e.target.value
+            );
+            handleInputChange(
+              { target: { name: 'kilometrajeActual', value: vehiculoSeleccionado?.kilometrajeActual || '' } },
+              'mantenimiento'
+            );
+          }}
           required
         >
           <option value="" disabled>Seleccionar vehículo</option>
@@ -821,7 +830,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           type="number"
           name="kilometrajeActual"
           value={nuevoMantenimiento.kilometrajeActual}
-          onChange={(e) => handleInputChange(e, 'mantenimiento')}
           readOnly
         />
       </label>
@@ -852,11 +860,12 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           value={nuevoMantenimiento.detalleGeneral}
           onChange={(e) => handleInputChange(e, 'mantenimiento')}
           required
-          maxLength="600" // Aprox. 100 palabras (considerando un promedio de 6 caracteres por palabra)
+          maxLength="600"
         ></textarea>
       </label>
       <button type="submit">Guardar</button>
     </form>
+
   );
   const generarReporteClientes = () => {
     const token = localStorage.getItem('token');
