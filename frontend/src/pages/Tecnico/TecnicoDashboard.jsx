@@ -1295,15 +1295,12 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
 
                 {mantenimientos.map((mantenimiento) => (
                   <div key={mantenimiento._id} className="item-mantenimientos-tecnico">
-                    <h3>{mantenimiento.descripcion}</h3>
-                    <p className="vehiculo-placa">
-                      <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo.placa}
-                    </p>
+                    <h3>{mantenimiento.vehiculo.placa}</h3>
                     <div className='etiquetas-horizontales'>
-                      <p><strong>Fecha:</strong> {mantenimiento.fechaCreacion}</p>
-                      <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual}</p>
-                      <p><strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio}</p>
-                      <p><strong>Detalles:</strong> {mantenimiento.detalleGeneral}</p>
+                      <p><strong><span className='highlight-tecnico'>Fecha:</span></strong> {mantenimiento.fechaCreacion}</p>
+                      <p><strong><span className='highlight-tecnico'>Kilometraje Actual:</span></strong> {mantenimiento.kilometrajeActual}</p>
+                      <p><strong><span className='highlight-tecnico'>Kilometraje de próximo Cambio:</span></strong> {mantenimiento.kilometrajeCambio}</p>
+                      <p><strong><span className='highlight-tecnico'>Detalles:</span></strong> {mantenimiento.detalleGeneral}</p>
                     </div>
                     <button onClick={() => toggleDetalles(mantenimiento._id)}>
                       {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}

@@ -406,6 +406,40 @@
   background-color: #1b1b1b;
   color: #f2c14e;
 }
+.item-mantenimientos-tecnico {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.item-mantenimientos-tecnico h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+.item-mantenimientos-tecnico hr {
+  margin-bottom: 5px;
+}
+.item-mantenimientos-tecnico button {
+  width: 25%;
+  padding: 10px;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.item-mantenimientos-tecnico button:hover {
+  background-color: #000000;
+  color: #ffffff;
+  width: 25%;
+}
+.item-clientes-tecnico span {
+  color: #f2c14e;
+}
 
 
 
