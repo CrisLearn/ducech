@@ -676,7 +676,6 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         tipoMantenimiento: "",
         detalleMantenimiento: "",
         marcaRepuesto: "",
-        kilometrajeActual: "",
         kilometrajeCambio: "",
         detalleGeneral: ""
       });
@@ -825,7 +824,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         />
       </label>
       <label>
-        Kilometraje Actual:
+        Kilometraje Actual del Cambio:
         <input 
           type="number"
           name="kilometrajeActual"
@@ -834,7 +833,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         />
       </label>
       <label>
-        Kilometraje Cambio:
+        Kilometraje del Próximo Cambio:
         <input
           type="number"
           name="kilometrajeCambio"
@@ -1285,95 +1284,106 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
             </div>
           )}
           {selectedSection === "Mantenimientos" && (
-              <div className="list-mantenimientos-tecnico">
-                <button
-                  className="tecnico-add-mantenimiento-button"
-                  onClick={() => setFormVisible(!formVisible)}
-                >
-                  {formVisible ? "Cancelar" : "Agregar Mantenimiento"}
-                </button>
+            <div className="list-mantenimientos-tecnico">
+              <button
+                className="tecnico-add-mantenimiento-button"
+                onClick={() => setFormVisible(!formVisible)}
+              >
+                {formVisible ? "Cancelar" : "Agregar Mantenimiento"}
+              </button>
 
-                {formVisible && renderMantenimientosForm()}
+              {formVisible && renderMantenimientosForm()}
 
-                {successMessage && <p className="success">{successMessage}</p>}
-                {error && <p className="error">{error}</p>}
+              {successMessage && <p className="success">{successMessage}</p>}
+              {error && <p className="error">{error}</p>}
 
-                {mantenimientos.length === 0 && !error && (
-                  <p>No hay mantenimientos registrados</p>
-                )}
+              {mantenimientos.length === 0 && !error && (
+                <p>No hay mantenimientos registrados</p>
+              )}
 
-                {mantenimientos.map((mantenimiento) => (
+              {mantenimientos.map((mantenimiento) => {
+                // Obtener la placa del vehículo de forma segura
+                const placa = mantenimiento.vehiculo?.placa || 
+                              mantenimiento.placa || 
+                              'Placa no disponible';
+
+                return (
                   <div key={mantenimiento._id} className="item-mantenimientos-tecnico">
-                    <h3>{mantenimiento.vehiculo.placa}</h3>
+                    <h3 className="vehicle-plate">
+                      <span className='highlight-tecnico'>Vehículo:</span> {placa}
+                    </h3>
                     <div className='etiquetas-horizontales'>
-                      <p><strong><span className='highlight-tecnico'>Fecha:</span></strong> {mantenimiento.fechaCreacion}</p>
-                      <p><strong><span className='highlight-tecnico'>Kilometraje Actual:</span></strong> {mantenimiento.kilometrajeActual}</p>
-                      <p><strong><span className='highlight-tecnico'>Kilometraje de próximo Cambio:</span></strong> {mantenimiento.kilometrajeCambio}</p>
-                      <p><strong><span className='highlight-tecnico'>Detalles:</span></strong> {mantenimiento.detalleGeneral}</p>
+                      <p>
+                        <strong><span className='highlight-tecnico'>Fecha:</span></strong> 
+                        {new Date(mantenimiento.fechaCreacion).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <strong><span className='highlight-tecnico'>Kilometraje de Cambio:</span></strong> 
+                        {mantenimiento.kilometrajeActual}
+                      </p>
+                      <p>
+                        <strong><span className='highlight-tecnico'>Kilometraje de próximo Cambio:</span></strong> 
+                        {mantenimiento.kilometrajeCambio}
+                      </p>
+                      <p>
+                        <strong><span className='highlight-tecnico'>Detalles:</span></strong> 
+                        {mantenimiento.detalleGeneral}
+                      </p>
                     </div>
-                    <button onClick={() => toggleDetalles(mantenimiento._id)}>
-                      {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
-                    </button>
-                    <button onClick={() => handleEliminar(mantenimiento._id)}>
-                      Eliminar Mantenimiento
-                    </button>
 
-                    {/* Mostrar el botón solo si el mantenimiento no ha sido realizado */}
-                    {!mantenimiento.realizado && (
-                      <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
-                        Marcar como Realizado
+                    <div className="mantenimiento-actions">
+                      <button onClick={() => toggleDetalles(mantenimiento._id)}>
+                        {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
                       </button>
-                    )}
+                      
+                      <button onClick={() => handleEliminar(mantenimiento._id)}>
+                        Eliminar Mantenimiento
+                      </button>
 
-                    {/* Muestra el mensaje de éxito o error solo para el mantenimiento actual */}
+                      {!mantenimiento.realizado && (
+                        <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
+                          Marcar como Realizado
+                        </button>
+                      )}
+                    </div>
+
                     {successMessages[mantenimiento._id] && (
                       <p className="mantenimiento-success">{successMessages[mantenimiento._id]}</p>
                     )}
                     {errorMessages[mantenimiento._id] && (
                       <p className="error-message">{errorMessages[mantenimiento._id]}</p>
                     )}
+
                     {detallesVisible[mantenimiento._id] && (
                       <div className="cliente-mantenimiento-detalles">
-                        <p><strong>Tipo:</strong> {mantenimiento.tipoMantenimiento}</p>
-                        <p><strong>Detalle:</strong> {mantenimiento.detalleMantenimiento}</p>
-                        <p><strong>Marca del Repuesto:</strong> {mantenimiento.marcaRepuesto}</p>
+                        <p><strong><span className='highlight-tecnico'>Tipo:</span></strong> {mantenimiento.tipoMantenimiento}</p>
+                        <p><strong><span className='highlight-tecnico'>Detalle:</span></strong> {mantenimiento.detalleMantenimiento}</p>
+                        <p><strong><span className='highlight-tecnico'>Marca del Repuesto:</span></strong> {mantenimiento.marcaRepuesto}</p>
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
+                );
+              })}
+            </div>
           )}
           {selectedSection === "Reportes" && (
-              <div className='reportes'>
-                <div>
-                  <button onClick={generarReporteClientes}>
-                    <FaUser style={{ marginRight: '8px' }} /> Generar Reporte de Clientes
-                  </button>
-                  {reporte && (
-                    <div id="reporteContainer">
-                      <pre>{JSON.stringify(reporte, null, 2)}</pre>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <button onClick={generarReporteVehiculos}>
-                    <FaCar style={{ marginRight: '8px' }} /> Generar Reporte de Vehículos
-                  </button>
-                  {reporte && (
-                    <div id="reporteContainer">
-                      <pre>{JSON.stringify(reporte, null, 2)}</pre>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <button onClick={generarReporteMantenimientos}>
-                    <FaClipboardList style={{ marginRight: '8px' }} /> Generar Reporte de Mantenimientos
-                  </button>
-                  {reporte && (
-                    <div id="reporteContainer">
-                      <pre>{JSON.stringify(reporte, null, 2)}</pre>
-                    </div>
-                  )}
+              <div className='reportes-tecnico'>
+                <div className='botones-reportes-tecnico'>
+                  <div>
+                    <button onClick={generarReporteClientes}>
+                      <FaUser style={{ marginRight: '8px' }} size={24} /> Generar Reporte de Clientes
+                    </button>
+                  </div>
+                  <div>
+                    <button onClick={generarReporteVehiculos}>
+                      <FaCar style={{ marginRight: '8px' }} size={24} /> Generar Reporte de Vehículos
+                    </button>
+                  </div>
+                  <div>
+                    <button onClick={generarReporteMantenimientos}>
+                      <FaClipboardList style={{ marginRight: '8px' }} size={24} /> Generar Reporte de Mantenimientos
+                    </button>
+                  </div>
                 </div>
               </div>
           )}

@@ -422,7 +422,7 @@
   margin-bottom: 5px;
 }
 .item-mantenimientos-tecnico button {
-  width: 25%;
+  width: 50%;
   padding: 10px;
   background: #f2c14e;
   color: #000000;
@@ -435,12 +435,81 @@
 .item-mantenimientos-tecnico button:hover {
   background-color: #000000;
   color: #ffffff;
-  width: 25%;
+  width: 50%;
 }
 .item-clientes-tecnico span {
   color: #f2c14e;
 }
+.mantenimiento-actions {
+  display: flex; /* Usar flexbox */
+  justify-content: center; /* Centrar los botones horizontalmente */
+  gap: 10px; /* Espacio entre los botones */
+}
 
+.mantenimiento-actions button {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/*Estilos para los reportes*/
+.reportes-tecnico {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  flex-wrap: wrap; /* Permite que los botones se ajusten en varias filas si no hay espacio */
+  gap: 20px; /* Espacio entre los botones */
+  padding: 20px;
+  background-color: #2e2e2e; /* Color de fondo */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para destacar */
+  border: solid #f2c14e; /* Borde con color */
+}
+
+.botones-reportes-tecnico {
+  display: flex;
+  flex-wrap: wrap; /* Ajusta los botones en filas si es necesario */
+  justify-content: space-evenly; /* Distribuye el espacio uniformemente */
+  width: 100%;
+}
+
+.botones-reportes-tecnico > div {
+  flex: 0 1 calc(25% - 20px); /* Cada botón ocupa un 25% del ancho menos el espacio del gap */
+  min-width: 200px; /* Ancho mínimo para mantener el diseño responsivo */
+  text-align: center; /* Centra el contenido del botón */
+}
+
+.botones-reportes-tecnico button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Botones ocupan todo el ancho de su contenedor */
+  padding: 12px 20px;
+  background-color: #f2c14e; /* Color de fondo */
+  color: #000000; /* Color del texto */
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid #000000; /* Borde con color */
+  border-radius: 8px; /* Bordes redondeados */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, color 0.3s, border-color 0.3s; /* Animaciones suaves */
+}
+
+.botones-reportes-tecnico button:hover {
+  background-color: #000000; /* Color al pasar el cursor */
+  transform: scale(1.05); /* Aumento de tamaño al hover */
+  color: #f2c14e; /* Color del texto al hover */
+  border-color: #f2c14e; /* Cambia el color del borde al hover */
+}
+
+.reporte-tecnicos, .reporte-clientes, .reporte-vehiculos, .reporte-mantenimientos {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #ffffff; /* Color de fondo */
+  border: 1px solid #dddddd; /* Color del borde */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para profundidad */
+}
 
 
 
