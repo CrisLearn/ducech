@@ -1,6 +1,7 @@
 import express from 'express';
 import { createCliente, 
     loginCliente, 
+    getClienteProfile,
     updateCliente,
     createVehiculoForCliente,
     getAllVehiculos,
@@ -19,6 +20,7 @@ const router = express.Router();
 
 router.post('/registrar-cliente', createCliente);
 router.post('/login-cliente', loginCliente);
+router.get('/perfil-cliente', authMiddleware, getClienteProfile);
 router.put('/update-cliente', authMiddleware,updateCliente);
 router.post('/registrar-vehiculo', authMiddleware,createVehiculoForCliente);
 router.put('/actualizar-vehiculo/:id', authMiddleware,updateVehiculoForCliente);

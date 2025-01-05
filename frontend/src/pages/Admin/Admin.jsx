@@ -557,8 +557,6 @@ const AdmPage = () => {
                         )}
                       </div>
                     )}
-
-
                 </main>
             </div>
         </div>

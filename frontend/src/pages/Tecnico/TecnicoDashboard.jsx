@@ -1138,7 +1138,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
             </div>
           )}
           {selectedSection === "Vehículos" && (
-            <div className="list-vehiculos-tecnico">
+            <div className="">
               <button
                 className="tecnico-add-vehiculo-button"
                 onClick={() => setFormVisible(!formVisible)}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./ClienteDashboard.css";
-import Sedan from "../../components/svg/sedan";
+import Header from '../../components/Layout/Header'
+import { FaDoorOpen, FaCar, FaUser } from 'react-icons/fa';
 
 const ClienteDashboard = ({ clienteName = "Cliente" }) => {
-  const [selectedSection, setSelectedSection] = useState("Vehículos");
+  const [selectedSection, setSelectedSection] = useState("Perfil");
   const [vehiculos, setVehiculos] = useState([]);
   const [mantenimientos, setMantenimientos] = useState([]);
   const [error, setError] = useState("");
@@ -13,6 +14,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   const [reporte, setReporte] = useState(null);
   const [successMessages, setSuccessMessages] = useState({});
   const [errorMessages, setErrorMessages] = useState({});
+  const [perfil, setPerfil] = useState(null);
 
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     placa: "",
@@ -24,7 +26,6 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
     kilometrajeActual: "",
     observacion: ""
   });
-
   const [nuevoMantenimiento, setNuevoMantenimiento] = useState({
     vehiculo: "",
     tipoMantenimiento: "",
@@ -71,44 +72,55 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         if (!token) {
           throw new Error("Usuario no autenticado");
         }
-
+  
+        let response;
         if (selectedSection === "Vehículos") {
-          const response = await fetch(
-            "http://localhost:5000/api/cliente/vehiculos",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          
+          response = await fetch("http://localhost:5000/api/cliente/vehiculos", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
           if (!response.ok) {
             throw new Error(
               "Error al obtener la lista de vehículos. Verifica tu autenticación"
             );
           }
-          
+  
           const data = await response.json();
           setVehiculos(data);
           setError("");
         } else if (selectedSection === "Mantenimientos") {
-          const response = await fetch(
-            "http://localhost:5000/api/cliente/mantenimientos",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          
+          response = await fetch("http://localhost:5000/api/cliente/mantenimientos", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
           if (!response.ok) {
             throw new Error(
               "Error al obtener la lista de mantenimientos. Verifica tu autenticación"
             );
           }
-          
+  
           const data = await response.json();
           setMantenimientos(data);
+          setError("");
+        } else if (selectedSection === "Perfil") {
+          response = await fetch("http://localhost:5000/api/cliente/perfil-cliente", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error(
+              "Error al obtener el perfil del cliente. Verifica tu autenticación"
+            );
+          }
+  
+          const data = await response.json();
+          setPerfil(data);
           setError("");
         }
       } catch (err) {
@@ -117,12 +129,14 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
           setVehiculos([]);
         } else if (selectedSection === "Mantenimientos") {
           setMantenimientos([]);
+        } else if (selectedSection === "Perfil") {
+          setPerfil(null); // Limpiar datos del perfil en caso de error
         }
       }
     };
-
+  
     fetchData();
-  }, [selectedSection]);
+  }, [selectedSection]);  
   const handleInputChange = (e, formType) => {
     const { name, value } = e.target;
     if (formType === 'vehiculo') {
@@ -311,16 +325,8 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       setError("Error al enviar la solicitud");
     }
   };  
-  const renderSVG = (tipo) => {
-    switch (tipo.toLowerCase()) {
-      case "sedan":
-        return <Sedan />;
-      default:
-        return <Sedan />; 
-    }
-  };
   const renderVehiculosForm = () => (
-    <form onSubmit={handleAddVehiculo} className="cliente-vehiculo-form">
+    <form onSubmit={handleAddVehiculo} className="form-vehiculos-cliente">
       <label>
         Placa:
         <input 
@@ -426,13 +432,21 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
     </form>
   );
   const renderMantenimientosForm = () => (
-    <form onSubmit={handleAddMantenimiento} className="cliente-mantenimiento-form">
+    <form onSubmit={handleAddMantenimiento} className="form-mantenimientos-cliente">
       <label>
         Vehículo:
         <select
           name="vehiculo"
           value={nuevoMantenimiento.vehiculo}
-          onChange={(e) => handleInputChange(e, 'mantenimiento')}
+          onChange={(e) => {handleInputChange(e, 'mantenimiento');
+            const vehiculoSeleccionado = vehiculos.find(
+              (vehiculo) => vehiculo.placa === e.target.value
+            );
+            handleInputChange(
+              { target: { name: 'kilometrajeActual', value: vehiculoSeleccionado?.kilometrajeActual || '' } },
+              'mantenimiento'
+            );
+          }}
           required
         >
           <option value="" disabled>Seleccionar vehículo</option>
@@ -483,25 +497,29 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         />
       </label>
       <label>
-        Kilometraje Actual:
+        Kilometraje Actual del Cambio:
         <input 
           type="number"
           name="kilometrajeActual"
           value={nuevoMantenimiento.kilometrajeActual}
-          onChange={(e) => handleInputChange(e, 'mantenimiento')}
-          min="5000"
-          max="500000"
-          required
+          readOnly
         />
       </label>
       <label>
-        Kilometraje Cambio:
+        Kilometraje del Próximo Cambio:
         <input
           type="number"
           name="kilometrajeCambio"
           value={nuevoMantenimiento.kilometrajeCambio || ""}
           onChange={(e) => handleInputChange(e, 'mantenimiento')}
-          min={Math.max(5000, parseInt(nuevoMantenimiento.kilometrajeActual) + 4000)}
+          min={
+            Math.max(
+              5000,
+              isNaN(parseInt(nuevoMantenimiento.kilometrajeActual)) 
+                ? 5000 
+                : parseInt(nuevoMantenimiento.kilometrajeActual) + 4000
+            )
+          }
           max="500000"
           required
         />
@@ -591,48 +609,92 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
       });
     }
   };
-    const sections = {
+  const sections = {
     Vehículos: "Gestión de Vehículos: Lista y administra los vehículos registrados.",
     Mantenimientos: "Historial de Mantenimientos: Detalles sobre mantenimientos realizados.",
     Reportes: "Reportes: Visualiza y descarga reportes estadísticos.",
   };
+  const handleUpdateCliente = async (e, id) => {
+    e.preventDefault();
+    const form = e.target;
+    const updatedCliente = {
+      nombre: form.nombre.value,
+      password: form.password.value,
+      
+    };
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Usuario no autenticado.");
+      }
+      const response = await fetch(
+        `http://localhost:5000/api/cliente/update-cliente`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedCliente),
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Perfil Actualizado:", data);
+  
+  
+        // Muestra el mensaje de éxito
+        setSuccessMessage("Cliente actualizado correctamente");
+        setError(null);
+  
+        // Limpia el mensaje de éxito después de 3 segundos
+        setTimeout(() => setSuccessMessage(""), 3000);
+  
+        // Opcional: Oculta el formulario
+        setFormVisible(false);
+      } else {
+        const errorData = await response.json();
+        console.error("Error al actualizar el cliente:", errorData);
+        setError("Cliente ya registrado");
+      }
+    } catch (error) {
+      console.error("Error al enviar la solicitud:", error);
+      setError("Error al enviar la solicitud");
+    }
+  }; 
 
   return (
-    <div className="cliente-dashboard">
-      <aside className="cliente-sidebar">
-        <h2>Menú</h2>
+    <div className="header-cliente">
+      <Header/>
+      <div className="cliente-dashboard">
+      <aside className="sidebar-cliente">
+        <h2>Opciones</h2>
         <ul>
           {Object.keys(sections).map((section) => (
-            <li 
-              key={section} 
-              className={selectedSection === section ? "active" : ""}
-            >
+            <li key={section} className={selectedSection === section ? "active" : ""}>
               <button onClick={() => setSelectedSection(section)}>
                 {section}
               </button>
             </li>
           ))}
         </ul>
+        <div className="buttons-cliente">
+          <button onClick={handleLogout}>
+            <FaDoorOpen/>
+          </button>
+          <button onClick={() => setSelectedSection("Perfil")}>
+            <FaUser/>
+          </button>
+        </div>
       </aside>
-      
-      <main className="cliente-main-content">
-        <header className="cliente-header">
-          <span>Bienvenido {clienteName}</span>
-          <button className="logout-button" onClick={handleLogout}>Salir</button>
-        </header>
-        
+      <main className="content-cliente">
         <div className="cliente-dashboard-content">
-          <h1>{selectedSection} Admin</h1>
-          <p>{sections[selectedSection]}</p>
-
-          {selectedSection === "Vehiculo" && (
-            <div>
-              <div className="vehiculo-svg">{renderSVG("sedan")}</div>
-            </div>
-          )}
+          <h1>{selectedSection} Cliente </h1>
 
             {selectedSection === "Vehículos" && (
-              <div className="cliente-vehiculos-list">
+              <div className="list-vehiculos-cliente">
                 <button 
                   className="cliente-add-vehiculo-button" 
                   onClick={() => {
@@ -652,118 +714,141 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
                 )}
                 
                 {vehiculos.map((vehiculo) => (
-                  <div key={vehiculo._id} className="cliente-vehiculo-item">
+                  <div key={vehiculo._id} className="item-vehiculos-cliente">
                     <h3>{vehiculo.placa}</h3>
-                    <p><strong>Marca:</strong> {vehiculo.marca}</p>
-                    <p><strong>Color:</strong> {vehiculo.color}</p>
+                    <div className="etiquetas-horizontales">
+                    <p>
+                      <strong><span className='highlight-cliente'>Marca:</span></strong> {vehiculo.marca}
+                    </p>
+                    <p>
+                      <strong><span className='highlight-cliente'>Modelo:</span></strong> {vehiculo.modelo}
+                    </p>
+                    <p>
+                      <strong><span className='highlight-cliente'>Color:</span></strong> {vehiculo.color}
+                    </p>
+                  </div>
                     <button onClick={() => toggleDetalles(vehiculo._id)}>
                       {detallesVisible[vehiculo._id] ? "Ocultar detalles" : "Ver detalles"}
                     </button>
+                    <div>
                     {detallesVisible[vehiculo._id] && (
-                      <div>
+                      <div className="contenido-cliente">
                         <form onSubmit={(e) => handleUpdate(e, vehiculo._id)}>
-                          <label htmlFor="placa"><strong>Placa:</strong></label>
-                          <input
-                            type="text"
-                            id="placa"
-                            name="placa"
-                            defaultValue={vehiculo.placa}
-                            pattern="^[A-Z]{3}[0-9][0-9]{2}[1-9]$" 
-                            title="La placa debe tener tres letras seguidas de cuatro números (no solo ceros), ej. PCH5503."
-                            required
-                          />
-
-                          <label htmlFor="marca"><strong>Marca:</strong></label>
-                          <input
-                            type="text"
-                            id="marca"
-                            name="marca"
-                            defaultValue={vehiculo.marca}
-                            maxLength="20"
-                            pattern="^[a-zA-Z\s]{1,20}$"
-                            title="La marca debe tener solo letras (máximo 20 caracteres)."
-                            required
-                          />
-
-                          <label htmlFor="color"><strong>Color:</strong></label>
-                          <input
-                            type="text"
-                            id="color"
-                            name="color"
-                            defaultValue={vehiculo.color}
-                            maxLength="20"
-                            pattern="^[a-zA-Z\s]{1,20}$"
-                            title="El color debe tener solo letras (máximo 20 caracteres)."
-                            required
-                          />
-
-                            <label htmlFor="tipo"><strong>Tipo:</strong></label>
-                            <select id="tipo" name="tipo" defaultValue={vehiculo.tipo} required>
-                              <option value="" disabled>Seleccione un tipo</option>
-                              <option value="sedan">sedan</option>
-                              <option value="suv">suv</option>
+                        <div>
+                          <h4>Actualiza la Información del Vehículo</h4>
+                          <label>
+                            <span className="highlight-cliente">Placa:</span>
+                            <input
+                              type="text"
+                              name="placa"
+                              value={vehiculo.placa}
+                              readOnly
+                            />
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            <span className="highlight-cliente">Tipo:</span>
+                            <select
+                              name="tipo"
+                              value={nuevoVehiculo.tipo || ""}
+                              onChange={(e) =>
+                                setNuevoVehiculo({
+                                  ...nuevoVehiculo,
+                                  tipo: e.target.value,
+                                })
+                              }
+                              required
+                            >
+                              <option value="">Seleccione un tipo</option>
+                              <option value="sedan">Sedan</option>
+                              <option value="suv">SUV</option>
                             </select>
-
-
-                          <label htmlFor="modelo"><strong>Modelo:</strong></label>
-                          <input
-                            type="text"
-                            id="modelo"
-                            name="modelo"
-                            defaultValue={vehiculo.modelo}
-                            maxLength="20"
-                            pattern="^[a-zA-Z\s]{1,20}$"
-                            title="El modelo debe tener solo letras (máximo 20 caracteres)."
-                            required
-                          />
-
-                          <label htmlFor="cilindraje"><strong>Motor:</strong></label>
-                          <input
-                            type="number"
-                            id="cilindraje"
-                            name="cilindraje"
-                            defaultValue={vehiculo.cilindraje}
-                            min="1300"
-                            max="7000"
-                            title="El cilindraje debe estar entre 1300 y 7000."
-                            required
-                          />
-
-                          <label htmlFor="kilometrajeActual"><strong>Kilometraje:</strong></label>
-                          <input
-                            type="number"
-                            id="kilometrajeActual"
-                            name="kilometrajeActual"
-                            defaultValue={vehiculo.kilometrajeActual}
-                            min="5000"
-                            max="500000"
-                            title="El kilometraje debe estar entre 5000 y 500000."
-                            required
-                          />
-
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            <span className="highlight-cliente">Marca:</span>
+                            <input
+                              type="text"
+                              name="marca"
+                              defaultValue={vehiculo.marca}
+                              maxLength="50"
+                              required
+                            />
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            <span className="highlight-cliente">Modelo:</span>
+                            <input
+                              type="text"
+                              name="modelo"
+                              defaultValue={vehiculo.modelo}
+                              maxLength="50"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-cliente">Color:</span>
+                            <input
+                              type="text"
+                              name="color"
+                              defaultValue={vehiculo.color}
+                              maxLength="50"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-cliente">Cilindraje:</span>
+                            <input
+                              type="number"
+                              name="cilindraje"
+                              defaultValue={vehiculo.cilindraje}
+                              min="1000"
+                              max="5000"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-cliente">Kilometraje Actual:</span>
+                            <input
+                              type="number"
+                              name="kilometrajeActual"
+                              defaultValue={vehiculo.kilometrajeActual}
+                              min={vehiculo.kilometrajeActual} 
+                              max="500000"
+                              required
+                            />
+                          </label>
+                          <label>
+                            <span className="highlight-cliente">Observación:</span>
+                            <input
+                              type="text"
+                              name="observacion"
+                              defaultValue={vehiculo.observacion}
+                              maxLength="50"
+                            />
+                          </label>
+                        </div>
+                        <div className="actualizar-button-cliente">
                           <input type="submit" value="Actualizar" />
-                          {/* Mensajes de éxito o error debajo del botón */}
-                          {successMessage && <p className="vehiculo-success">{successMessage}</p>}
+                          {successMessage && (
+                            <p className="cliente-success">{successMessage}</p>
+                          )}
                           {error && <p className="error">{error}</p>}
+                        </div>
                         </form>
 
                       </div>
                     )}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
-
             {selectedSection === "Mantenimientos" && (
-              <div className="cliente-mantenimientos-list">
-                <input
-                  type="number"
-                  min="5000"
-                  max="50000"
-                  className="kilometraje-input"
-                  placeholder="Ingresa tu kilometraje actual"
-                />
-    <button className="enviar-notificacion-button">Enviar Notificación</button>
+              <div className="list-mantenimientos-cliente">
                 <button
                   className="cliente-add-mantenimiento-button"
                   onClick={() => setFormVisible(!formVisible)}
@@ -780,57 +865,141 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
                   <p>No hay mantenimientos registrados</p>
                 )}
 
-                {mantenimientos.map((mantenimiento) => (
-                  <div key={mantenimiento._id} className="cliente-mantenimiento-item">
-                    <h3>{mantenimiento.descripcion}</h3>
-                    <p className="vehiculo-placa">
-                      <strong>Placa del Vehículo:</strong> {mantenimiento.vehiculo.placa}
-                    </p>
-                    <p><strong>Fecha:</strong> {mantenimiento.fechaCreacion}</p>
-                    <p><strong>Kilometraje Actual:</strong> {mantenimiento.kilometrajeActual}</p>
-                    <p><strong>Kilometraje de próximo Cambio:</strong> {mantenimiento.kilometrajeCambio}</p>
-                    <p><strong>Detalles:</strong> {mantenimiento.detalleGeneral}</p>
+              {mantenimientos.map((mantenimiento) => {
+                // Obtener la placa del vehículo de forma segura
+                const placa = mantenimiento.vehiculo?.placa || 
+                              mantenimiento.placa || 
+                              'Placa no disponible';
 
-                    <button onClick={() => toggleDetalles(mantenimiento._id)}>
-                      {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
-                    </button>
-                    <button onClick={() => handleEliminar(mantenimiento._id)}>
-                      Eliminar Mantenimiento
-                    </button>
+                return (
+                  <div key={mantenimiento._id} className="item-mantenimientos-cliente">
+                    <h3 className="vehicle-plate">
+                      <span className='highlight-cliente'>Vehículo:</span> {placa}
+                    </h3>
+                    <div className='etiquetas-horizontales'>
+                      <p>
+                        <strong><span className='highlight-cliente'>Fecha:</span></strong> 
+                        {new Date(mantenimiento.fechaCreacion).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <strong><span className='highlight-cliente'>Kilometraje de Cambio:</span></strong> 
+                        {mantenimiento.kilometrajeActual}
+                      </p>
+                      <p>
+                        <strong><span className='highlight-cliente'>Kilometraje de próximo Cambio:</span></strong> 
+                        {mantenimiento.kilometrajeCambio}
+                      </p>
+                      <p>
+                        <strong><span className='highlight-cliente'>Detalles:</span></strong> 
+                        {mantenimiento.detalleGeneral}
+                      </p>
+                    </div>
 
-                    {/* Mostrar el botón solo si el mantenimiento no ha sido realizado */}
-                    {!mantenimiento.realizado && (
-                      <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
-                        Marcar como Realizado
+                    <div className="mantenimiento-actions">
+                      <button onClick={() => toggleDetalles(mantenimiento._id)}>
+                        {detallesVisible[mantenimiento._id] ? "Ocultar detalles" : "Ver detalles"}
                       </button>
-                    )}
+                      
+                      <button onClick={() => handleEliminar(mantenimiento._id)}>
+                        Eliminar Mantenimiento
+                      </button>
 
-                    {/* Muestra el mensaje de éxito o error solo para el mantenimiento actual */}
+                      {!mantenimiento.realizado && (
+                        <button onClick={() => handleRealizarMantenimiento(mantenimiento._id)}>
+                          Marcar como Realizado
+                        </button>
+                      )}
+                    </div>
+
                     {successMessages[mantenimiento._id] && (
                       <p className="mantenimiento-success">{successMessages[mantenimiento._id]}</p>
                     )}
                     {errorMessages[mantenimiento._id] && (
                       <p className="error-message">{errorMessages[mantenimiento._id]}</p>
                     )}
+
                     {detallesVisible[mantenimiento._id] && (
-                      <div className="cliente-mantenimiento-detalles">
-                        <p><strong>Tipo:</strong> {mantenimiento.tipoMantenimiento}</p>
-                        <p><strong>Detalle:</strong> {mantenimiento.detalleMantenimiento}</p>
-                        <p><strong>Marca del Repuesto:</strong> {mantenimiento.marcaRepuesto}</p>
+                      <div className="detalle-mantenimientos-">
+                        <p><strong><span className='highlight-cliente'>Tipo:</span></strong> {mantenimiento.tipoMantenimiento}</p>
+                        <p><strong><span className='highlight-cliente'>Detalle:</span></strong> {mantenimiento.detalleMantenimiento}</p>
+                        <p><strong><span className='highlight-cliente'>Marca del Repuesto:</span></strong> {mantenimiento.marcaRepuesto}</p>
                       </div>
                     )}
                   </div>
-                ))}
+                );
+              })}
               </div>
             )}
-          {selectedSection === "Reportes" && (
-            <div>
-              <button onClick={generarReporte}>Generar Reporte de Vehículos</button>
-              {reporte && ( <div id="reporteContainer"> <pre>{JSON.stringify(reporte, null, 2)}</pre> </div> )}
-            </div>
-          )}
+            {selectedSection === "Reportes" && (
+              <div className="reportes-vehiculos">
+                <div className="botones-reportes-cliente">
+                  <div>
+                  <button onClick={generarReporte}><FaCar style={{ marginRight: '8px' }} size={24} />Generar Reporte de Vehículos</button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {selectedSection === "Perfil" && (
+                      <div className="perfil">
+                        {perfil ? (
+                          <div className="perfil-cliente">
+                            <h3>Editar Mi Perfil</h3>
+                            <form onSubmit={(e) => handleUpdateCliente(e)}>
+                              <label htmlFor='rol'><strong>Rol:</strong>
+                              <input
+                                defaultValue={"Cliente"}
+                                readOnly
+                              />
+                              </label>
+                              <label htmlFor="nombre"><strong>Nombre:</strong></label>
+                              <input
+                                type="text"
+                                id="nombre"
+                                name="nombre"
+                                defaultValue={perfil.nombre}
+                                maxLength="50"
+                                pattern="^[a-zA-Z\s]{1,50}$"
+                                title="El nombre debe tener solo letras y espacios (máximo 50 caracteres)."
+                                required
+                              />
+
+                              <label htmlFor="email"><strong>Correo Electrónico:</strong></label>
+                              <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                defaultValue={perfil.email}
+                                disabled // No editable
+                              />
+
+                              <label htmlFor="password"><strong>Nueva Contraseña:</strong></label>
+                              <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Ingrese una nueva contraseña (opcional)"
+                                minLength="8"
+                                maxLength="50"
+                                title="La contraseña debe tener al menos 8 caracteres."
+                              />
+
+                              <div className='actualizar-button'>
+                                <input type="submit" value="Actualizar" />
+                                {/* Mensajes de éxito o error debajo del botón */}
+                                {successMessage && <p className="perfil-success">{successMessage}</p>}
+                                {error && <p className="error">{error}</p>}
+                              </div>
+                            </form>
+                          </div>
+                        ) : (
+                          <p>Cargando perfil...</p>
+                        )}
+                      </div>
+                    )}
+
         </div>
       </main>
+      </div>
     </div>
   );
 };

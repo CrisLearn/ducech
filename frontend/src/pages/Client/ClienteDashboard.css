@@ -1,105 +1,48 @@
-
-.right-aligned-controls input,
-.right-aligned-controls button {
-  margin-left: 10px; /* Espacio entre los elementos */
-}
-.right-aligned-controls {
-  display: flex;
-  align-items: center; /* Alinea verticalmente los elementos */
-}
-
-
-.kilometraje-input {
-  margin-left: 10px; /* Espacio entre el input y los botones */
-  padding: 5px;
-  width: 200px; /* Ajusta el ancho según sea necesario */
-}
-
-.enviar-notificacion-button,
-.cliente-add-mantenimiento-button {
-  margin-left: 10px; /* Espacio entre los botones */
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.enviar-notificacion-button {
-  background-color: #f2c14e; /* Color de fondo del botón */
-  color: black; /* Color del texto del botón */
-  border: none;
-  border-radius: 4px;
-}
-/* Estilo base */
-.mantenimiento-success {
-  color: green;
-  font-weight: bold;
-}
-
-.error-message {
-  color: red;
-  font-weight: bold;
-}
-
-.vehiculo-success {
-  color: black !important;
-  background-color: #f2c14e;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-}
-
-.error {
-  color: red;
-  background-color: black;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
+.header-cliente {
+  margin-top: 80px; 
 }
 
 .cliente-dashboard {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
+  display: flex; /* Ajusta el diseño principal a un contenedor de dos columnas */
   font-family: Arial, sans-serif;
   color: #ffffff;
+  height: calc(100vh - 80px); /* Altura total menos la del header */
 }
-
-.cliente-sidebar {
+/*Barra lateral*/
+.sidebar-cliente {
   width: 250px;
-  height: 100%;
-  background-color: #2e2e2e;
-  color: #f2c14e;
+  height: calc(100vh - 80px); /* Ajusta la altura para que reste el tamaño del header */
+  background-color: #2e2e2e; /* Gris oscuro Caterpillar */
+  color: #f2c14e; /* Amarillo Caterpillar */
   padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: fixed;
-  top: 0;
+  position: fixed; /* Fija la barra en su posición */
+  top: 80px; /* Asegura que el sidebar inicie justo debajo del header */
   left: 0;
+  transition: transform 0.3s ease; /* Agregado para la animación de la barra lateral */
 }
-
-.cliente-sidebar h2 {
+.sidebar-cliente h2 {
   margin-bottom: 20px;
-  font-size: 18px;
-  border-bottom: 1px solid #f2c14e;
+  font-size: 30px;
+  border-bottom: 2px solid #f2c14e;
   padding-bottom: 10px;
 }
-
-.cliente-sidebar ul {
+.sidebar-cliente ul {
   list-style: none;
   padding: 0;
   width: 100%;
 }
-
-.cliente-sidebar ul li {
+.sidebar-cliente ul li {
   margin: 10px 0;
   width: 100%;
 }
-
-.cliente-sidebar ul li button {
+.sidebar-cliente ul li button {
   width: 100%;
-  background: none;
-  border: none;
+  background: black;
+  border-radius: 8px;
   color: #ffffff;
   font-size: 16px;
   padding: 10px 15px;
@@ -107,91 +50,55 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-.cliente-sidebar ul li button:hover {
+.sidebar-cliente ul li button:hover {
   background-color: #f2c14e;
   color: #2e2e2e;
+  font-size: 16px;
+  font-weight: bold;
 }
-
-.cliente-sidebar ul li.active button {
+.sidebar-cliente li.active button {
   background-color: #f2c14e;
   color: #2e2e2e;
   font-weight: bold;
-}
 
-.cliente-main-content {
-  margin-left: 250px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #1b1b1b;
-  color: #ffffff;
 }
-
-.cliente-header {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-  padding: 15px 20px;
-  text-align: right;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.buttons-cliente {
+margin-top: auto; /* Empuja este contenedor al final del sidebar */
 }
-
-.cliente-dashboard-content {
-  padding: 20px;
+.buttons-cliente button {
+  margin-bottom: 10px;
+  margin-left: 35px; /* Espaciado entre los botones */
+  margin-right: 30px; /* Espaciado entre los botones */
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f2c14e; /* Botón azul */
+  color: #000000;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.buttons-cliente button:hover {
+  background-color: #ffffff; /* Cambia el color al pasar el cursor */
+}
+/*Contenido del dashboard*/
+.content-cliente {
+  flex-grow: 1; /* Permite que ocupe el espacio restante a la derecha del sidebar */
+  margin-left: 250px; /* Asegura que comience después del sidebar */
+  height: calc(100vh - 80px); /* Mantén la altura debajo del header */
+  background-color: black; /* Color de fondo */
+  padding: 20px; /* Opcional: Padding para el contenido */
   overflow-y: auto;
+  color: #f2c14e; /* Habilita el scroll vertical si es necesario */
 }
-
-.cliente-dashboard-content h1 {
-  color: #f2c14e;
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.cliente-dashboard-content p {
-  color: #dddddd;
-  font-size: 16px;
-}
-
-.cliente-vehiculos-list {
-  margin-top: 20px;
-}
-
-.cliente-add-vehiculo-button {
-  margin-bottom: 20px;
-  background-color: #2e2e2e;
-  color: #f2c14e;
-  padding: 10px;
-}
-
-.cliente-add-vehiculo-button:hover {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-}
-
-.cliente-vehiculo-form {
-  background-color: #2e2e2e;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #f2c14e;
-  margin-top: 20px;
-}
-
-.cliente-vehiculo-form label {
+/*Estilos formulario perfil*/
+.perfil-cliente label, 
+.perfil-cliente select {
   display: block;
   margin-bottom: 10px;
   color: #f2c14e;
 }
-
-.cliente-vehiculo-item label,
-.cliente-vehiculo-item select {
-  display: block;
-  margin-bottom: 10px;
-  color: #f2c14e;
-}
-
-.cliente-vehiculo-form input,
-.cliente-vehiculo-form select {
+.perfil-cliente select,
+.perfil-cliente input {
   width: calc(100% - 22px);
   padding: 10px;
   margin-bottom: 10px;
@@ -200,30 +107,7 @@
   background-color: #1b1b1b;
   color: #ffffff;
 }
-
-.cliente-vehiculo-item select,
-.cliente-vehiculo-item input {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #f2c14e;
-  border-radius: 5px;
-  background-color: #1b1b1b;
-  color: #ffffff;
-}
-
-.cliente-vehiculo-form button {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-  padding: 10px 20px;
-}
-
-.cliente-vehiculo-form button:hover {
-  background-color: #1b1b1b;
-  color: #f2c14e;
-}
-
-.cliente-vehiculo-item {
+.perfil-cliente {
   background-color: #2e2e2e;
   color: #ffffff;
   padding: 15px;
@@ -233,28 +117,15 @@
   position: relative;
 }
 
-.cliente-vehiculo-item h3 {
+.perfil-cliente h3 {
   margin: 0 0 5px;
 }
 
-.cliente-vehiculo-item p {
+.perfil-cliente p {
   margin: 5px 0;
 }
-
-.cliente-vehiculo-form {
-  margin-top: 10px;
-  background-color: #3a3a3a;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.cliente-vehiculo-form label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.cliente-vehiculo-item select,
-.cliente-vehiculo-item input {
+.perfil-cliente select,
+.perfil-cliente input {
   width: 100%;
   background-color: #1b1b1b;
   margin-bottom: 10px;
@@ -263,53 +134,88 @@
   border: 1px solid #f2c14e;
 }
 
-.cliente-vehiculo-form input,
-.cliente-vehiculo-form select,
-.cliente-vehiculo-form button {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #f2c14e;
+/*Estilo para los vehiculos del cliente*/
+.list-vehiculos-cliente {
+  margin-top: 10px;
 }
-
-/*Mantenimientos*/
-.cliente-mantenimientos-list {
-  margin-top: 20px;
-}
-
-.cliente-add-mantenimiento-button {
+.cliente-add-vehiculo-button {
   margin-bottom: 20px;
+  background-color: #f2c14e;
+  color: #000000;
+  padding: 10px;
+  font-size: 17px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.cliente-add-vehiculo-button:hover {
   background-color: #2e2e2e;
   color: #f2c14e;
-  padding: 10px 15px;
+}
+.item-vehiculos-cliente {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f2c14e;
   border-radius: 5px;
-  display: block;
-  text-align: center;
+  margin-bottom: 10px;
 }
-
-.cliente-add-mantenimiento-button:hover {
-  background-color: #f2c14e;
-  color: #2e2e2e;
+.item-vehiculos-cliente h3 {
+  margin: 0 0 5px;
+  font-weight: bold;
 }
-
-.cliente-mantenimiento-form {
+.item-vehiculos-cliente hr {
+  margin-bottom: 5px;
+}
+.item-vehiculos-cliente button {
+  width: 25%;
+  padding: 10px;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.item-vehiculos-cliente button:hover {
+  background-color: #000000;
+  color: #ffffff;
+  width: 25%;
+}
+.item-vehiculos-cliente span {
+  color: #f2c14e;
+}
+.item-vehiculos-cliente button {
+  width: 25%;
+  padding: 10px;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.item-vehiculos-cliente button:hover {
+  background-color: #000000;
+  color: #ffffff;
+  width: 25%;
+}
+.form-vehiculos-cliente {
   background-color: #2e2e2e;
   padding: 20px;
   border-radius: 5px;
   border: 1px solid #f2c14e;
-  margin-top: 20px;
+  margin-bottom: 20px;
+  
 }
-
-.cliente-mantenimiento-form label {
+.form-vehiculos-cliente label {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   color: #f2c14e;
 }
-
-.cliente-mantenimiento-form input,
-.cliente-mantenimiento-form textarea,
-.cliente-mantenimiento-form select {
+.form-vehiculos-cliente input,
+.form-vehiculos-cliente select {
   width: calc(100% - 22px);
   padding: 10px;
   margin-bottom: 10px;
@@ -318,84 +224,175 @@
   background-color: #1b1b1b;
   color: #ffffff;
 }
-
-.cliente-mantenimiento-form button {
+.form-vehiculos-cliente button {
   background-color: #f2c14e;
   color: #2e2e2e;
   padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
 }
-
-.cliente-mantenimiento-form button:hover {
+.form-vehiculos-cliente button:hover {
   background-color: #1b1b1b;
   color: #f2c14e;
 }
-
-.cliente-mantenimiento-item {
+.contenido-cliente {
+  margin-top: 10px;
+  background-color: #4e4e4e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-bottom: 20px;
+}
+.contenido-cliente label {
+  display: block;
+  margin-bottom: 5px;
+}
+.contenido-cliente input, select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.actualizar-button-cliente input{
+  background-color: #f2c14e;
+  color: #000000;
+  font-weight: bold;
+}
+/*Estilos para los mantenimientos*/
+.list-mantenimientos-cliente {
+  margin-top: 10px;
+}
+.cliente-add-mantenimiento-button {
+  margin-bottom: 20px;
+  background-color: #f2c14e;
+  color: #000000;
+  padding: 10px;
+  font-size: 17px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.cliente-add-mantenimiento-button:hover {
+  background-color: #2e2e2e;
+  color: #f2c14e;
+}
+.item-mantenimientos-cliente {
   background-color: #2e2e2e;
   color: #ffffff;
   padding: 15px;
-  margin-bottom: 15px;
   border: 1px solid #f2c14e;
   border-radius: 5px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  position: relative;
+  margin-bottom: 10px;
 }
-
-.cliente-mantenimiento-item h3 {
-  margin: 0;
-  font-size: 1.5em;
-  color: #f2c14e;
+.item-mantenimientos-cliente h3 {
+  margin: 0 0 5px;
   font-weight: bold;
-  width: 100%;
 }
-
-.cliente-mantenimiento-item p {
-  margin: 5px 0;
-  font-size: 1em;
+.item-mantenimientos-cliente hr {
+  margin-bottom: 5px;
 }
-
-.cliente-mantenimiento-item .vehiculo-placa {
-  font-size: 1.2em;
-  color: #f2c14e;
+.item-mantenimientos-cliente button {
+  width: 50%;
+  padding: 10px;
+  background: #f2c14e;
+  color: #000000;
+  font-size: 17px;
   font-weight: bold;
-  margin-top:  10px;
-}
-/* Botón de ver/ocultar detalles */
-.cliente-mantenimiento-item button {
-  background-color: #f2c14e;
-  color: #2e2e2e;
-  border: none;
   border-radius: 5px;
-  padding: 5px 10px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-.cliente-mantenimiento-item button:hover {
+.item-mantenimientos-cliente button:hover {
+  background-color: #000000;
+  color: #ffffff;
+  width: 50%;
+}
+.form-mantenimientos-cliente {
+  background-color: #2e2e2e;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #f2c14e;
+  margin-bottom: 20px;
+  
+}
+.form-mantenimientos-cliente label, textarea {
+  display: block;
+  margin-bottom: 5px;
+  color: #f2c14e;
+}
+.form-mantenimientos-cliente input, textarea,
+.form-mantenimientos-cliente select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f2c14e;
+  border-radius: 5px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+}
+.form-mantenimientos-cliente button {
+  background-color: #f2c14e;
+  color: #2e2e2e;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.form-mantenimientos-cliente button:hover {
   background-color: #1b1b1b;
   color: #f2c14e;
 }
+/*Estilos para los reportes*/
+.reportes-vehiculos {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  flex-wrap: wrap; /* Permite que los botones se ajusten en varias filas si no hay espacio */
+  gap: 20px; /* Espacio entre los botones */
+  padding: 20px;
+  background-color: #2e2e2e; /* Color de fondo */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para destacar */
+  border: solid #f2c14e; /* Borde con color */
+}
 
-/* Detalles del mantenimiento */
-.cliente-mantenimiento-detalles {
+.botones-reportes-cliente {
+  display: flex;
+  flex-wrap: wrap; /* Ajusta los botones en filas si es necesario */
+  justify-content: space-evenly; /* Distribuye el espacio uniformemente */
   width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #3a3a3a;
-  border-radius: 5px;
-  border: 1px solid #f2c14e;
 }
 
-/* Estilo de los detalles dentro de la sección */
-.cliente-mantenimiento-detalles p {
-  margin: 5px 0;
+.botones-reportes-cliente > div {
+  flex: 0 1 calc(25% - 20px); /* Cada botón ocupa un 25% del ancho menos el espacio del gap */
+  min-width: 200px; /* Ancho mínimo para mantener el diseño responsivo */
+  text-align: center; /* Centra el contenido del botón */
 }
 
-/* Ajuste de espacio entre elementos */
-.cliente-mantenimiento-item p,
-.cliente-mantenimiento-item h3 {
-  width: 100%; /* Hace que cada p o h3 ocupe el ancho completo */
+.botones-reportes-cliente button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Botones ocupan todo el ancho de su contenedor */
+  padding: 12px 20px;
+  background-color: #f2c14e; /* Color de fondo */
+  color: #000000; /* Color del texto */
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid #000000; /* Borde con color */
+  border-radius: 8px; /* Bordes redondeados */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, color 0.3s, border-color 0.3s; /* Animaciones suaves */
 }
-  
+
+.botones-reportes-cliente button:hover {
+  background-color: #000000; /* Color al pasar el cursor */
+  transform: scale(1.05); /* Aumento de tamaño al hover */
+  color: #f2c14e; /* Color del texto al hover */
+  border-color: #f2c14e; /* Cambia el color del borde al hover */
+}
+
+.highlight-cliente {
+  color: #f2c14e;
+}

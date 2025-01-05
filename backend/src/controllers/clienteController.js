@@ -95,6 +95,29 @@ export const loginCliente = async (req, res) => {
         res.status(400).send(error);
     }
 };
+export const getClienteProfile = async (req, res) => {
+    try {
+        // Obtener el ID del administrador desde el middleware de autenticación
+        const clienteId = req.userId;
+
+        // Buscar el administrador por ID
+        const cliente = await Cliente.findById(clienteId);
+        if (!cliente) {
+            return res.status(404).send({ error: 'tecncio no encontrado' });
+        }
+
+        // Retornar los datos del perfil
+        res.send({
+            nombre: cliente.nombre,
+            email: cliente.email,
+            telefono: cliente.telefono,
+            direccion: cliente.direccion,
+        });
+    } catch (error) {
+        console.error('Error al obtener el perfil del tecncio:', error);
+        res.status(500).send({ error: 'Error interno del servidor' });
+    }
+};
 
 // Método para actualizar los datos del cliente
 export const updateCliente = async (req, res) => {
