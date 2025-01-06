@@ -14,9 +14,9 @@ const App = () => {
     <Router>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/ducech" element={<LandingPage />} />
-        <Route path="/ducech/login" element={<LoginPage />} />
-        <Route path="/ducech/registro" element={<Registro />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/registro" element={<Registro />} />
 
         {/* Rutas privadas */}
         <Route
