@@ -882,16 +882,16 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
                         {new Date(mantenimiento.fechaCreacion).toLocaleDateString()}
                       </p>
                       <p>
-                        <strong><span className='highlight-cliente'>Kilometraje de Cambio:</span></strong> 
-                        {mantenimiento.kilometrajeActual}
+                        <strong><span className='highlight-cliente'>Tipo de Mantenimiento: </span></strong> 
+                        {mantenimiento.tipoMantenimiento}
                       </p>
                       <p>
-                        <strong><span className='highlight-cliente'>Kilometraje de próximo Cambio:</span></strong> 
-                        {mantenimiento.kilometrajeCambio}
+                        <strong><span className='highlight-cliente'>Detalle del Mantenimiento: </span></strong> 
+                        {mantenimiento.detalleMantenimiento}
                       </p>
                       <p>
-                        <strong><span className='highlight-cliente'>Detalles:</span></strong> 
-                        {mantenimiento.detalleGeneral}
+                        <strong><span className='highlight-cliente'>Realizado: </span></strong> 
+                        {mantenimiento.realizado ? 'Sí' : 'No'}
                       </p>
                     </div>
 
@@ -920,9 +920,10 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
 
                     {detallesVisible[mantenimiento._id] && (
                       <div className="detalle-mantenimientos-">
-                        <p><strong><span className='highlight-cliente'>Tipo:</span></strong> {mantenimiento.tipoMantenimiento}</p>
-                        <p><strong><span className='highlight-cliente'>Detalle:</span></strong> {mantenimiento.detalleMantenimiento}</p>
+                        <p><strong><span className='highlight-cliente'>Kilometraje de Cambio:</span></strong> {mantenimiento.kilometrajeActual}</p>
+                        <p><strong><span className='highlight-cliente'>Kilometraje para el Próximo Cmabio</span></strong> {mantenimiento.kilometrajeCambio}</p>
                         <p><strong><span className='highlight-cliente'>Marca del Repuesto:</span></strong> {mantenimiento.marcaRepuesto}</p>
+                        <p><strong><span className='highlight-cliente'>Detalles:</span></strong>{mantenimiento.detalleGeneral}</p>
                       </div>
                     )}
                   </div>

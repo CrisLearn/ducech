@@ -6,8 +6,8 @@ import Cliente from '../models/Cliente.js';
 import Vehiculo from '../models/Vehiculo.js';
 import Mantenimiento from '../models/Mantenimiento.js';
 import PDFDocument from 'pdfkit';
-import nodemailer from 'nodemailer';
-
+import transporter from '../config/nodemailer.js';
+import moment from 'moment';
 
 // Método para crear un nuevo cliente
 export const createCliente = async (req, res) => {
@@ -160,50 +160,94 @@ export const updateCliente = async (req, res) => {
     }
 };
 
+
 export const updateVehiculoForCliente = async (req, res) => {
     try {
-      const { id } = req.params; // Obtener el ID del vehículo desde la URL
-      const {
-        placa,
-        tipo,
-        marca,
-        modelo,
-        cilindraje,
-        color,
-        kilometrajeActual,
-        observacion
-      } = req.body;
-  
-      // Buscar el vehículo por ID y actualizarlo con los nuevos datos
-      const updatedVehiculo = await Vehiculo.findByIdAndUpdate(
-        id,
-        {
-          placa,
-          tipo,
-          marca,
-          modelo,
-          cilindraje,
-          color,
-          kilometrajeActual,
-          observacion,
-          fechaModificacion: new Date()
-        },
-        { new: true } // Esta opción devuelve el documento modificado en lugar del original
-      );
-  
-      if (!updatedVehiculo) {
-        return res.status(404).send({ error: 'Vehículo no encontrado' });
-      }
-  
-      res.status(200).send(updatedVehiculo);
+        const { id } = req.params; // ID del vehículo desde la URL
+        const {
+            placa,
+            tipo,
+            marca,
+            modelo,
+            cilindraje,
+            color,
+            kilometrajeActual,
+            observacion
+        } = req.body;
+
+        // Actualizar el vehículo
+        const updatedVehiculo = await Vehiculo.findByIdAndUpdate(
+            id,
+            {
+                placa,
+                tipo,
+                marca,
+                modelo,
+                cilindraje,
+                color,
+                kilometrajeActual,
+                observacion,
+                fechaModificacion: new Date()
+            },
+            { new: true } // Retornar el documento actualizado
+        );
+
+        if (!updatedVehiculo) {
+            return res.status(404).send({ error: 'Vehículo no encontrado' });
+        }
+
+        // Buscar los mantenimientos asociados al vehículo
+        const mantenimientos = await Mantenimiento.find({ vehiculo: updatedVehiculo._id });
+
+        // Buscar al cliente asociado al vehículo
+        const cliente = await Cliente.findOne({ vehiculos: updatedVehiculo._id });
+
+        if (!cliente) {
+            return res.status(404).send({ error: 'Cliente no encontrado para este vehículo' });
+        }
+
+        // Verificar mantenimientos y enviar notificación si corresponde
+        for (const mantenimiento of mantenimientos) {
+            const kilometrajeFaltante = mantenimiento.kilometrajeCambio - kilometrajeActual;
+
+            // Generar mensaje basado en las condiciones
+            let mensaje = '';
+            if (!mantenimiento.realizado) {
+                if (kilometrajeFaltante > 1000) {
+                    mensaje = `Mantenimiento al día. Aún faltan ${kilometrajeFaltante} kilómetros para el próximo mantenimiento.\n\nTipo de mantenimiento:\nTipo: ${mantenimiento.tipoMantenimiento}\nDetalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}\nKilometraje Programado: ${mantenimiento.kilometrajeCambio}\nMarca del Repuesto: ${mantenimiento.marcaRepuesto}`;
+                } else if (kilometrajeFaltante > 0 && kilometrajeFaltante <= 1000) {
+                    mensaje = `Mantenimiento por cumplirse. Faltan ${kilometrajeFaltante} kilómetros para el próximo mantenimiento.\n\nTipo de mantenimiento:\nTipo: ${mantenimiento.tipoMantenimiento}\nDetalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}\nKilometraje Programado: ${mantenimiento.kilometrajeCambio}\nMarca del Repuesto: ${mantenimiento.marcaRepuesto}`;
+                } else if (kilometrajeFaltante <= 0 && Math.abs(kilometrajeFaltante) <= 500) {
+                    mensaje = `Mantenimiento cumplido. Realice el cambio, ya que se ha alcanzado el kilometraje programado.\n\nTipo de mantenimiento:\nTipo: ${mantenimiento.tipoMantenimiento}\nDetalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}\nKilometraje Programado: ${mantenimiento.kilometrajeCambio}\nMarca del Repuesto: ${mantenimiento.marcaRepuesto}`;
+                } else if (Math.abs(kilometrajeFaltante) > 500) {
+                    mensaje = `Mantenimiento excedido. ¡Cambiar inmediatamente! Ha superado el kilometraje recomendado por ${Math.abs(kilometrajeFaltante)} kilómetros.\n\nTipo de mantenimiento:\nTipo: ${mantenimiento.tipoMantenimiento}\nDetalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}\nKilometraje Programado: ${mantenimiento.kilometrajeCambio}\nMarca del Repuesto: ${mantenimiento.marcaRepuesto}`;
+                }
+
+                // Enviar correo al cliente
+                if (mensaje) {
+                    const mailOptions = {
+                        from: process.env.EMAIL,
+                        to: cliente.email,
+                        subject: 'Notificación de Mantenimiento',
+                        text: `Placa del vehículo: ${placa}\n\n${mensaje}`,
+                    };
+
+                    await transporter.sendMail(mailOptions);
+                    console.log(`Correo de notificación enviado a ${cliente.email} para el vehículo con placa ${placa}`);
+                }
+            }
+        }
+
+        res.status(200).send(updatedVehiculo);
     } catch (error) {
-      console.error(error); // Agregar log para ver el error en la consola
-      res.status(400).send({ error: 'Error al actualizar el vehículo. Por favor, revise los datos e intente nuevamente.' });
+        console.error(error); // Registrar el error en consola
+        res.status(400).send({ error: 'Error al actualizar el vehículo. Por favor, revise los datos e intente nuevamente.' });
     }
 };
-  
 
-// Método para crear un nuevo vehículo para el cliente autenticado
+
+
+
 export const createVehiculoForCliente = async (req, res) => {
     try {
         const { placa, tipo, marca, modelo, cilindraje, color, kilometrajeActual, observacion } = req.body;
@@ -215,6 +259,7 @@ export const createVehiculoForCliente = async (req, res) => {
             return res.status(400).send({ error: 'Placa ya registrada para otro vehículo' });
         }
 
+        // Crear el nuevo vehículo
         const newVehiculo = new Vehiculo({
             placa,
             tipo,
@@ -239,12 +284,26 @@ export const createVehiculoForCliente = async (req, res) => {
         cliente.vehiculos.push(newVehiculo._id);
         await cliente.save();
 
+        // Enviar el correo al cliente con la información del vehículo registrado
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: cliente.email,  // Asumimos que el cliente tiene un campo de 'email'
+            subject: 'Vehículo Registrado Exitosamente',
+            text: `Hola ${cliente.nombre},\n\nTu vehículo con la placa ${placa} ha sido registrado exitosamente en nuestra plataforma. Detalles del vehículo:\n\nTipo: ${tipo}\nMarca: ${marca}\nModelo: ${modelo}\nCilindraje: ${cilindraje}\nColor: ${color}\nKilometraje actual: ${kilometrajeActual}\nObservaciones: ${observacion}\n\n¡Gracias por confiar en nosotros!`,
+        };
+
+        // Enviar el correo
+        await transporter.sendMail(mailOptions);
+
+        // Responder con el nuevo vehículo
         res.status(201).send(newVehiculo);
+
     } catch (error) {
         console.error(error); // Agregar log para ver el error en la consola
         res.status(400).send({ error: 'Error al crear el vehículo. Por favor, revise los datos e intente nuevamente.' });
     }
 };
+
 
 
 // Método para obtener todos los vehículos del cliente autenticado
@@ -282,9 +341,15 @@ export const getVehiculoById = async (req, res) => {
     }
 };
 
-// Método para generar el reporte en PDF de los vehículos y sus mantenimientos del cliente autenticado
+import path from 'path';
+import { fileURLToPath } from 'url'; // Para trabajar con import.meta.url
+
 export const generateVehiculosReport = async (req, res) => {
     try {
+        // Obtener __dirname equivalente
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+
         const clienteId = req.userId; // Obtener el ID del cliente del token
         const cliente = await Cliente.findById(clienteId).populate({
             path: 'vehiculos',
@@ -297,72 +362,102 @@ export const generateVehiculosReport = async (req, res) => {
             return res.status(404).send({ error: 'Cliente no encontrado' });
         }
 
-        // Crear el documento PDF
-        const doc = new PDFDocument();
+        const doc = new PDFDocument({ margin: 50 });
 
-        // Configurar el encabezado de la respuesta para enviar un PDF
+        // Configurar el encabezado para el PDF
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=reporte-vehiculos.pdf');
 
-        // Enviar el documento PDF en el cuerpo de la respuesta
-        doc.pipe(res);
+        doc.pipe(res); // Pipe para enviar el PDF en la respuesta
 
-        // Añadir contenido al PDF
-        doc.fontSize(20).text('Reporte de Vehículos', { align: 'center' });
-        doc.moveDown();
+        // Insertar imagen en la cabecera
+        const logoPath = path.join(__dirname, '../../public/images/logo2.png');
+        doc.image(logoPath, 50, 45, { width: 100 })
+           .font('Helvetica-Bold')
+           .fontSize(24)
+           .fillColor('#007BFF')
+           .text('Reporte de Vehículos', 200, 50, { align: 'center' })
+           .moveDown(2);
 
-        cliente.vehiculos.forEach(vehiculo => {
-            doc.fontSize(14).text(`Placa: ${vehiculo.placa}`);
-            doc.fontSize(14).text(`Tipo: ${vehiculo.tipo}`);
-            doc.fontSize(14).text(`Marca: ${vehiculo.marca}`);
-            doc.fontSize(14).text(`Modelo: ${vehiculo.modelo}`);
-            doc.fontSize(14).text(`Cilindraje: ${vehiculo.cilindraje}`);
-            doc.fontSize(14).text(`Color: ${vehiculo.color}`);
-            doc.fontSize(14).text(`Kilometraje Actual: ${vehiculo.kilometrajeActual}`);
-            doc.fontSize(14).text(`Observación: ${vehiculo.observacion}`);
-            doc.moveDown();
+        // Información del cliente
+        doc.font('Helvetica')
+           .fontSize(16)
+           .fillColor('#000')
+           .text(`Cliente: ${cliente.nombre}`)
+           .text(`Correo: ${cliente.email}`)
+           .text(`Fecha de reporte: ${new Date().toISOString().split('T')[0]}`)
+           .moveDown();
+
+        // Iterar sobre los vehículos
+        cliente.vehiculos.forEach((vehiculo, index) => {
+            doc.font('Helvetica-Bold')
+               .fontSize(18)
+               .fillColor('#333')
+               .text(`Vehículo ${index + 1}: ${vehiculo.placa}`, { underline: true })
+               .moveDown(0.5);
+
+            doc.font('Helvetica')
+               .fontSize(14)
+               .fillColor('#000')
+               .text(`Tipo: ${vehiculo.tipo}`)
+               .text(`Marca: ${vehiculo.marca}`)
+               .text(`Modelo: ${vehiculo.modelo}`)
+               .text(`Cilindraje: ${vehiculo.cilindraje}`)
+               .text(`Color: ${vehiculo.color}`)
+               .text(`Kilometraje Actual: ${vehiculo.kilometrajeActual}`)
+               .text(`Observación: ${vehiculo.observacion}`)
+               .moveDown();
 
             if (vehiculo.mantenimientos.length > 0) {
-                doc.fontSize(14).text('Mantenimientos:', { underline: true });
-                vehiculo.mantenimientos.forEach(mantenimiento => {
-                    doc.fontSize(12).text(`Tipo de Mantenimiento: ${mantenimiento.tipoMantenimiento}`);
-                    doc.fontSize(12).text(`Detalle del Mantenimiento: ${mantenimiento.detalleMantenimiento}`);
-                    doc.fontSize(12).text(`Marca del Repuesto: ${mantenimiento.marcagaRepuesto}`);
-                    doc.fontSize(12).text(`Kilometraje Actual: ${mantenimiento.kilometrajeActual}`);
-                    doc.fontSize(12).text(`Kilometraje del Cambio: ${mantenimiento.kilometrajeCambio}`);
-                    doc.fontSize(12).text(`Detalle General: ${mantenimiento.detalleGeneral}`);
-                    doc.fontSize(12).text(`Fecha: ${mantenimiento.fechaCreacion.toISOString().split('T')[0]}`);
-                    doc.moveDown();
+                doc.font('Helvetica-Bold')
+                   .fontSize(16)
+                   .fillColor('#007BFF')
+                   .text('Mantenimientos:', { underline: true })
+                   .moveDown(0.5);
+
+                vehiculo.mantenimientos.forEach((mantenimiento, idx) => {
+                    doc.font('Helvetica-Bold')
+                       .fontSize(14)
+                       .fillColor('#333')
+                       .text(`Mantenimiento ${idx + 1}`, { align: 'left' })
+                       .moveDown(0.3);
+
+                    doc.font('Helvetica')
+                       .fontSize(12)
+                       .fillColor('#000')
+                       .text(`Tipo: ${mantenimiento.tipoMantenimiento}`)
+                       .text(`Detalle: ${mantenimiento.detalleMantenimiento}`)
+                       .text(`Marca del Repuesto: ${mantenimiento.marcaRepuesto}`)
+                       .text(`Kilometraje Actual: ${mantenimiento.kilometrajeActual}`)
+                       .text(`Kilometraje Cambio: ${mantenimiento.kilometrajeCambio}`)
+                       .text(`Detalle General: ${mantenimiento.detalleGeneral}`)
+                       .text(`Fecha: ${mantenimiento.fechaCreacion.toISOString().split('T')[0]}`)
+                       .text(`Realizado: ${mantenimiento.realizado ? 'Sí' : 'No'}`)
+                       .moveDown();
                 });
             } else {
-                doc.fontSize(12).text('Sin mantenimientos registrados.');
+                doc.font('Helvetica-Italic')
+                   .fontSize(12)
+                   .fillColor('#FF0000')
+                   .text('Sin mantenimientos registrados.')
+                   .moveDown();
             }
-            doc.moveDown();
+
+            doc.moveDown(1).lineWidth(1).strokeColor('#CCCCCC').moveTo(50, doc.y).lineTo(550, doc.y).stroke().moveDown(1);
         });
 
-        // Finalizar el PDF
-        doc.end();
+        doc.end(); // Finalizar el documento
     } catch (error) {
         console.error('Error al generar el PDF:', error);
-        res.status(500).send(error);
+        res.status(500).send({ error: 'Error al generar el PDF.' });
     }
 };
 
 
 export const createMantenimientoForVehiculo = async (req, res) => {
     try {
-        // Desestructuración de los campos del cuerpo de la solicitud
-        const {
-            tipoMantenimiento,
-            detalleMantenimiento,
-            marcaRepuesto,
-            kilometrajeActual,
-            kilometrajeCambio,
-            detalleGeneral,
-            placa // Asegúrate de que 'placa' esté incluido en la solicitud
-        } = req.body;
-
-        const clienteId = req.userId; 
+        const { placa, tipoMantenimiento, detalleMantenimiento, marcaRepuesto, kilometrajeActual, kilometrajeCambio, detalleGeneral } = req.body;
+        const clienteId = req.userId;
 
         const vehiculoEncontrado = await Vehiculo.findOne({ placa: new RegExp(`^${placa}$`, 'i') }).populate('mantenimientos');
 
@@ -370,10 +465,8 @@ export const createMantenimientoForVehiculo = async (req, res) => {
             return res.status(404).send({ error: 'Vehículo no encontrado' });
         }
 
-        // Verificar que el vehículo pertenece al cliente autenticado
         const cliente = await Cliente.findById(clienteId);
         if (!cliente || !cliente.vehiculos.includes(vehiculoEncontrado._id)) {
-            console.log('Permisos del cliente:', cliente ? cliente.vehiculos : 'No se encontró cliente');
             return res.status(403).send({ error: 'Acceso denegado. El cliente no tiene permisos para este vehículo.' });
         }
 
@@ -386,15 +479,29 @@ export const createMantenimientoForVehiculo = async (req, res) => {
             kilometrajeCambio,
             detalleGeneral,
             fechaCreacion: new Date(),
-            vehiculo: vehiculoEncontrado._id // Asociar el mantenimiento al vehículo
+            vehiculo: vehiculoEncontrado._id
         });
 
-        // Guardar el nuevo mantenimiento
         await newMantenimiento.save();
-        const populatedMantenimiento = await Mantenimiento.findById(newMantenimiento._id).populate('vehiculo');
-        // Añadir el mantenimiento a la lista de mantenimientos del vehículo
+
+        // Añadir el mantenimiento al vehículo
         vehiculoEncontrado.mantenimientos.push(newMantenimiento._id);
+
+        // Establecer la fecha del próximo mantenimiento, por ejemplo, en 6 meses o 10000 km más
+        const fechaProximoMantenimiento = moment().add(2, 'months'); // Por ejemplo, 6 meses después
+        vehiculoEncontrado.proximoMantenimiento = fechaProximoMantenimiento.toDate();
+
         await vehiculoEncontrado.save();
+
+        // Enviar el correo de notificación al cliente
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: cliente.email,
+            subject: 'Mantenimiento Registrado Exitosamente',
+            text: `Hola ${cliente.nombre},\n\nEl mantenimiento de tu vehículo con la placa ${placa} ha sido registrado exitosamente. Detalles:\n\nTipo de mantenimiento: ${tipoMantenimiento}\nDetalle: ${detalleMantenimiento}\nMarca de repuesto: ${marcaRepuesto}\nKilometraje actual: ${kilometrajeActual}\nKilometraje de cambio: ${kilometrajeCambio}\n\nEl próximo mantenimiento se estima para: ${fechaProximoMantenimiento.format('YYYY-MM-DD')}\n\n¡Gracias por confiar en nosotros!`,
+        };
+
+        await transporter.sendMail(mailOptions);
 
         res.status(201).send(newMantenimiento);
     } catch (error) {
@@ -402,6 +509,8 @@ export const createMantenimientoForVehiculo = async (req, res) => {
         res.status(400).send({ error: 'Error al crear el mantenimiento. Por favor, revise los datos e intente nuevamente.' });
     }
 };
+
+
 
 
 export const getAllMantenimientosForCliente = async (req, res) => {

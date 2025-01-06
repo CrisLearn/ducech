@@ -156,3 +156,46 @@ hr {
     text-align: left;
   }
 }
+.success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegurarse de que esté sobre todo */
+}
+
+.success-modal {
+  background: white;
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.5s ease;
+}
+
+.success-modal h2 {
+  color: #ffcc00;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.success-modal p {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

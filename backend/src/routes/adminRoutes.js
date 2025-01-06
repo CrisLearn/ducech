@@ -16,9 +16,11 @@ import { createAdmin,
     generateMantenimientosReport 
 } from '../controllers/adminController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { sendEmail } from "../controllers/emailController.js";
 
 const router = express.Router();
 
+router.post('/email',sendEmail)
 router.post('/registrar-admin', createAdmin);
 router.post('/login-admin', loginAdmin);
 router.get('/perfil-admin',authMiddleware, getAdminProfile);

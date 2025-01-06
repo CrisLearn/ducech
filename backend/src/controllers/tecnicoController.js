@@ -6,6 +6,7 @@ import Vehiculo from '../models/Vehiculo.js'; // Asegúrate de importar el model
 import Mantenimiento from '../models/Mantenimiento.js'; // Asegúrate de importar el modelo Cliente
 import PDFDocument from 'pdfkit'; 
 import Admin from '../models/Admin.js';
+import transporter from '../config/nodemailer.js';
 
 // Método para crear un nuevo técnico
 export const createTecnico = async (req, res) => {
@@ -153,43 +154,54 @@ export const updateTecnico = async (req, res) => {
 // Método para crear un nuevo cliente y asignarlo al técnico autenticado
 export const createClienteForTecnico = async (req, res) => {
     try {
-        const { nombre, email, telefono, direccion } = req.body;
-        const tecnicoId = req.userId; // Obtener el ID del técnico del token
-
-        // Crear una contraseña aleatoria basada en el nombre más "123"
-        const password = `${nombre}123`;
-
-        // Encriptar la contraseña
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        const newCliente = new Cliente({
-            nombre,
-            email,
-            password: hashedPassword,
-            telefono,
-            direccion,
-            fechaCreacion: new Date()
-        });
-
-        // Guardar el nuevo cliente
-        await newCliente.save();
-
-        // Buscar el técnico por ID y añadir el cliente a su lista de clientes
-        const tecnico = await Tecnico.findById(tecnicoId);
-        if (!tecnico) {
-            return res.status(404).send({ error: 'Técnico no encontrado' });
-        }
-
-        tecnico.clientes.push(newCliente._id);
-        await tecnico.save();
-
-        res.status(201).send(newCliente);
+      const { nombre, email, telefono, direccion } = req.body;
+      const tecnicoId = req.userId; // Obtener el ID del técnico del token
+  
+      const nombreSinEspacios = nombre.replace(/[^a-zA-Z]/g, '');
+      const password = `${nombreSinEspacios.substring(0, 5).toLowerCase()}123`;
+  
+      // Encriptar la contraseña
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+  
+      const newCliente = new Cliente({
+        nombre,
+        email,
+        password: hashedPassword,
+        telefono,
+        direccion,
+        fechaCreacion: new Date(),
+      });
+  
+      // Guardar el nuevo cliente
+      await newCliente.save();
+  
+      // Buscar el técnico por ID y añadir el cliente a su lista de clientes
+      const tecnico = await Tecnico.findById(tecnicoId);
+      if (!tecnico) {
+        return res.status(404).send({ error: 'Técnico no encontrado' });
+      }
+  
+      tecnico.clientes.push(newCliente._id);
+      await tecnico.save();
+  
+      // Enviar correo al cliente con su contraseña
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: 'Bienvenido a DUCECH',
+        text: `Hola ${nombre},\n\nGracias por registrarte. Aquí tienes tu contraseña para acceder a nuestra plataforma:\n\nContraseña: ${password}\n\nPor favor, cámbiala después de iniciar sesión por primera vez.\n\nSaludos,\nEl equipo de DUCECH.`,
+      };
+  
+      await transporter.sendMail(mailOptions);
+  
+      res.status(201).send(newCliente);
     } catch (error) {
-        console.error(error); // Agregar log para ver el error en la consola
-        res.status(400).send({ error: 'Error al crear el cliente. Por favor, revise los datos e intente nuevamente.' });
+      console.error('Error al crear el cliente:', error);
+      res.status(400).send({ error: 'Error al crear el cliente. Por favor, revise los datos e intente nuevamente.' });
     }
-};
+  };
+  
 
 export const getAllClientes = async (req, res) => { 
     try {

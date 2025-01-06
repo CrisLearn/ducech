@@ -7,26 +7,25 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // Nuevo estado para el mensaje de éxito
   const navigate = useNavigate();
 
-  // Validación del formulario
   const validateForm = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar correos electrónicos
-
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return 'Por favor, ingresa un correo electrónico válido.';
     }
     if (password.trim() === '') {
       return 'La contraseña no puede estar vacía.';
     }
-    return null; // Sin errores
+    return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Limpia errores previos
+    setError('');
+    setSuccessMessage('');
 
-    // Validar formulario
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -34,24 +33,23 @@ const LoginPage = () => {
     }
 
     try {
-      // Llamar al servicio de autenticación
       const result = await AuthService.login(email, password);
 
       if (result.success) {
-        // Guarda el token
         localStorage.setItem('token', result.token);
 
-        // Mapeo de endpoints a rutas
         const endpointToRoute = {
           'http://localhost:5000/api/admin/login-admin': '/ducech/admin',
           'http://localhost:5000/api/tecnico/login-tecnico': '/ducech/tecnico',
           'http://localhost:5000/api/cliente/login-cliente': '/ducech/cliente',
         };
 
-        // Redirige basado en el endpoint
         const route = endpointToRoute[result.endpoint];
         if (route) {
-          navigate(route);
+          if (route === '/ducech/cliente') {
+            setSuccessMessage('Inicio de sesión exitoso. Actualiza el kilometraje de tu vehículo para no olvidar tus mantenimientos pendientes.');
+          }
+          setTimeout(() => navigate(route), 3000);
         } else {
           setError('No se puede determinar la ruta de redirección.');
         }
@@ -68,7 +66,6 @@ const LoginPage = () => {
     <div className="background">
       <div id="contenedor">
         <div id="contenedorcentrado">
-          {/* Sección del login */}
           <div id="login">
             <form id="loginform" onSubmit={handleSubmit}>
               <label htmlFor="usuario">Correo</label>
@@ -98,7 +95,6 @@ const LoginPage = () => {
             </form>
           </div>
 
-          {/* Sección derecha con texto y enlaces */}
           <div id="derecho">
             <div className="titulo">Bienvenido</div>
             <hr />
@@ -111,6 +107,15 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+
+      {successMessage && (
+        <div className="success-overlay">
+          <div className="success-modal">
+            <h2>¡Éxito!</h2>
+            <p>{successMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
