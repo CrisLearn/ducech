@@ -18,9 +18,8 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-app.use(cors({
-    origin: 'http://localhost:3000' 
-}));
+app.use(cors(corsOptions));
+
 
 app.use(express.json());
 
