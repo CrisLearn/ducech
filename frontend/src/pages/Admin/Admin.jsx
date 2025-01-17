@@ -46,16 +46,16 @@ const AdmPage = () => {
     
       switch (selectedSection) {
         case "Técnicos":
-          fetchData("http://localhost:5000/api/admin/tecnicos", setTecnicos);
+          fetchData(`${process.env.REACT_APP_API_URL}/api/admin/tecnicos`, setTecnicos);
           break;
         case "Clientes":
-          fetchData("http://localhost:5000/api/admin/clientes", setClientes);
+          fetchData(`${process.env.REACT_APP_API_URL}/api/admin/clientes`, setClientes);
           break;
         case "Vehículos":
-          fetchData("http://localhost:5000/api/admin/vehiculos", setVehiculos);
+          fetchData(`${process.env.REACT_APP_API_URL}/api/admin/vehiculos`, setVehiculos);
           break;
         case "Mantenimientos":
-          fetchData("http://localhost:5000/api/admin/mantenimientos", (data) => {
+          fetchData(`${process.env.REACT_APP_API_URL}/api/admin/mantenimientos`, (data) => {
             const mantenimientosConVehiculo = data.map((mantenimiento) => ({
               ...mantenimiento,
               vehiculo: mantenimiento.vehiculo || { placa: "Información no disponible" },
@@ -64,7 +64,7 @@ const AdmPage = () => {
           });
           break;
         case "Perfil":
-          fetchData("http://localhost:5000/api/admin/perfil-admin", setPerfil);
+          fetchData(`${process.env.REACT_APP_API_URL}/api/admin/perfil-admin`, setPerfil);
           break;
         default:
           break;
@@ -95,7 +95,7 @@ const AdmPage = () => {
           throw new Error("Usuario no autenticado.");
         }
         const response = await fetch(
-          `http://localhost:5000/api/admin/update-admin`,
+          `${process.env.REACT_APP_API_URL}/api/admin/update-admin`,
           {
             method: "PUT",
             headers: {
@@ -133,7 +133,7 @@ const AdmPage = () => {
     const generarReporteTecnicos = () => {
         const token = localStorage.getItem('token');
     
-        fetch('http://localhost:5000/api/admin/reportes-tecnicos', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/admin/reportes-tecnicos`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ const AdmPage = () => {
     const generarReporteClientes = () => {
         const token = localStorage.getItem('token');
     
-        fetch('http://localhost:5000/api/admin/reportes-clientes', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/admin/reportes-clientes`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -193,7 +193,7 @@ const AdmPage = () => {
     const generarReporteVehiculos = () => {
         const token = localStorage.getItem('token');
     
-        fetch('http://localhost:5000/api/admin/reportes-vehiculos', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/admin/reportes-vehiculos`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ const AdmPage = () => {
     const generarReporteMantenimientos = () => {
         const token = localStorage.getItem('token');
     
-        fetch('http://localhost:5000/api/admin/reportes-mantenimientos', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/admin/reportes-mantenimientos`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
