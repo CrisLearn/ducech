@@ -156,7 +156,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   };
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/ducech/login";
+    window.location.href = "/login";
   };
   const showMessage = (message, type = 'success') => {
     if (type === 'success') {

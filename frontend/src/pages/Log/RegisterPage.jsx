@@ -81,7 +81,7 @@ const RegisterPage = () => {
 
         setTimeout(() => {
           setShowSuccessModal(false);
-          window.location.href = '/ducech/login';
+          window.location.href = '/login';
         }, 5000);
       } else {
         setError('Error inesperado en el registro.');
@@ -109,7 +109,7 @@ const RegisterPage = () => {
               <button onClick={() => handleRoleSelection('tecnico')}>Registrar como Técnico</button>
               <button onClick={() => handleRoleSelection('cliente')}>Registrar como Cliente</button>
               <div className="pie-form-registro">
-                <a href="/ducech/login">« Volver</a>
+                <a href="/login">« Volver</a>
               </div>
             </div>
           ) : (

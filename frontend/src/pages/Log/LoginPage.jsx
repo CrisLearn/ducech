@@ -8,6 +8,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState(''); // Nuevo estado para el mensaje de éxito
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState(''); // Estado para el mensaje de "olvidaste tu contraseña"
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -39,14 +40,14 @@ const LoginPage = () => {
         localStorage.setItem('token', result.token);
 
         const endpointToRoute = {
-          'http://localhost:5000/api/admin/login-admin': '/ducech/admin',
-          'http://localhost:5000/api/tecnico/login-tecnico': '/ducech/tecnico',
-          'http://localhost:5000/api/cliente/login-cliente': '/ducech/cliente',
+          'http://localhost:5000/api/admin/login-admin': '/admin',
+          'http://localhost:5000/api/tecnico/login-tecnico': '/tecnico',
+          'http://localhost:5000/api/cliente/login-cliente': '/cliente',
         };
 
         const route = endpointToRoute[result.endpoint];
         if (route) {
-          if (route === '/ducech/cliente') {
+          if (route === '/cliente') {
             setSuccessMessage('Inicio de sesión exitoso. Actualiza el kilometraje de tu vehículo para no olvidar tus mantenimientos pendientes.');
           }
           setTimeout(() => navigate(route), 3000);
@@ -60,6 +61,11 @@ const LoginPage = () => {
       console.error('Error en la solicitud:', err);
       setError('Ocurrió un error al intentar iniciar sesión. Por favor, intenta nuevamente.');
     }
+  };
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault(); // Evita la navegación predeterminada
+    setForgotPasswordMessage('Por favor, contáctate con soporte para recuperar tu contraseña.');
   };
 
   return (
@@ -99,10 +105,12 @@ const LoginPage = () => {
             <div className="titulo">Bienvenido</div>
             <hr />
             <div className="pie-form">
-              <a href="/forgot">¿Perdiste tu contraseña?</a>
-              <a href="/ducech/registro">¿No tienes Cuenta? Regístrate</a>
+              <a href="/forgot" onClick={handleForgotPassword}>
+                ¿Perdiste tu contraseña?
+              </a>
+              <a href="/registro">¿No tienes Cuenta? Regístrate</a>
               <hr />
-              <a href="/ducech">« Volver</a>
+              <a href="/">« Volver</a>
             </div>
           </div>
         </div>
@@ -113,6 +121,16 @@ const LoginPage = () => {
           <div className="success-modal">
             <h2>¡Éxito!</h2>
             <p>{successMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {forgotPasswordMessage && (
+        <div className="info-overlay">
+          <div className="info-modal">
+            <h2>Recuperación de contraseña</h2>
+            <p>{forgotPasswordMessage}</p>
+            <button onClick={() => setForgotPasswordMessage('')}>Cerrar</button>
           </div>
         </div>
       )}

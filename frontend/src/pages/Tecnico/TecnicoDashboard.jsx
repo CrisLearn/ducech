@@ -129,7 +129,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     localStorage.removeItem("token");
     
     // Redirige a la página de login
-    window.location.href = "/ducech/login"; // Cambia la URL si es necesario
+    window.location.href = "/login"; // Cambia la URL si es necesario
   };
   const handleInputChange = (e, formType) => {
     const { name, value } = e.target;

@@ -14,13 +14,13 @@ const App = () => {
     <Router>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/ducech" element={<LandingPage />} />
-        <Route path="/ducech/login" element={<LoginPage />} />
-        <Route path="/ducech/registro" element={<Registro />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/registro" element={<Registro />} />
 
         {/* Rutas privadas */}
         <Route
-          path="/ducech/admin"
+          path="/admin"
           element={
             <PrivateRoute>
               <AdmPage />
@@ -28,7 +28,7 @@ const App = () => {
           }
         />
         <Route
-          path="/ducech/tecnico"
+          path="/tecnico"
           element={
             <PrivateRoute>
               <TecnicoDashboard />
@@ -36,7 +36,7 @@ const App = () => {
           }
         />
         <Route
-          path="/ducech/cliente"
+          path="/cliente"
           element={
             <PrivateRoute>
               <ClientDashboard />

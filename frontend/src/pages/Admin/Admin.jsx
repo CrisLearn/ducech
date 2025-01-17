@@ -72,7 +72,7 @@ const AdmPage = () => {
     }, [selectedSection]);
     const handleLogout = () => {
         localStorage.removeItem("token");
-        window.location.href = "/ducech/login"; // Cambia la URL si es necesario
+        window.location.href = "/login"; // Cambia la URL si es necesario
     };
     const toggleDetalles = (id) => {
         setDetallesVisible((prev) => ({
