@@ -1,12 +1,12 @@
-const API_URL = 'http://localhost:5000/api';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const AuthService = {
   // Función de login que intenta autenticar al usuario en diferentes endpoints
   login: async (email, password) => {
     const endpoints = [
-      `${API_URL}/admin/login-admin`,
-      `${API_URL}/tecnico/login-tecnico`,
-      `${API_URL}/cliente/login-cliente`,
+      `${apiUrl}/api/admin/login-admin`,
+      `${apiUrl}/api/tecnico/login-tecnico`,
+      `${apiUrl}/api/cliente/login-cliente`,
     ];
 
     for (const endpoint of endpoints) {
