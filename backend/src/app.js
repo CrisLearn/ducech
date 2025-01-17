@@ -12,6 +12,11 @@ dotenv.config();
 const app = express();
 
 connectDB();
+const corsOptions = {
+  origin: 'https://ducech.com',  // Cambia esto por la URL de tu frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
 app.use(cors({
     origin: 'http://localhost:3000' 
