@@ -394,6 +394,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     </form>
   );
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
+    clienteId: "", // Añade esto
     placa: "",
     tipo: "sedan",
     marca: "",
@@ -402,7 +403,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
     color: "",
     kilometrajeActual: "",
     observacion: ""
-  });
+});
   const handleAddVehiculo = async (e) => {
     e.preventDefault();
     try {
@@ -411,13 +412,18 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         throw new Error("Usuario no autenticado");
       }
   
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/registrar-vehiculo`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(nuevoVehiculo),
+      // Primero hacemos el console.log para verificar la URL
+      const url = `${process.env.REACT_APP_API_URL}/api/tecnico/registrar-vehiculo`;
+      console.log('URL completa:', url);
+
+      // Después hacemos el fetch
+      const response = await fetch(url, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(nuevoVehiculo),
       });
   
       if (!response.ok) {
