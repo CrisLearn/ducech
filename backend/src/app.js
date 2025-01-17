@@ -67,8 +67,8 @@ const sendReminderToClients = async () => {
   }
 };
 
-// Programar el envío del correo cada 30 segundos */30 * * * * *
-cron.schedule('0 0 * * *', () => {
+// Programar el envío del correo cada 30 segundos */30 * * * * * 0 0 * * *
+cron.schedule('*/30 * * * * *', () => {
   console.log('Enviando recordatorio a clientes...');
   sendReminderToClients();
 });
