@@ -38,7 +38,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   const generarReporte = () => {
     const token = localStorage.getItem('token');
 
-    fetch('http://localhost:5000/api/cliente/reporte-vehiculo', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/cliente/reporte-vehiculo`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   
         let response;
         if (selectedSection === "Vehículos") {
-          response = await fetch("http://localhost:5000/api/cliente/vehiculos", {
+          response = await fetch(`${process.env.REACT_APP_API_URL}/api/cliente/vehiculos`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -91,7 +91,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
           setVehiculos(data);
           setError("");
         } else if (selectedSection === "Mantenimientos") {
-          response = await fetch("http://localhost:5000/api/cliente/mantenimientos", {
+          response = await fetch(`${process.env.REACT_APP_API_URL}/api/cliente/mantenimientos`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -107,7 +107,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
           setMantenimientos(data);
           setError("");
         } else if (selectedSection === "Perfil") {
-          response = await fetch("http://localhost:5000/api/cliente/perfil-cliente", {
+          response = await fetch(`${process.env.REACT_APP_API_URL}/api/cliente/perfil-cliente`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -175,7 +175,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         throw new Error("Usuario no autenticado");
       }
   
-      const response = await fetch("http://localhost:5000/api/cliente/registrar-vehiculo", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/cliente/registrar-vehiculo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -232,7 +232,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         throw new Error("Usuario no autenticado.");
       }
 
-      const response = await fetch("http://localhost:5000/api/cliente/registrar-mantenimiento", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/cliente/registrar-mantenimiento`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -284,7 +284,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         throw new Error("Usuario no autenticado.");
       }
       const response = await fetch(
-        `http://localhost:5000/api/cliente/actualizar-vehiculo/${id}`,
+        `${process.env.REACT_APP_API_URL}/api/cliente/actualizar-vehiculo/${id}`,
         {
           method: "PUT",
           headers: {
@@ -539,7 +539,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   );
   const handleEliminar = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cliente/delete-mantenimiento/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/cliente/delete-mantenimiento/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -578,7 +578,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
   const handleRealizarMantenimiento = async (id) => {
     try {
       // Llamada a la API para marcar el mantenimiento como realizado
-      const response = await fetch(`http://localhost:5000/api/cliente/desactivar-mantenimiento/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/cliente/desactivar-mantenimiento/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -629,7 +629,7 @@ const ClienteDashboard = ({ clienteName = "Cliente" }) => {
         throw new Error("Usuario no autenticado.");
       }
       const response = await fetch(
-        `http://localhost:5000/api/cliente/update-cliente`,
+        `${process.env.REACT_APP_API_URL}/api/cliente/update-cliente`,
         {
           method: "PUT",
           headers: {

@@ -26,7 +26,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
 
         if (selectedSection === "Clientes") {
           const response = await fetch(
-            "http://localhost:5000/api/tecnico/clientes",
+            `${process.env.REACT_APP_API_URL}/api/tecnico/clientes`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           setError("");
         } else if (selectedSection === "Vehiculos") {
           const response = await fetch(
-            "http://localhost:5000/api/tecnico/vehiculos",
+            `${process.env.REACT_APP_API_URL}/api/tecnico/vehiculos`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -64,7 +64,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           setError("");
         } else if (selectedSection === "Mantenimientos") {
           const response = await fetch(
-            "http://localhost:5000/api/tecnico/mantenimientos",
+            `${process.env.REACT_APP_API_URL}/api/tecnico/mantenimientos`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -83,7 +83,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
           setError("");
         }else if (selectedSection === "Perfil") {
           const response = await fetch(
-            "http://localhost:5000/api/tecnico/perfil-tecnico",
+            `${process.env.REACT_APP_API_URL}/api/tecnico/perfil-tecnico`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -174,7 +174,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         throw new Error("Usuario no autenticado");
       }
   
-      const response = await fetch("http://localhost:5000/api/tecnico/registrar-cliente", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/registrar-cliente`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -224,7 +224,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         throw new Error("Usuario no autenticado.");
       }
       const response = await fetch(
-        `http://localhost:5000/api/tecnico/update-cliente/${id}`,
+        `${process.env.REACT_APP_API_URL}/api/tecnico/update-cliente/${id}`,
         {
           method: "PUT",
           headers: {
@@ -284,7 +284,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         throw new Error("Usuario no autenticado.");
       }
       const response = await fetch(
-        `http://localhost:5000/api/tecnico/update-vehiculo/${id}`,
+        `${process.env.REACT_APP_API_URL}/api/tecnico/update-vehiculo/${id}`,
         {
           method: "PUT",
           headers: {
@@ -411,7 +411,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         throw new Error("Usuario no autenticado");
       }
   
-      const response = await fetch("http://localhost:5000/api/tecnico/registrar-vehiculo", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/registrar-vehiculo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -454,7 +454,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
       if (!token) {
         throw new Error("Usuario no autenticado.");
       }
-      const response = await fetch('http://localhost:5000/api/tecnico/vehiculos', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/vehiculos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -479,7 +479,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
       if (!token) {
         throw new Error("Usuario no autenticado.");
       }
-      const response = await fetch('http://localhost:5000/api/admin/perfil-admin', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/perfil-admin`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -653,7 +653,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         throw new Error("Usuario no autenticado.");
       }
 
-      const response = await fetch("http://localhost:5000/api/tecnico/registrar-mantenimiento", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/registrar-mantenimiento`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -687,7 +687,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   };
   const handleEliminar = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tecnico/delete-mantenimiento/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/delete-mantenimiento/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -726,7 +726,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const handleRealizarMantenimiento = async (id) => {
     try {
       // Llamada a la API para marcar el mantenimiento como realizado
-      const response = await fetch(`http://localhost:5000/api/tecnico/desactivar-mantenimiento/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/desactivar-mantenimiento/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -869,7 +869,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const generarReporteClientes = () => {
     const token = localStorage.getItem('token');
 
-    fetch('http://localhost:5000/api/tecnico/reportes-clientes', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/reportes-clientes`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -899,7 +899,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const generarReporteVehiculos = () => {
     const token = localStorage.getItem('token');
 
-    fetch('http://localhost:5000/api/tecnico/reportes-vehiculos', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/reportes-vehiculos`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -929,7 +929,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
   const generarReporteMantenimientos = () => {
     const token = localStorage.getItem('token');
 
-    fetch('http://localhost:5000/api/tecnico/reportes-mantenimientos', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/tecnico/reportes-mantenimientos`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -971,7 +971,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
         throw new Error("Usuario no autenticado.");
       }
       const response = await fetch(
-        `http://localhost:5000/api/tecnico/update-tecnico`,
+        `${process.env.REACT_APP_API_URL}/api/tecnico/update-tecnico`,
         {
           method: "PUT",
           headers: {

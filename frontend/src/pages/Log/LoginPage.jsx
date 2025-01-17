@@ -40,10 +40,11 @@ const LoginPage = () => {
         localStorage.setItem('token', result.token);
 
         const endpointToRoute = {
-          'http://localhost:5000/api/admin/login-admin': '/admin',
-          'http://localhost:5000/api/tecnico/login-tecnico': '/tecnico',
-          'http://localhost:5000/api/cliente/login-cliente': '/cliente',
+          [`${process.env.REACT_APP_API_URL}/api/admin/login-admin`]: '/admin',
+          [`${process.env.REACT_APP_API_URL}/api/tecnico/login-tecnico`]: '/tecnico',
+          [`${process.env.REACT_APP_API_URL}/api/cliente/login-cliente`]: '/cliente',
         };
+        
 
         const route = endpointToRoute[result.endpoint];
         if (route) {

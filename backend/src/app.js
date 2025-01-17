@@ -13,8 +13,9 @@ const app = express();
 connectDB();
 
 app.use(cors({
-    origin: 'https://ducech.com'
+  origin: ['https://ducech.com', 'http://localhost:3000']
 }));
+
 
 app.use(express.json());
 

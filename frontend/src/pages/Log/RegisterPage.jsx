@@ -50,7 +50,7 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError('');  // Resetear error
 
     const validationError = validateForm();
     if (validationError) {
@@ -59,10 +59,18 @@ const RegisterPage = () => {
     }
 
     try {
+      const apiUrl = process.env.REACT_APP_API_URL;
+
+      // Validar si la URL base está correctamente configurada
+      if (!apiUrl) {
+        throw new Error('La URL de la API no está configurada correctamente.');
+      }
+      console.log("URL de la API:", apiUrl);
+
       const endpoint =
         selectedRole === 'tecnico'
-          ? 'http://localhost:5000/api/tecnico/registrar-tecnico'
-          : 'http://localhost:5000/api/cliente/registrar-cliente';
+          ? `${apiUrl}/api/tecnico/registrar-tecnico`
+          : `${apiUrl}/api/cliente/registrar-cliente`;
 
       console.log('Datos enviados:', formData);
 
@@ -81,7 +89,7 @@ const RegisterPage = () => {
 
         setTimeout(() => {
           setShowSuccessModal(false);
-          window.location.href = '/login';
+          window.location.href = '/login'; // Redirigir después del éxito
         }, 5000);
       } else {
         setError('Error inesperado en el registro.');
@@ -89,6 +97,7 @@ const RegisterPage = () => {
     } catch (err) {
       console.error('Error en la solicitud:', err);
 
+      // Verifica si hay una respuesta del servidor
       if (err.response) {
         const serverMessage = err.response.data.message || 'Error desconocido en el registro.';
         setError(serverMessage);
