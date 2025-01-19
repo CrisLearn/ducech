@@ -9,11 +9,6 @@ const AuthService = {
       `${apiUrl}/api/cliente/login-cliente`,
     ];
 
-    // Validar entradas
-    if (!email || !password) {
-      return { success: false, message: 'Email y contraseña son requeridos.' };
-    }
-
     for (const endpoint of endpoints) {
       try {
         const response = await fetch(endpoint, {
@@ -27,43 +22,40 @@ const AuthService = {
         if (response.ok) {
           const data = await response.json();
 
-          // Verificar que el token exista en la respuesta
-          if (data.token) {
-            localStorage.setItem('token', data.token);
-            return {
-              success: true,
-              role: data.role || 'user', // Rol por defecto si no está presente
-              endpoint,
-              token: data.token,
-            };
-          } else {
-            console.error(`Error: No se recibió un token en ${endpoint}`);
-          }
+          // Guarda el token en localStorage
+          localStorage.setItem('token', data.token);
+
+          return {
+            success: true,
+            role: data.role,
+            endpoint,
+            token: data.token,
+          };
         } else {
-          // Manejo de errores de respuesta
+          // Maneja errores específicos de la respuesta
           const errorData = await response.json();
-          console.error(`Error en ${endpoint}: ${errorData.message || 'Error desconocido'}`);
+          console.error(`Error al autenticar: ${errorData.message}`);
         }
       } catch (error) {
-        // Errores de conexión o problemas con la petición
-        console.error(`Error de red o servidor en ${endpoint}:`, error.message);
+        console.error(`Error con ${endpoint}:`, error);
       }
     }
 
-    // Si ninguna autenticación tuvo éxito
-    return {
-      success: false,
-      message: 'Credenciales inválidas o error en la autenticación.',
-    };
+    return { success: false, message: 'Credenciales inválidas o error en la autenticación.' };
   },
 
-  // Obtener el token almacenado en localStorage
-  getToken: () => localStorage.getItem('token'),
+  // Método para obtener el token del almacenamiento local
+  getToken: () => {
+    return localStorage.getItem('token');
+  },
 
-  // Verificar si el usuario está autenticado
-  isAuthenticated: () => !!AuthService.getToken(),
+  // Método para verificar si el usuario está autenticado
+  isAuthenticated: () => {
+    const token = AuthService.getToken();
+    return !!token; // Retorna true si hay un token
+  },
 
-  // Cerrar sesión y eliminar el token
+  // Método para cerrar sesión y eliminar el token
   logout: () => {
     localStorage.removeItem('token');
   },
