@@ -67,7 +67,14 @@ const LoginPage = () => {
   const handleForgotPassword = (e) => {
     e.preventDefault(); // Evita la navegación predeterminada
     setForgotPasswordMessage('Por favor, contáctate con soporte para recuperar tu contraseña.');
+  
+    // Abre el enlace de WhatsApp en una nueva pestaña después de 3 segundos
+    setTimeout(() => {
+      window.open('https://wa.me/qr/VOCKHZYNN7DUL1', '_blank');
+    }, 3000);
   };
+  ;
+  
 
   return (
     <div className="background">

@@ -425,14 +425,23 @@ export const createVehiculoForTecnico = async (req, res) => {
 
 export const getAllVehiculos = async (req, res) => { 
     try {
-        const tecnicoId = req.userId; // Obtener el ID del tecnico del token
+        const tecnicoId = req.userId; // Obtener el ID del técnico del token
+
+        // Buscar el técnico y sus vehículos
         const tecnico = await Tecnico.findById(tecnicoId).populate('vehiculos');
         if (!tecnico) {
-            return res.status(404).send({ error: 'Tecnico no encontrado' });
+            return res.status(404).send({ error: 'Técnico no encontrado' });
         }
-        res.send(tecnico.vehiculos);
+
+        // Buscar vehículos registrados por clientes asignados al técnico
+        const vehiculosClientes = await Vehiculo.find({ asignadoATecnico: tecnicoId, registradoPor: 'cliente' });
+
+        // Combinar vehículos del técnico y de los clientes asignados
+        const todosLosVehiculos = [...tecnico.vehiculos, ...vehiculosClientes];
+
+        res.send(todosLosVehiculos);
     } catch (error) { 
-        res.status(500).send(error); 
+        res.status(500).send({ error: 'Ocurrió un error al obtener los vehículos', detalle: error.message }); 
     } 
 };
 
