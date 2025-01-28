@@ -396,3 +396,110 @@ margin-top: auto; /* Empuja este contenedor al final del sidebar */
 .highlight-cliente {
   color: #f2c14e;
 }
+
+@media screen and (max-width: 1024px) {
+  .cliente-dashboard {
+    flex-direction: column;
+  }
+  
+  .content-cliente {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px;
+  }
+  
+  .sidebar-cliente {
+    transform: translateX(-100%);
+    z-index: 1000;
+  }
+  
+  .sidebar-cliente.active {
+    transform: translateX(0);
+  }
+  
+  /* Ajuste de botones en reportes */
+  .botones-reportes-cliente > div {
+    flex: 0 1 calc(50% - 20px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header-cliente {
+    margin-top: 60px;
+  }
+  
+  .cliente-dashboard {
+    height: calc(100vh - 60px);
+  }
+  
+  .sidebar-cliente {
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 60px);
+    top: 60px;
+  }
+  
+  .item-vehiculos-cliente button,
+  .item-mantenimientos-cliente button {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .contenido {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Ajuste de botones en reportes */
+  .botones-reportes-cliente > div {
+    flex: 0 1 100%;
+  }
+  
+  .btn-reporte {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .perfil-cliente input,
+  .perfil-cliente select {
+    width: 100%;
+  }
+  
+  .item-tecnicos-cliente,
+  .item-clientes-cliente,
+  .item-vehiculos-cliente,
+  .item-mantenimientos-cliente {
+    padding: 10px;
+  }
+  
+  .sidebar-cliente h2 {
+    font-size: 24px;
+  }
+  
+  .sidebar-cliente ul li button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+/* Añadir clase para toggle del menú */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 90px;
+  left: 10px;
+  z-index: 1001;
+  background: #f2c14e;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 1024px) {
+  .menu-toggle {
+    display: block;
+  }
+}

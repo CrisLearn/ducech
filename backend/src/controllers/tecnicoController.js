@@ -426,24 +426,31 @@ export const createVehiculoForTecnico = async (req, res) => {
 export const getAllVehiculos = async (req, res) => { 
     try {
         const tecnicoId = req.userId; // Obtener el ID del técnico del token
+        
+        // Buscar al técnico y hacer un populate de los clientes y los vehículos de los clientes
+        const tecnico = await Tecnico.findById(tecnicoId).populate({
+            path: 'clientes', // Asumo que el técnico tiene un campo "clientes"
+            populate: {
+                path: 'vehiculos', // Y que cada cliente tiene un campo "vehiculos"
+            }
+        });
 
-        // Buscar el técnico y sus vehículos
-        const tecnico = await Tecnico.findById(tecnicoId).populate('vehiculos');
         if (!tecnico) {
             return res.status(404).send({ error: 'Técnico no encontrado' });
         }
 
-        // Buscar vehículos registrados por clientes asignados al técnico
-        const vehiculosClientes = await Vehiculo.find({ asignadoATecnico: tecnicoId, registradoPor: 'cliente' });
+        // Obtener todos los vehículos de los clientes y del técnico
+        const vehiculosClientes = tecnico.clientes.flatMap(cliente => cliente.vehiculos);
+        const todosLosVehiculos = [...tecnico.vehiculos, ...vehiculosClientes]; // Combinar vehículos
 
-        // Combinar vehículos del técnico y de los clientes asignados
-        const todosLosVehiculos = [...tecnico.vehiculos, ...vehiculosClientes];
-
+        // Responder con todos los vehículos
         res.send(todosLosVehiculos);
-    } catch (error) { 
-        res.status(500).send({ error: 'Ocurrió un error al obtener los vehículos', detalle: error.message }); 
-    } 
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'Error al obtener los vehículos', detalle: error.message });
+    }
 };
+
 
 export const getVehiculoById = async (req, res) => { 
     try {

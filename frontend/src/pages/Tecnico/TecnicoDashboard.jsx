@@ -1144,7 +1144,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
             </div>
           )}
           {selectedSection === "Vehículos" && (
-            <div className="">
+            <div>
               <button
                 className="tecnico-add-vehiculo-button"
                 onClick={() => setFormVisible(!formVisible)}
@@ -1157,17 +1157,18 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
               {vehiculos.length === 0 && !error && <p>No hay vehículos registrados</p>}
 
               {vehiculos.map((vehiculo) => (
-                <div key={vehiculo._id} className="item-vehiculos-tecnico">
+                // Verifica si vehiculo._id existe y es único
+                <div key={vehiculo._id || `vehiculo-${vehiculo.placa}`} className="item-vehiculos-tecnico">
                   <h3>{vehiculo.placa}</h3>
                   <div className="etiquetas-horizontales">
                     <p>
-                      <strong><span className='highlight-tecnico'>Marca:</span></strong> {vehiculo.marca}
+                      <strong><span className="highlight-tecnico">Marca:</span></strong> {vehiculo.marca}
                     </p>
                     <p>
-                      <strong><span className='highlight-tecnico'>Modelo:</span></strong> {vehiculo.modelo}
+                      <strong><span className="highlight-tecnico">Modelo:</span></strong> {vehiculo.modelo}
                     </p>
                     <p>
-                      <strong><span className='highlight-tecnico'>Color:</span></strong> {vehiculo.color}
+                      <strong><span className="highlight-tecnico">Color:</span></strong> {vehiculo.color}
                     </p>
                   </div>
                   <div>
@@ -1260,7 +1261,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                               type="number"
                               name="kilometrajeActual"
                               defaultValue={vehiculo.kilometrajeActual}
-                              min={vehiculo.kilometrajeActual} 
+                              min={vehiculo.kilometrajeActual}
                               max="500000"
                               required
                             />
@@ -1277,9 +1278,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
                         </div>
                         <div className="actualizar-button">
                           <input type="submit" value="Actualizar" />
-                          {successMessage && (
-                            <p className="cliente-success">{successMessage}</p>
-                          )}
+                          {successMessage && <p className="cliente-success">{successMessage}</p>}
                           {error && <p className="error">{error}</p>}
                         </div>
                       </form>
@@ -1289,6 +1288,7 @@ const TecnicoDashboard = ({ tecnicoName = "Tecnico" }) => {
               ))}
             </div>
           )}
+
           {selectedSection === "Mantenimientos" && (
             <div className="list-mantenimientos-tecnico">
               <button
