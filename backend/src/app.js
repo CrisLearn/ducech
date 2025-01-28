@@ -66,6 +66,6 @@ const sendReminderToClients = async () => {
 setInterval(() => {
   console.log('Enviando recordatorio a clientes...');
   sendReminderToClients();
-}, 300 * 300 * 1000); // 24 horas en milisegundos
+}, 60 * 60 * 1000); // 24 horas en milisegundos
 
 export default app;
